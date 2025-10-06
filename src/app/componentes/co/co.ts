@@ -107,10 +107,23 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
+
+
+    // 🔹 Labels corregidos con fecha completa y sin desfase
     const labels = data.map(d => {
-      const fecha = new Date(d.fecha_hora);
-      return fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const fecha = new Date(d.fecha_hora + 'Z'); // Forzar UTC
+      const day = fecha.getDate().toString().padStart(2,'0');
+      const month = (fecha.getMonth()+1).toString().padStart(2,'0');
+      const year = fecha.getFullYear();
+      const hours = fecha.getHours().toString().padStart(2,'0');
+      const minutes = fecha.getMinutes().toString().padStart(2,'0');
+
+      const label = `${year}-${month}-${day} ${hours}:${minutes}`;
+      return label;
     });
+
+
+
 
     this.chart = new Chart(ctx, {
       type: 'line',
@@ -132,7 +145,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-
+  // Calcular estadísticas básicas
   private computeStats(data: any[]) {
     if (!data?.length) return;
     const vals = data.map(r => Number(r.co) || 0);
@@ -141,7 +154,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     this.min = Math.min(...vals);
     this.max = Math.max(...vals);
   }
-
+// Actualizar fechas visibles en el calendario
   private updateVisibleDates() {
     this.visibleDates = [];
     for (let i = -3; i <= 3; i++) {
@@ -151,6 +164,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Verificar si la fecha es hoy
   isToday(date: Date): boolean {
     const today = new Date();
     return date.getDate() === today.getDate() &&
@@ -158,25 +172,32 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
            date.getFullYear() === today.getFullYear();
   }
 
+  // Formatear fecha para mostrar en calendario
   formatDate(date: Date): string {
     if (this.isToday(date)) return 'Hoy';
     return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}`;
   }
 
+
+  // Seleccionar fecha
   selectDate(date: Date) {
     this.loadDataForDate(date);
   }
 
+  // Clase CSS para fechas en el calendario
   getDateClass(date: Date): string {
     if (this.isToday(date)) return 'today';
     if (date.toDateString() === this.selectedDate.toDateString()) return 'selected';
     return '';
   }
 
+  // Abrir selector de fecha oculto
   openCalendar() {
     this.hiddenDateInput.nativeElement.click();
   }
 
+
+  // Manejar selección de fecha desde el input oculto
   onDatePicked(event: any) {
     const pickedDate = new Date(event.target.value);
     if (!isNaN(pickedDate.getTime())) {
@@ -184,6 +205,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Navegación fechas
   shiftVisibleDates(direction: number) {
   // direction: -1 → izquierda, 1 → derecha
   this.visibleDates = this.visibleDates.map(d => {
