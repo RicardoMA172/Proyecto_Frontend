@@ -1,11 +1,10 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
-import { Chart, registerables } from 'chart.js';
+import { Chart, registerables, TimeScale, LinearScale, LineController, LineElement, PointElement, CategoryScale } from 'chart.js';
+import 'chartjs-adapter-date-fns'; // 🔹 adaptador de fechas
 import { interval, Subject, BehaviorSubject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
-import 'chartjs-adapter-date-fns';
-
 
 Chart.register(...registerables);
 
@@ -109,39 +108,42 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
-    // 🔹 Datos para Chart.js usando eje de tiempo completo
     this.chart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    datasets: [{
-      label: 'CO (ppm)',
-      data: data.map(d => ({ x: new Date(d.fecha_hora + 'Z'), y: d.co })),
-      borderColor: '#2980b9',
-      backgroundColor: 'rgba(41, 128, 185, 0.2)',
-      fill: true,
-      tension: 0.3
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' },
-      decimation: { enabled: true, algorithm: 'lttb', samples: 500 }
-    },
-    scales: {
-      x: {
-        type: 'time',            // 🔹 importante
-        time: { unit: 'minute' },// escala de tiempo
-        title: { display: true, text: 'Hora' }
+      type: 'line',
+      data: {
+        datasets: [{
+          label: 'CO (ppm)',
+          data: data.map(d => ({
+            x: new Date(d.fecha_hora + 'Z'), // 🔹 convertir a UTC
+            y: Number(d.co)
+          })),
+          borderColor: '#2980b9',
+          backgroundColor: 'rgba(41, 128, 185, 0.2)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 0 // 🔹 para no saturar con 500+ puntos
+        }]
       },
-      y: {
-        title: { display: true, text: 'CO (ppm)' }
+      options: {
+        responsive: true,
+        parsing: false, // 🔹 porque usamos objetos {x, y}
+        plugins: {
+          legend: { position: 'top' },
+          decimation: { enabled: true, algorithm: 'lttb', samples: 500 } // 🔹 decimación optimizada
+        },
+        scales: {
+          x: {
+            type: 'time',
+            time: { unit: 'hour', tooltipFormat: 'dd/MM HH:mm' },
+            title: { display: true, text: 'Hora' }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'CO (ppm)' }
+          }
+        }
       }
-    }
-  }
-});
-
-
+    });
   }
 
   // Calcular estadísticas básicas
