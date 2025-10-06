@@ -1,8 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
-import { Chart, registerables, TimeScale, LinearScale, LineController, LineElement, PointElement, CategoryScale } from 'chart.js';
-import 'chartjs-adapter-date-fns'; // 🔹 adaptador de fechas
+import { Chart, registerables } from 'chart.js';
 import { interval, Subject, BehaviorSubject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
@@ -65,7 +64,19 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         })
       )
-      .subscribe(latest => this.data = latest);
+      .subscribe(latest => {
+        // 🔹 Filtrar registros por fecha local para evitar desfase
+        const selYear = this.selectedDate.getFullYear();
+        const selMonth = this.selectedDate.getMonth();
+        const selDay = this.selectedDate.getDate();
+
+        this.data = latest.filter((r: any) => {
+          const fecha = new Date(r['fecha_hora']);
+          return fecha.getFullYear() === selYear &&
+                 fecha.getMonth() === selMonth &&
+                 fecha.getDate() === selDay;
+        });
+      });
   }
 
   ngAfterViewInit(): void {
@@ -93,12 +104,30 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isToday(date)) {
       // Solo últimos N registros para hoy
       this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
-        this.data = latest;
+        const selYear = this.selectedDate.getFullYear();
+        const selMonth = this.selectedDate.getMonth();
+        const selDay = this.selectedDate.getDate();
+
+        this.data = latest.filter((r: any) => {
+          const fecha = new Date(r['fecha_hora']);
+          return fecha.getFullYear() === selYear &&
+                 fecha.getMonth() === selMonth &&
+                 fecha.getDate() === selDay;
+        });
       });
     } else {
       // Todos los registros del día para fechas pasadas
       this.caService.getByDate(date).subscribe(allData => {
-        this.data = allData;
+        const selYear = this.selectedDate.getFullYear();
+        const selMonth = this.selectedDate.getMonth();
+        const selDay = this.selectedDate.getDate();
+
+        this.data = allData.filter((r: any) => {
+          const fecha = new Date(r['fecha_hora']);
+          return fecha.getFullYear() === selYear &&
+                 fecha.getMonth() === selMonth &&
+                 fecha.getDate() === selDay;
+        });
       });
     }
   }
@@ -108,40 +137,34 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
+    // 🔹 Labels corregidos para mostrar hora local correcta
+    const labels = data.map((r: any) => {
+      // Interpretar fecha como UTC (backend envía YYYY-MM-DD HH:MM:SS)
+      const fechaUTC = new Date(r['fecha_hora'] + 'Z'); 
+
+      // Convertir a hora local
+      const hours = fechaUTC.getHours().toString().padStart(2,'0');
+      const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
+      return `${hours}:${minutes}`; // Solo hora:minutos
+    });
+
     this.chart = new Chart(ctx, {
       type: 'line',
       data: {
+        labels: labels,
         datasets: [{
           label: 'CO (ppm)',
-          data: data.map(d => ({
-            x: new Date(d.fecha_hora + 'Z'), // 🔹 convertir a UTC
-            y: Number(d.co)
-          })),
+          data: data.map((r: any) => r.co),
           borderColor: '#2980b9',
           backgroundColor: 'rgba(41, 128, 185, 0.2)',
           fill: true,
-          tension: 0.3,
-          pointRadius: 0 // 🔹 para no saturar con 500+ puntos
+          tension: 0.3
         }]
       },
       options: {
         responsive: true,
-        parsing: false, // 🔹 porque usamos objetos {x, y}
-        plugins: {
-          legend: { position: 'top' },
-          decimation: { enabled: true, algorithm: 'lttb', samples: 500 } // 🔹 decimación optimizada
-        },
-        scales: {
-          x: {
-            type: 'time',
-            time: { unit: 'hour', tooltipFormat: 'dd/MM HH:mm' },
-            title: { display: true, text: 'Hora' }
-          },
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'CO (ppm)' }
-          }
-        }
+        plugins: { legend: { position: 'top' } },
+        scales: { x: { display: true }, y: { display: true } }
       }
     });
   }
@@ -149,11 +172,24 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
   // Calcular estadísticas básicas
   private computeStats(data: any[]) {
     if (!data?.length) return;
-    const vals = data.map(r => Number(r.co) || 0);
+
+    const selYear = this.selectedDate.getFullYear();
+    const selMonth = this.selectedDate.getMonth();
+    const selDay = this.selectedDate.getDate();
+
+    // 🔹 Filtrar por fecha local antes de calcular estadísticas
+    const filtered = data.filter((r: any) => {
+      const fecha = new Date(r['fecha_hora']);
+      return fecha.getFullYear() === selYear &&
+             fecha.getMonth() === selMonth &&
+             fecha.getDate() === selDay;
+    });
+
+    const vals = filtered.map(r => Number(r.co) || 0);
     const sum = vals.reduce((a, b) => a + b, 0);
-    this.avg = sum / vals.length;
-    this.min = Math.min(...vals);
-    this.max = Math.max(...vals);
+    this.avg = vals.length ? sum / vals.length : 0;
+    this.min = vals.length ? Math.min(...vals) : 0;
+    this.max = vals.length ? Math.max(...vals) : 0;
   }
 
   // Actualizar fechas visibles en el calendario
@@ -214,4 +250,5 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
       return newDate;
     });
   }
+
 }
