@@ -29,6 +29,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
   private pollingIntervalMs = 5000;
   private tableLimit = 5;
 
+  // 🔹 BehaviorSubject para manejar fecha seleccionada en polling
   private selectedDate$ = new BehaviorSubject<Date>(this.selectedDate);
 
   @ViewChild('hiddenDateInput') hiddenDateInput!: ElementRef<HTMLInputElement>;
@@ -39,20 +40,19 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateVisibleDates();
     this.loadDataForDate(this.selectedDate);
 
-    // 🔄 Polling para la gráfica
+    // Polling gráfico
     interval(this.pollingIntervalMs)
       .pipe(
         takeUntil(this.destroy$),
         switchMap(() => this.caService.getByDate(this.selectedDate$.value))
       )
       .subscribe(data => {
-        const filtered = this.filterBySelectedDate(data, this.selectedDate$.value);
-        this.chartData = filtered;
+        this.chartData = data;
         this.initChart(this.chartData);
         this.computeStats(this.chartData);
       });
 
-    // 🔄 Polling para la tabla
+    // Polling tabla
     interval(this.pollingIntervalMs)
       .pipe(
         takeUntil(this.destroy$),
@@ -65,8 +65,17 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       )
       .subscribe(latest => {
-        const filtered = this.filterBySelectedDate(latest, this.selectedDate$.value);
-        this.data = filtered;
+        // 🔹 Filtrar registros por fecha local para evitar desfase
+        const selYear = this.selectedDate.getFullYear();
+        const selMonth = this.selectedDate.getMonth();
+        const selDay = this.selectedDate.getDate();
+
+        this.data = latest.filter((r: any) => {
+          const fecha = new Date(r['fecha_hora']);
+          return fecha.getFullYear() === selYear &&
+                 fecha.getMonth() === selMonth &&
+                 fecha.getDate() === selDay;
+        });
       });
   }
 
@@ -81,52 +90,46 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadDataForDate(date: Date) {
     this.selectedDate = new Date(date);
-    this.selectedDate$.next(this.selectedDate);
+    this.selectedDate$.next(this.selectedDate); // 🔹 actualizar BehaviorSubject
     this.updateVisibleDates();
 
-    // 🔹 Gráfica
+    // Datos para la gráfica
     this.caService.getByDate(date).subscribe(data => {
-      const filtered = this.filterBySelectedDate(data, date);
-      this.chartData = filtered;
+      this.chartData = data;
       this.initChart(this.chartData);
       this.computeStats(this.chartData);
     });
 
-    // 🔹 Tabla
+    // Tabla de registros
     if (this.isToday(date)) {
+      // Solo últimos N registros para hoy
       this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
-        this.data = this.filterBySelectedDate(latest, date);
+        const selYear = this.selectedDate.getFullYear();
+        const selMonth = this.selectedDate.getMonth();
+        const selDay = this.selectedDate.getDate();
+
+        this.data = latest.filter((r: any) => {
+          const fecha = new Date(r['fecha_hora']);
+          return fecha.getFullYear() === selYear &&
+                 fecha.getMonth() === selMonth &&
+                 fecha.getDate() === selDay;
+        });
       });
     } else {
+      // Todos los registros del día para fechas pasadas
       this.caService.getByDate(date).subscribe(allData => {
-        this.data = this.filterBySelectedDate(allData, date);
+        const selYear = this.selectedDate.getFullYear();
+        const selMonth = this.selectedDate.getMonth();
+        const selDay = this.selectedDate.getDate();
+
+        this.data = allData.filter((r: any) => {
+          const fecha = new Date(r['fecha_hora']);
+          return fecha.getFullYear() === selYear &&
+                 fecha.getMonth() === selMonth &&
+                 fecha.getDate() === selDay;
+        });
       });
     }
-  }
-
-  // ✅ Función robusta para convertir y filtrar por fecha
-  private filterBySelectedDate(data: any[], date: Date): any[] {
-    const selYear = date.getFullYear();
-    const selMonth = date.getMonth();
-    const selDay = date.getDate();
-
-    return data.filter((r: any) => {
-      // Asegurarse de parsear correctamente la fecha del backend
-      let fechaStr = r['fecha_hora'];
-      if (!fechaStr) return false;
-
-      // Reemplazar espacio por 'T' para formato ISO
-      fechaStr = fechaStr.replace(' ', 'T');
-      const fecha = new Date(fechaStr);
-
-      if (isNaN(fecha.getTime())) return false;
-
-      return (
-        fecha.getFullYear() === selYear &&
-        fecha.getMonth() === selMonth &&
-        fecha.getDate() === selDay
-      );
-    });
   }
 
   private initChart(data: any[]) {
@@ -134,12 +137,15 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
+    // 🔹 Labels corregidos para mostrar hora local correcta
     const labels = data.map((r: any) => {
-      let fechaStr = r['fecha_hora']?.replace(' ', 'T');
-      const fecha = new Date(fechaStr);
-      const hours = fecha.getHours().toString().padStart(2, '0');
-      const minutes = fecha.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
+      // Interpretar fecha como UTC (backend envía YYYY-MM-DD HH:MM:SS)
+      const fechaUTC = new Date(r['fecha_hora'] + 'Z'); 
+
+      // Convertir a hora local
+      const hours = fechaUTC.getHours().toString().padStart(2,'0');
+      const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
+      return `${hours}:${minutes}`; // Solo hora:minutos
     });
 
     this.chart = new Chart(ctx, {
@@ -163,60 +169,71 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // Calcular estadísticas básicas
   private computeStats(data: any[]) {
-    if (!data?.length) {
-      this.avg = 0;
-      this.min = 0;
-      this.max = 0;
-      return;
-    }
+    if (!data?.length) return;
 
-    const vals = data.map(r => Number(r.co) || 0);
+    const selYear = this.selectedDate.getFullYear();
+    const selMonth = this.selectedDate.getMonth();
+    const selDay = this.selectedDate.getDate();
+
+    // 🔹 Filtrar por fecha local antes de calcular estadísticas
+    const filtered = data.filter((r: any) => {
+      const fecha = new Date(r['fecha_hora']);
+      return fecha.getFullYear() === selYear &&
+             fecha.getMonth() === selMonth &&
+             fecha.getDate() === selDay;
+    });
+
+    const vals = filtered.map(r => Number(r.co) || 0);
     const sum = vals.reduce((a, b) => a + b, 0);
     this.avg = vals.length ? sum / vals.length : 0;
     this.min = vals.length ? Math.min(...vals) : 0;
     this.max = vals.length ? Math.max(...vals) : 0;
   }
 
+  // Actualizar fechas visibles en el calendario
   private updateVisibleDates() {
     this.visibleDates = [];
     for (let i = -3; i <= 3; i++) {
-      const d = new Date(this.selectedDate.getTime());
+      const d = new Date(this.selectedDate.getTime()); // copiar fecha seleccionada
       d.setDate(d.getDate() + i);
       this.visibleDates.push(d);
     }
   }
 
+  // Verificar si la fecha es hoy
   isToday(date: Date): boolean {
     const today = new Date();
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
+    return date.getDate() === today.getDate() &&
+           date.getMonth() === today.getMonth() &&
+           date.getFullYear() === today.getFullYear();
   }
 
+  // Formatear fecha para mostrar en calendario
   formatDate(date: Date): string {
     if (this.isToday(date)) return 'Hoy';
-    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}`;
+    return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}`;
   }
 
+  // Seleccionar fecha
   selectDate(date: Date) {
     this.loadDataForDate(date);
   }
 
+  // Clase CSS para fechas en el calendario
   getDateClass(date: Date): string {
     if (this.isToday(date)) return 'today';
     if (date.toDateString() === this.selectedDate.toDateString()) return 'selected';
     return '';
   }
 
+  // Abrir selector de fecha oculto
   openCalendar() {
     this.hiddenDateInput.nativeElement.click();
   }
 
+  // Manejar selección de fecha desde el input oculto
   onDatePicked(event: any) {
     const pickedDate = new Date(event.target.value);
     if (!isNaN(pickedDate.getTime())) {
@@ -224,11 +241,14 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Navegación fechas
   shiftVisibleDates(direction: number) {
+    // direction: -1 → izquierda, 1 → derecha
     this.visibleDates = this.visibleDates.map(d => {
       const newDate = new Date(d.getTime());
       newDate.setDate(newDate.getDate() + direction);
       return newDate;
     });
   }
+
 }
