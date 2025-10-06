@@ -87,8 +87,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Datos para la gráfica
     this.caService.getByDate(date).subscribe(data => {
-        console.log('Datos recibidos:', data.length, data); // 👈 Agrega esto
-
+      console.log('Datos recibidos:', data.length, data); // 👈 para verificar cantidad de registros
       this.chartData = data;
       this.initChart(this.chartData);
       this.computeStats(this.chartData);
@@ -111,40 +110,87 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // ✅ NUEVA VERSIÓN — Muestra los 294 puntos, pero con eje X simplificado
   private initChart(data: any[]) {
     const ctx = document.getElementById('coChart') as HTMLCanvasElement;
     if (!ctx) return;
-    if (this.chart) this.chart.destroy();
 
-    // 🔹 Labels corregidos para mostrar hora local correcta
+    // 🔹 Limpia el canvas si ya existía una gráfica
+    if (this.chart) {
+      this.chart.destroy();
+      const context = ctx.getContext('2d');
+      if (context) context.clearRect(0, 0, ctx.width, ctx.height);
+    }
+
+    if (!data?.length) return;
+
+    // 🔹 Etiquetas horarias (sin "Z")
     const labels = data.map(d => {
-      // Interpretar fecha como UTC (backend envía YYYY-MM-DD HH:MM:SS)
-      const fechaUTC = new Date(d.fecha_hora + 'Z'); 
-      // Convertir a hora local
-      const hours = fechaUTC.getHours().toString().padStart(2,'0');
-      const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
-      return `${hours}:${minutes}`; // Solo hora:minutos
+      const fecha = new Date(d.fecha_hora);
+      const hours = fecha.getHours().toString().padStart(2, '0');
+      const minutes = fecha.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
     });
 
+    // 🔹 Datos de CO
+    const coValues = data.map(d => d.co);
+
+    // 🔹 Crear gráfica
     this.chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: labels,
+        labels,
         datasets: [{
           label: 'CO (ppm)',
-          data: data.map(d => d.co),
+          data: coValues,
           borderColor: '#2980b9',
           backgroundColor: 'rgba(41, 128, 185, 0.2)',
           fill: true,
-          tension: 0.3
+          tension: 0.3,
+          pointRadius: 0,      // 🔹 Muestra la línea continua sin puntos individuales
+          borderWidth: 1,
         }]
       },
       options: {
         responsive: true,
-        plugins: { legend: { position: 'top' } },
-        scales: { x: { display: true }, y: { display: true } }
+        animation: false,      // 🔹 Sin animación para rendimiento
+        plugins: { 
+          legend: { position: 'top' } 
+        },
+        scales: {
+          x: {
+            type: 'category',
+            display: true,
+            ticks: {
+              // 🔹 Muestra una etiqueta cada 3 horas aprox
+              callback: function (value, index) {
+                if (index % 3 === 0) {
+                  return labels[index];
+                }
+                return '';
+              },
+              maxRotation: 0,
+              autoSkip: false
+            },
+            title: {
+              display: true,
+              text: 'Hora del día'
+            },
+            grid: { display: false }
+          },
+          y: {
+            display: true,
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Concentración de CO (ppm)'
+            }
+          }
+        }
       }
     });
+
+    console.log('Graficando', data.length, 'puntos');
   }
 
   // 🔹 Calcular estadísticas básicas usando solo registros del día seleccionado
