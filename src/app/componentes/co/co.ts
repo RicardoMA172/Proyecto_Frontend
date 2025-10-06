@@ -29,7 +29,6 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
   private pollingIntervalMs = 5000;
   private tableLimit = 5;
 
-  // 🔹 BehaviorSubject para manejar fecha seleccionada en polling
   private selectedDate$ = new BehaviorSubject<Date>(this.selectedDate);
 
   @ViewChild('hiddenDateInput') hiddenDateInput!: ElementRef<HTMLInputElement>;
@@ -40,7 +39,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateVisibleDates();
     this.loadDataForDate(this.selectedDate);
 
-    // Polling gráfico: siempre mostrar todos los datos de la fecha seleccionada
+    // 🔄 Polling para la gráfica
     interval(this.pollingIntervalMs)
       .pipe(
         takeUntil(this.destroy$),
@@ -53,7 +52,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
         this.computeStats(this.chartData);
       });
 
-    // Polling tabla: solo limitar a últimos N si es hoy
+    // 🔄 Polling para la tabla
     interval(this.pollingIntervalMs)
       .pipe(
         takeUntil(this.destroy$),
@@ -82,10 +81,10 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadDataForDate(date: Date) {
     this.selectedDate = new Date(date);
-    this.selectedDate$.next(this.selectedDate); // 🔹 actualizar BehaviorSubject
+    this.selectedDate$.next(this.selectedDate);
     this.updateVisibleDates();
 
-    // Datos para la gráfica
+    // 🔹 Gráfica
     this.caService.getByDate(date).subscribe(data => {
       const filtered = this.filterBySelectedDate(data, date);
       this.chartData = filtered;
@@ -93,32 +92,40 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
       this.computeStats(this.chartData);
     });
 
-    // Tabla de registros
+    // 🔹 Tabla
     if (this.isToday(date)) {
-      // Solo últimos N registros para hoy
       this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
         this.data = this.filterBySelectedDate(latest, date);
       });
     } else {
-      // Todos los registros del día para fechas pasadas
       this.caService.getByDate(date).subscribe(allData => {
         this.data = this.filterBySelectedDate(allData, date);
       });
     }
   }
 
-  // 🔹 Función reutilizable para filtrar registros por fecha local
+  // ✅ Función robusta para convertir y filtrar por fecha
   private filterBySelectedDate(data: any[], date: Date): any[] {
     const selYear = date.getFullYear();
     const selMonth = date.getMonth();
     const selDay = date.getDate();
 
     return data.filter((r: any) => {
-      // Backend envía YYYY-MM-DD HH:MM:SS → interpretar como UTC
-      const fecha = new Date(r['fecha_hora'] + 'Z');
-      return fecha.getFullYear() === selYear &&
-             fecha.getMonth() === selMonth &&
-             fecha.getDate() === selDay;
+      // Asegurarse de parsear correctamente la fecha del backend
+      let fechaStr = r['fecha_hora'];
+      if (!fechaStr) return false;
+
+      // Reemplazar espacio por 'T' para formato ISO
+      fechaStr = fechaStr.replace(' ', 'T');
+      const fecha = new Date(fechaStr);
+
+      if (isNaN(fecha.getTime())) return false;
+
+      return (
+        fecha.getFullYear() === selYear &&
+        fecha.getMonth() === selMonth &&
+        fecha.getDate() === selDay
+      );
     });
   }
 
@@ -128,9 +135,10 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.chart) this.chart.destroy();
 
     const labels = data.map((r: any) => {
-      const fechaUTC = new Date(r['fecha_hora'] + 'Z');
-      const hours = fechaUTC.getHours().toString().padStart(2,'0');
-      const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
+      let fechaStr = r['fecha_hora']?.replace(' ', 'T');
+      const fecha = new Date(fechaStr);
+      const hours = fecha.getHours().toString().padStart(2, '0');
+      const minutes = fecha.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
     });
 
@@ -181,14 +189,18 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isToday(date: Date): boolean {
     const today = new Date();
-    return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
   }
 
   formatDate(date: Date): string {
     if (this.isToday(date)) return 'Hoy';
-    return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}`;
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}`;
   }
 
   selectDate(date: Date) {
