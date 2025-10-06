@@ -64,7 +64,11 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         })
       )
-      .subscribe(latest => this.data = latest);
+      .subscribe(latest => {
+        // 🔹 Filtrar por la fecha seleccionada para evitar desfase
+        const selDateStr = this.selectedDate.toISOString().split('T')[0];
+        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
+      });
   }
 
   ngAfterViewInit(): void {
@@ -92,12 +96,15 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isToday(date)) {
       // Solo últimos N registros para hoy
       this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
-        this.data = latest;
+        // 🔹 Filtrar por la fecha seleccionada para evitar desfase
+        const selDateStr = this.selectedDate.toISOString().split('T')[0];
+        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
     } else {
       // Todos los registros del día para fechas pasadas
       this.caService.getByDate(date).subscribe(allData => {
-        this.data = allData;
+        const selDateStr = this.selectedDate.toISOString().split('T')[0];
+        this.data = allData.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
     }
   }
@@ -107,23 +114,15 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
-
-
-        // 🔹 Labels corregidos para mostrar hora local correcta
+    // 🔹 Labels corregidos para mostrar hora local correcta
     const labels = data.map(d => {
-    // Interpretar fecha como UTC (backend envía YYYY-MM-DD HH:MM:SS)
-    const fechaUTC = new Date(d.fecha_hora + 'Z'); 
-
-    // Convertir a hora local
-    const hours = fechaUTC.getHours().toString().padStart(2,'0');
-    const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
-    return `${hours}:${minutes}`; // Solo hora:minutos
-  });
-
-
-      
-
-
+      // Interpretar fecha como UTC (backend envía YYYY-MM-DD HH:MM:SS)
+      const fechaUTC = new Date(d.fecha_hora + 'Z'); 
+      // Convertir a hora local
+      const hours = fechaUTC.getHours().toString().padStart(2,'0');
+      const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
+      return `${hours}:${minutes}`; // Solo hora:minutos
+    });
 
     this.chart = new Chart(ctx, {
       type: 'line',
@@ -145,16 +144,21 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
-  // Calcular estadísticas básicas
+
+  // 🔹 Calcular estadísticas básicas usando solo registros del día seleccionado
   private computeStats(data: any[]) {
     if (!data?.length) return;
-    const vals = data.map(r => Number(r.co) || 0);
+    const selDateStr = this.selectedDate.toISOString().split('T')[0];
+    const filtered = data.filter(d => d.fecha_hora.startsWith(selDateStr));
+    const vals = filtered.map(r => Number(r.co) || 0);
+    if (!vals.length) return;
     const sum = vals.reduce((a, b) => a + b, 0);
     this.avg = sum / vals.length;
     this.min = Math.min(...vals);
     this.max = Math.max(...vals);
   }
-// Actualizar fechas visibles en el calendario
+
+  // Actualizar fechas visibles en el calendario
   private updateVisibleDates() {
     this.visibleDates = [];
     for (let i = -3; i <= 3; i++) {
@@ -178,7 +182,6 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}`;
   }
 
-
   // Seleccionar fecha
   selectDate(date: Date) {
     this.loadDataForDate(date);
@@ -196,7 +199,6 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     this.hiddenDateInput.nativeElement.click();
   }
 
-
   // Manejar selección de fecha desde el input oculto
   onDatePicked(event: any) {
     const pickedDate = new Date(event.target.value);
@@ -207,12 +209,12 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Navegación fechas
   shiftVisibleDates(direction: number) {
-  // direction: -1 → izquierda, 1 → derecha
-  this.visibleDates = this.visibleDates.map(d => {
-    const newDate = new Date(d.getTime());
-    newDate.setDate(newDate.getDate() + direction);
-    return newDate;
-  });
-}
+    // direction: -1 → izquierda, 1 → derecha
+    this.visibleDates = this.visibleDates.map(d => {
+      const newDate = new Date(d.getTime());
+      newDate.setDate(newDate.getDate() + direction);
+      return newDate;
+    });
+  }
 
 }
