@@ -1,0 +1,11 @@
+[build]
+  # Ajusta 'publish' si en Netlify usas otra carpeta como directorio de publicación
+  publish = "dist/frontend"
+  # Comando de build (ajusta si tu proyecto usa otro script)
+  command = "npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = true
