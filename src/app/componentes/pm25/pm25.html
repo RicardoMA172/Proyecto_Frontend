@@ -1,0 +1,51 @@
+<div class="dashboard">
+  <main class="content">
+  <h1>Partículas PM2.5</h1>
+
+  <!-- Sección tabla de últimos registros -->
+  <section class="records-section">
+    <h2>Últimos registros</h2>
+    <table class="records-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>PM2.5</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of data; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ r.pm25 }}</td>
+          <td>{{ r.fecha_hora | date:'yyyy-MM-dd' }}</td>
+          <td>{{ r.fecha_hora | date:'HH:mm' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Sección estadísticas -->
+  <section class="stats-section">
+    <div class="stats">
+      <div class="card">
+        <h3>Promedio</h3>
+        <p>{{ avg | number:'1.1-2' }}</p>
+      </div>
+      <div class="card">
+        <h3>Mínimo</h3>
+        <p>{{ min }}</p>
+      </div>
+      <div class="card">
+        <h3>Máximo</h3>
+        <p>{{ max }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gráfica -->
+  <section class="chart-section">
+    <canvas id="pm25Chart"></canvas>
+  </section>
+</main>
+</div>

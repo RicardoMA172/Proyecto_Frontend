@@ -1,0 +1,44 @@
+/* Layout */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 30px;
+  background-color: #ecf0f1;
+}
+
+.content h1 {
+  margin-bottom: 20px;
+  font-size: 26px;
+  color: #2c3e50;
+}
+
+/* Stats cards */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  color: #2980b9;
+}
+
+.card p {
+  font-size: 16px;
+  color: #333;
+}
