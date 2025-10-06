@@ -137,7 +137,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
           decimation: {
             enabled: true,
             algorithm: 'lttb', // mejor preserva la forma de la curva
-            samples: 100      // máximo de puntos a mostrar
+            samples: 500      // máximo de puntos a mostrar
           }
         },
         scales: { x: { display: true }, y: { display: true } }
