@@ -109,18 +109,14 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
 
-    // 🔹 Labels corregidos con fecha completa y sin desfase
-    const labels = data.map(d => {
-      const fecha = new Date(d.fecha_hora + 'Z'); // Forzar UTC
-      const day = fecha.getDate().toString().padStart(2,'0');
-      const month = (fecha.getMonth()+1).toString().padStart(2,'0');
-      const year = fecha.getFullYear();
-      const hours = fecha.getHours().toString().padStart(2,'0');
-      const minutes = fecha.getMinutes().toString().padStart(2,'0');
-
-      const label = `${year}-${month}-${day} ${hours}:${minutes}`;
-      return label;
-    });
+     // 🔹 Labels corregidos para usar hora local
+  const labels = data.map(d => {
+    // Forzar interpretación como UTC
+    const fecha = new Date(d.fecha_hora + 'Z'); 
+    const hours = fecha.getHours().toString().padStart(2,'0');
+    const minutes = fecha.getMinutes().toString().padStart(2,'0');
+    return `${hours}:${minutes}`; // Solo hora:minutos
+  });
 
 
 
