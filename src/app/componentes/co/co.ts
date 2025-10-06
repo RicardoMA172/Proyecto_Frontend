@@ -107,23 +107,16 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
-    // 🔹 Labels corregidos para mostrar hora local correcta
-    const labels = data.map(d => {
-      // Interpretar fecha como UTC (backend envía YYYY-MM-DD HH:MM:SS)
-      const fechaUTC = new Date(d.fecha_hora + 'Z'); 
-      // Convertir a hora local
-      const hours = fechaUTC.getHours().toString().padStart(2,'0');
-      const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
-      return `${hours}:${minutes}`; // Solo hora:minutos
-    });
-
+    // 🔹 Datos para Chart.js usando eje de tiempo completo
     this.chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: labels,
         datasets: [{
           label: 'CO (ppm)',
-          data: data.map(d => d.co),
+          data: data.map(d => ({
+            x: new Date(d.fecha_hora + 'Z'), // usar fecha completa
+            y: d.co
+          })),
           borderColor: '#2980b9',
           backgroundColor: 'rgba(41, 128, 185, 0.2)',
           fill: true,
@@ -136,11 +129,21 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
           legend: { position: 'top' },
           decimation: {
             enabled: true,
-            algorithm: 'lttb', // mejor preserva la forma de la curva
-            samples: 500      // máximo de puntos a mostrar
+            algorithm: 'lttb', // conserva la forma de la curva
+            samples: 500 // máximo de puntos a mostrar
           }
         },
-        scales: { x: { display: true }, y: { display: true } }
+        scales: {
+          x: {
+            type: 'time', // eje de tiempo
+            time: { unit: 'minute', tooltipFormat: 'HH:mm:ss' },
+            title: { display: true, text: 'Hora' }
+          },
+          y: {
+            display: true,
+            title: { display: true, text: 'CO (ppm)' }
+          }
+        }
       }
     });
   }
