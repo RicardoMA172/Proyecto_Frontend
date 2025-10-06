@@ -109,15 +109,19 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
 
-     // 🔹 Labels corregidos para usar hora local
-  const labels = data.map(d => {
-    // Forzar interpretación como UTC
-    const fecha = new Date(d.fecha_hora + 'Z'); 
-    const hours = fecha.getHours().toString().padStart(2,'0');
-    const minutes = fecha.getMinutes().toString().padStart(2,'0');
+        // 🔹 Labels corregidos para mostrar hora local correcta
+    const labels = data.map(d => {
+    // Interpretar fecha como UTC (backend envía YYYY-MM-DD HH:MM:SS)
+    const fechaUTC = new Date(d.fecha_hora + 'Z'); 
+
+    // Convertir a hora local
+    const hours = fechaUTC.getHours().toString().padStart(2,'0');
+    const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
     return `${hours}:${minutes}`; // Solo hora:minutos
   });
 
+
+      
 
 
 
