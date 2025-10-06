@@ -4,6 +4,8 @@ import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.se
 import { Chart, registerables } from 'chart.js';
 import { interval, Subject, BehaviorSubject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
+import 'chartjs-adapter-date-fns';
+
 
 Chart.register(...registerables);
 
