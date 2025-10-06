@@ -87,6 +87,8 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Datos para la gráfica
     this.caService.getByDate(date).subscribe(data => {
+        console.log('Datos recibidos:', data.length, data); // 👈 Agrega esto
+
       this.chartData = data;
       this.initChart(this.chartData);
       this.computeStats(this.chartData);
