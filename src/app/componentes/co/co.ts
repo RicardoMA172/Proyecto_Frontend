@@ -136,34 +136,28 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ✅ Corregido: calcula promedio, min y max correctamente
   private computeStats(data: any[], campo: string) {
-    if (!data?.length) {
-      this.avg = this.min = this.max = 0;
-      return;
-    }
-
-    const selDateStr = this.selectedDate.toISOString().split('T')[0];
-
-    const filtered = data.filter(d => {
-      const fechaStr = d.fecha_hora.split(' ')[0]; // ✅ extrae "YYYY-MM-DD"
-      return fechaStr === selDateStr;
-    });
-
-    const vals = filtered.map(r => Number(r[campo])).filter(v => !isNaN(v));
-
-    if (!vals.length) {
-      this.avg = this.min = this.max = 0;
-      return;
-    }
-
-    const sum = vals.reduce((a, b) => a + b, 0);
-    this.avg = parseFloat((sum / vals.length).toFixed(2));
-    this.min = Math.min(...vals);
-    this.max = Math.max(...vals);
-
-    console.log(`📈 ${campo.toUpperCase()} — Promedio: ${this.avg}, Min: ${this.min}, Max: ${this.max}`);
+  if (!data?.length) {
+    this.avg = this.min = this.max = 0;
+    return;
   }
+
+  // Extraemos solo los valores válidos del campo
+  const vals = data.map(r => Number(r[campo])).filter(v => !isNaN(v));
+
+  if (!vals.length) {
+    this.avg = this.min = this.max = 0;
+    return;
+  }
+
+  const sum = vals.reduce((a, b) => a + b, 0);
+  this.avg = parseFloat((sum / vals.length).toFixed(2));
+  this.min = Math.min(...vals);
+  this.max = Math.max(...vals);
+
+  console.log(`📈 ${campo.toUpperCase()} — Promedio: ${this.avg}, Min: ${this.min}, Max: ${this.max}`);
+}
+
 
   private updateVisibleDates() {
     this.visibleDates = [];
