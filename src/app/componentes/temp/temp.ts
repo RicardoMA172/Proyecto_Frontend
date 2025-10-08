@@ -84,75 +84,64 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateVisibleDates();
 
     this.caService.getByDate(date).subscribe(data => {
-      console.log('📊 Datos recibidos:', data.length, data.slice(0, 5));
       this.chartData = data;
       this.initChart(this.chartData);
       this.computeStats(this.chartData, 'temp');
     });
-
-    if (this.isToday(date)) {
-      this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
-        const selDateStr = this.selectedDate.toISOString().split('T')[0];
-        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
-      });
-    } else {
-      this.caService.getByDate(date).subscribe(allData => {
-        const selDateStr = this.selectedDate.toISOString().split('T')[0];
-        this.data = allData.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
-      });
-    }
   }
 
   private initChart(data: any[]) {
-  const ctx = document.getElementById('tempChart') as HTMLCanvasElement;
-  if (!ctx) return;
-  if (this.chart) this.chart.destroy();
+    const ctx = document.getElementById('tempChart') as HTMLCanvasElement;
+    if (!ctx) return;
+    if (this.chart) this.chart.destroy();
 
-  const labels = [
-    '12AM','1AM','2AM','3AM','4AM','5AM','6AM','7AM','8AM','9AM','10AM','11AM',
-    '12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM','9PM','10PM','11PM'
-  ];
+    const labels = [
+      '12AM','1AM','2AM','3AM','4AM','5AM','6AM','7AM','8AM','9AM','10AM','11AM',
+      '12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM','9PM','10PM','11PM'
+    ];
 
-  // Array de 24 elementos inicializado en null
-  const hourlyData: (number | null)[] = new Array(24).fill(null);
+    // Creamos un array por hora para todos los registros
+    const hourlyData: (number | null)[] = new Array(24).fill(null);
 
-  // Ubicamos cada dato exactamente en su hora
-  data.forEach(d => {
-    const date = new Date(d.fecha_hora.replace(' ', 'T'));
-    const hour = date.getHours();
-    const temp = Number(d.temp);
-    if (!isNaN(temp)) {
-      hourlyData[hour] = temp; // si hay varios datos en la misma hora, toma el último
-    }
-  });
-
-  this.chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Temp (°C)',
-        data: hourlyData,
-        borderColor: '#2980b9',
-        backgroundColor: 'rgba(41, 128, 185, 0.2)',
-        fill: true,
-        tension: 0.3,
-        spanGaps: true
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: 'top' } },
-      scales: {
-        x: { display: true, ticks: { maxRotation: 0, minRotation: 0 } },
-        y: { display: true }
+    data.forEach(d => {
+      const date = new Date(d.fecha_hora.replace(' ', 'T'));
+      const hour = date.getHours(); // 0-23
+      const temp = Number(d.temp);
+      if (!isNaN(temp)) {
+        if (hourlyData[hour] === null) {
+          hourlyData[hour] = temp; // si no hay dato, asigna
+        } else {
+          // si ya hay dato, podemos promediar
+          hourlyData[hour] = (hourlyData[hour]! + temp) / 2;
+        }
       }
-    }
-  });
-}
+    });
 
+    this.chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Temp (°C)',
+          data: hourlyData,
+          borderColor: '#2980b9',
+          backgroundColor: 'rgba(41, 128, 185, 0.2)',
+          fill: true,
+          tension: 0.3,
+          spanGaps: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+          x: { display: true, ticks: { maxRotation: 0, minRotation: 0 } },
+          y: { display: true }
+        }
+      }
+    });
+  }
 
-  // ✅ Corregido: calcula promedio, min y max correctamente
   private computeStats(data: any[], campo: string) {
     if (!data?.length) {
       this.avg = this.min = this.max = 0;
@@ -160,12 +149,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const selDateStr = this.selectedDate.toISOString().split('T')[0];
-
-    const filtered = data.filter(d => {
-      const fechaStr = d.fecha_hora.split(' ')[0]; // ✅ extrae "YYYY-MM-DD"
-      return fechaStr === selDateStr;
-    });
-
+    const filtered = data.filter(d => d.fecha_hora.split(' ')[0] === selDateStr);
     const vals = filtered.map(r => Number(r[campo])).filter(v => !isNaN(v));
 
     if (!vals.length) {
@@ -177,8 +161,6 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
     this.avg = parseFloat((sum / vals.length).toFixed(2));
     this.min = Math.min(...vals);
     this.max = Math.max(...vals);
-
-    console.log(`📈 ${campo.toUpperCase()} — Promedio: ${this.avg}, Min: ${this.min}, Max: ${this.max}`);
   }
 
   private updateVisibleDates() {
@@ -202,27 +184,18 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
     return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}`;
   }
 
-  selectDate(date: Date) {
-    this.loadDataForDate(date);
-  }
-
-  getDateClass(date: Date): string {
+  selectDate(date: Date) { this.loadDataForDate(date); }
+  getDateClass(date: Date) {
     if (this.isToday(date)) return 'today';
     if (date.toDateString() === this.selectedDate.toDateString()) return 'selected';
     return '';
   }
 
-  openCalendar() {
-    this.hiddenDateInput.nativeElement.click();
-  }
-
+  openCalendar() { this.hiddenDateInput.nativeElement.click(); }
   onDatePicked(event: any) {
     const pickedDate = new Date(event.target.value);
-    if (!isNaN(pickedDate.getTime())) {
-      this.selectDate(pickedDate);
-    }
+    if (!isNaN(pickedDate.getTime())) this.selectDate(pickedDate);
   }
-
   shiftVisibleDates(direction: number) {
     this.visibleDates = this.visibleDates.map(d => {
       const newDate = new Date(d.getTime());
@@ -230,5 +203,4 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       return newDate;
     });
   }
-
 }
