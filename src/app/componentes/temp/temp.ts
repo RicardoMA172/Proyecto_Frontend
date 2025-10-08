@@ -48,7 +48,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(data => {
         this.chartData = data;
         this.initChart(this.chartData);
-        this.computeStats(this.chartData, 'co');
+        this.computeStats(this.chartData, 'temp');
       });
 
     // Polling tabla

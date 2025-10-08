@@ -48,7 +48,7 @@ export class HumComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(data => {
         this.chartData = data;
         this.initChart(this.chartData);
-        this.computeStats(this.chartData, 'co');
+        this.computeStats(this.chartData, 'hum');
       });
 
     // Polling tabla
