@@ -150,16 +150,32 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // 🔹 Calcular estadísticas básicas usando solo registros del día seleccionado
   private computeStats(data: any[]) {
-    if (!data?.length) return;
-    const selDateStr = this.selectedDate.toISOString().split('T')[0];
-    const filtered = data.filter(d => String(d.fecha_hora).startsWith(selDateStr));
-    const vals = filtered.map(r => Number(r.co) || 0);
-    if (!vals.length) return;
-    const sum = vals.reduce((a, b) => a + b, 0);
-    this.avg = sum / vals.length;
-    this.min = Math.min(...vals);
-    this.max = Math.max(...vals);
+  if (!data?.length) {
+    this.avg = this.min = this.max = 0;
+    return;
   }
+
+  const selDateStr = this.selectedDate.toISOString().split('T')[0];
+
+  // Comparar fechas convirtiendo a ISO
+  const filtered = data.filter(d => {
+    const fecha = new Date(d.fecha_hora);
+    return fecha.toISOString().split('T')[0] === selDateStr;
+  });
+
+  const vals = filtered.map(r => Number(r.co)).filter(v => !isNaN(v));
+
+  if (!vals.length) {
+    this.avg = this.min = this.max = 0;
+    return;
+  }
+
+  const sum = vals.reduce((a, b) => a + b, 0);
+  this.avg = sum / vals.length;
+  this.min = Math.min(...vals);
+  this.max = Math.max(...vals);
+}
+
 
   // Actualizar fechas visibles en el calendario
   private updateVisibleDates() {
