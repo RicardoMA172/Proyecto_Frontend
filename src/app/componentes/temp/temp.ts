@@ -108,11 +108,20 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   if (!ctx) return;
   if (this.chart) this.chart.destroy();
 
-  // Etiquetas estáticas 12 horas AM/PM
   const labels = [
     '12AM','1AM','2AM','3AM','4AM','5AM','6AM','7AM','8AM','9AM','10AM','11AM',
     '12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM','9PM','10PM','11PM'
   ];
+
+  // Inicializamos 24 valores en null
+  const hourlyData: (number | null)[] = new Array(24).fill(null);
+
+  // Recorremos tus datos y ubicamos cada temp en su hora
+  data.forEach(d => {
+    const date = new Date(d.fecha_hora.replace(' ', 'T'));
+    let hour = date.getHours(); // 0-23
+    hourlyData[hour] = d.temp;  // Si hay varios datos en la misma hora, puedes hacer promedio
+  });
 
   this.chart = new Chart(ctx, {
     type: 'line',
@@ -120,7 +129,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       labels: labels,
       datasets: [{
         label: 'Temp (°C)',
-        data: data.map(d => d.temp), // deja tus datos igual
+        data: hourlyData,
         borderColor: '#2980b9',
         backgroundColor: 'rgba(41, 128, 185, 0.2)',
         fill: true,
@@ -131,14 +140,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       responsive: true,
       plugins: { legend: { position: 'top' } },
       scales: {
-        x: {
-          display: true,
-          ticks: {
-            autoSkip: true,  // evita saturación
-            maxRotation: 0,
-            minRotation: 0
-          }
-        },
+        x: { display: true, ticks: { maxRotation: 0, minRotation: 0 } },
         y: { display: true }
       }
     }
