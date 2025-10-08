@@ -26,7 +26,8 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedDate: Date = new Date();
   visibleDates: Date[] = [];
   private destroy$ = new Subject<void>();
-  private pollingIntervalMs = 5000;
+  private pollingIntervalMs = 50000;// 50 segundos
+  // Límite de registros en la tabla para fecha actual
   private tableLimit = 5;
 
   // 🔹 BehaviorSubject para manejar fecha seleccionada en polling
