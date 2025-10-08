@@ -48,7 +48,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(data => {
         this.chartData = data;
         this.initChart(this.chartData);
-        this.computeStats(this.chartData, 'co'); // 🟢 CAMBIO — ahora se pasa el campo
+        this.computeStats(this.chartData, 'co');
       });
 
     // Polling tabla
@@ -84,10 +84,10 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateVisibleDates();
 
     this.caService.getByDate(date).subscribe(data => {
-      console.log('📊 Datos recibidos:', data.length, data.slice(0, 5)); // 🟢 CAMBIO: log más claro
+      console.log('📊 Datos recibidos:', data.length, data.slice(0, 5));
       this.chartData = data;
       this.initChart(this.chartData);
-      this.computeStats(this.chartData, 'co'); // 🟢 CAMBIO — pasa el campo
+      this.computeStats(this.chartData, 'co');
     });
 
     if (this.isToday(date)) {
@@ -109,9 +109,9 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.chart) this.chart.destroy();
 
     const labels = data.map(d => {
-      const fechaUTC = new Date(d.fecha_hora + 'Z');
-      const hours = fechaUTC.getHours().toString().padStart(2, '0');
-      const minutes = fechaUTC.getMinutes().toString().padStart(2, '0');
+      const fecha = new Date(d.fecha_hora.replace(' ', 'T')); // ✅ se convierte correctamente
+      const hours = fecha.getHours().toString().padStart(2, '0');
+      const minutes = fecha.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
     });
 
@@ -136,7 +136,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // 🟢 CAMBIO — función mejorada y adaptable a cualquier campo
+  // ✅ Corregido: calcula promedio, min y max correctamente
   private computeStats(data: any[], campo: string) {
     if (!data?.length) {
       this.avg = this.min = this.max = 0;
@@ -145,10 +145,8 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const selDateStr = this.selectedDate.toISOString().split('T')[0];
 
-    // 🟢 CAMBIO — usar toLocaleDateString para evitar errores de zona horaria
     const filtered = data.filter(d => {
-      const fecha = new Date(d.fecha_hora);
-      const fechaStr = fecha.toLocaleDateString('en-CA'); // YYYY-MM-DD
+      const fechaStr = d.fecha_hora.split(' ')[0]; // ✅ extrae "YYYY-MM-DD"
       return fechaStr === selDateStr;
     });
 
@@ -160,11 +158,11 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const sum = vals.reduce((a, b) => a + b, 0);
-    this.avg = parseFloat((sum / vals.length).toFixed(2)); // 🟢 CAMBIO — redondeo
+    this.avg = parseFloat((sum / vals.length).toFixed(2));
     this.min = Math.min(...vals);
     this.max = Math.max(...vals);
 
-    console.log(`📈 ${campo.toUpperCase()} — Promedio: ${this.avg}, Min: ${this.min}, Max: ${this.max}`); // 🟢 CAMBIO: depuración útil
+    console.log(`📈 ${campo.toUpperCase()} — Promedio: ${this.avg}, Min: ${this.min}, Max: ${this.max}`);
   }
 
   private updateVisibleDates() {
