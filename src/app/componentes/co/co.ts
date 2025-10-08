@@ -26,11 +26,9 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedDate: Date = new Date();
   visibleDates: Date[] = [];
   private destroy$ = new Subject<void>();
-  private pollingIntervalMs = 50000;// 50 segundos
-  // Límite de registros en la tabla para fecha actual
+  private pollingIntervalMs = 50000; // 50 segundos
   private tableLimit = 5;
 
-  // 🔹 BehaviorSubject para manejar fecha seleccionada en polling
   private selectedDate$ = new BehaviorSubject<Date>(this.selectedDate);
 
   @ViewChild('hiddenDateInput') hiddenDateInput!: ElementRef<HTMLInputElement>;
@@ -50,7 +48,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(data => {
         this.chartData = data;
         this.initChart(this.chartData);
-        this.computeStats(this.chartData);
+        this.computeStats(this.chartData, 'co'); // 🟢 CAMBIO — ahora se pasa el campo
       });
 
     // Polling tabla
@@ -66,7 +64,6 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       )
       .subscribe(latest => {
-        // 🔹 Filtrar por la fecha seleccionada para evitar desfase
         const selDateStr = this.selectedDate.toISOString().split('T')[0];
         this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
@@ -83,28 +80,22 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadDataForDate(date: Date) {
     this.selectedDate = new Date(date);
-    this.selectedDate$.next(this.selectedDate); // 🔹 actualizar BehaviorSubject
+    this.selectedDate$.next(this.selectedDate);
     this.updateVisibleDates();
 
-    // Datos para la gráfica
     this.caService.getByDate(date).subscribe(data => {
-        console.log('Datos recibidos:', data.length, data); // 👈 Agrega esto
-
+      console.log('📊 Datos recibidos:', data.length, data.slice(0, 5)); // 🟢 CAMBIO: log más claro
       this.chartData = data;
       this.initChart(this.chartData);
-      this.computeStats(this.chartData);
+      this.computeStats(this.chartData, 'co'); // 🟢 CAMBIO — pasa el campo
     });
 
-    // Tabla de registros
     if (this.isToday(date)) {
-      // Solo últimos N registros para hoy
       this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
-        // 🔹 Filtrar por la fecha seleccionada para evitar desfase
         const selDateStr = this.selectedDate.toISOString().split('T')[0];
         this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
     } else {
-      // Todos los registros del día para fechas pasadas
       this.caService.getByDate(date).subscribe(allData => {
         const selDateStr = this.selectedDate.toISOString().split('T')[0];
         this.data = allData.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
@@ -117,14 +108,11 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
-    // 🔹 Labels corregidos para mostrar hora local correcta
     const labels = data.map(d => {
-      // Interpretar fecha como UTC (backend envía YYYY-MM-DD HH:MM:SS)
-      const fechaUTC = new Date(d.fecha_hora + 'Z'); 
-      // Convertir a hora local
-      const hours = fechaUTC.getHours().toString().padStart(2,'0');
-      const minutes = fechaUTC.getMinutes().toString().padStart(2,'0');
-      return `${hours}:${minutes}`; // Solo hora:minutos
+      const fechaUTC = new Date(d.fecha_hora + 'Z');
+      const hours = fechaUTC.getHours().toString().padStart(2, '0');
+      const minutes = fechaUTC.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
     });
 
     this.chart = new Chart(ctx, {
@@ -148,46 +136,46 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // 🔹 Calcular estadísticas básicas usando solo registros del día seleccionado
-  private computeStats(data: any[]) {
-  if (!data?.length) {
-    this.avg = this.min = this.max = 0;
-    return;
+  // 🟢 CAMBIO — función mejorada y adaptable a cualquier campo
+  private computeStats(data: any[], campo: string) {
+    if (!data?.length) {
+      this.avg = this.min = this.max = 0;
+      return;
+    }
+
+    const selDateStr = this.selectedDate.toISOString().split('T')[0];
+
+    // 🟢 CAMBIO — usar toLocaleDateString para evitar errores de zona horaria
+    const filtered = data.filter(d => {
+      const fecha = new Date(d.fecha_hora);
+      const fechaStr = fecha.toLocaleDateString('en-CA'); // YYYY-MM-DD
+      return fechaStr === selDateStr;
+    });
+
+    const vals = filtered.map(r => Number(r[campo])).filter(v => !isNaN(v));
+
+    if (!vals.length) {
+      this.avg = this.min = this.max = 0;
+      return;
+    }
+
+    const sum = vals.reduce((a, b) => a + b, 0);
+    this.avg = parseFloat((sum / vals.length).toFixed(2)); // 🟢 CAMBIO — redondeo
+    this.min = Math.min(...vals);
+    this.max = Math.max(...vals);
+
+    console.log(`📈 ${campo.toUpperCase()} — Promedio: ${this.avg}, Min: ${this.min}, Max: ${this.max}`); // 🟢 CAMBIO: depuración útil
   }
 
-  const selDateStr = this.selectedDate.toISOString().split('T')[0];
-
-  // Comparar fechas convirtiendo a ISO
-  const filtered = data.filter(d => {
-    const fecha = new Date(d.fecha_hora);
-    return fecha.toISOString().split('T')[0] === selDateStr;
-  });
-
-  const vals = filtered.map(r => Number(r.co)).filter(v => !isNaN(v));
-
-  if (!vals.length) {
-    this.avg = this.min = this.max = 0;
-    return;
-  }
-
-  const sum = vals.reduce((a, b) => a + b, 0);
-  this.avg = sum / vals.length;
-  this.min = Math.min(...vals);
-  this.max = Math.max(...vals);
-}
-
-
-  // Actualizar fechas visibles en el calendario
   private updateVisibleDates() {
     this.visibleDates = [];
     for (let i = -3; i <= 3; i++) {
-      const d = new Date(this.selectedDate.getTime()); // copiar fecha seleccionada
+      const d = new Date(this.selectedDate.getTime());
       d.setDate(d.getDate() + i);
       this.visibleDates.push(d);
     }
   }
 
-  // Verificar si la fecha es hoy
   isToday(date: Date): boolean {
     const today = new Date();
     return date.getDate() === today.getDate() &&
@@ -195,30 +183,25 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
            date.getFullYear() === today.getFullYear();
   }
 
-  // Formatear fecha para mostrar en calendario
   formatDate(date: Date): string {
     if (this.isToday(date)) return 'Hoy';
     return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}`;
   }
 
-  // Seleccionar fecha
   selectDate(date: Date) {
     this.loadDataForDate(date);
   }
 
-  // Clase CSS para fechas en el calendario
   getDateClass(date: Date): string {
     if (this.isToday(date)) return 'today';
     if (date.toDateString() === this.selectedDate.toDateString()) return 'selected';
     return '';
   }
 
-  // Abrir selector de fecha oculto
   openCalendar() {
     this.hiddenDateInput.nativeElement.click();
   }
 
-  // Manejar selección de fecha desde el input oculto
   onDatePicked(event: any) {
     const pickedDate = new Date(event.target.value);
     if (!isNaN(pickedDate.getTime())) {
@@ -226,9 +209,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // Navegación fechas
   shiftVisibleDates(direction: number) {
-    // direction: -1 → izquierda, 1 → derecha
     this.visibleDates = this.visibleDates.map(d => {
       const newDate = new Date(d.getTime());
       newDate.setDate(newDate.getDate() + direction);
