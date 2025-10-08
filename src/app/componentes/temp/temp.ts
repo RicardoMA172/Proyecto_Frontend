@@ -113,27 +113,18 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
     '12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM','9PM','10PM','11PM'
   ];
 
+  // Array de 24 elementos inicializado en null
   const hourlyData: (number | null)[] = new Array(24).fill(null);
 
-  // Llenamos hourlyData con promedio por hora
-  const hourlySums: number[] = new Array(24).fill(0);
-  const hourlyCounts: number[] = new Array(24).fill(0);
-
+  // Ubicamos cada dato exactamente en su hora
   data.forEach(d => {
     const date = new Date(d.fecha_hora.replace(' ', 'T'));
     const hour = date.getHours();
     const temp = Number(d.temp);
     if (!isNaN(temp)) {
-      hourlySums[hour] += temp;
-      hourlyCounts[hour] += 1;
+      hourlyData[hour] = temp; // si hay varios datos en la misma hora, toma el último
     }
   });
-
-  for (let i = 0; i < 24; i++) {
-    if (hourlyCounts[i] > 0) {
-      hourlyData[i] = +(hourlySums[i] / hourlyCounts[i]).toFixed(2);
-    }
-  }
 
   this.chart = new Chart(ctx, {
     type: 'line',
@@ -146,7 +137,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
         backgroundColor: 'rgba(41, 128, 185, 0.2)',
         fill: true,
         tension: 0.3,
-        spanGaps: true // ← esto hace que la línea conecte los nulls
+        spanGaps: true
       }]
     },
     options: {
