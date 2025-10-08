@@ -187,8 +187,15 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   selectDate(date: Date) {
-    this.loadDataForDate(date);
-  }
+  this.selectedDate = new Date(date);
+  this.selectedDate$.next(this.selectedDate);
+
+  // Reinicia visibleDates correctamente
+  this.updateVisibleDates();
+
+  // Carga datos y gráfica
+  this.loadDataForDate(this.selectedDate);
+}
 
   getDateClass(date: Date): string {
     if (this.isToday(date)) return 'today';
