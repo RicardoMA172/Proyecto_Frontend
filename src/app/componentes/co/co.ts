@@ -152,7 +152,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
   private computeStats(data: any[]) {
     if (!data?.length) return;
     const selDateStr = this.selectedDate.toISOString().split('T')[0];
-    const filtered = data.filter(d => d.fecha_hora.startsWith(selDateStr));
+    const filtered = data.filter(d => String(d.fecha_hora).startsWith(selDateStr));
     const vals = filtered.map(r => Number(r.co) || 0);
     if (!vals.length) return;
     const sum = vals.reduce((a, b) => a + b, 0);
