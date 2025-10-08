@@ -122,26 +122,30 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
     tempByHour[hour] = d.temp;       // aquí podrías hacer promedio si hay varios registros en la misma hora
   });
 
-    this.chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'temp (ppm)',
-          data: data.map(d => d.temp),
-          borderColor: '#2980b9',
-          backgroundColor: 'rgba(41, 128, 185, 0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'top' } },
-        scales: { x: { display: true }, y: { display: true } }
+  this.chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Temp (°C)',
+        data: tempByHour,
+        borderColor: '#2980b9',
+        backgroundColor: 'rgba(41, 128, 185, 0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: { 
+        x: { display: true, title: { display: true, text: 'Hora del día (12h)' } }, 
+        y: { display: true } 
       }
-    });
-  }
+    }
+  });
+}
+
 
   // ✅ Corregido: calcula promedio, min y max correctamente
   private computeStats(data: any[], campo: string) {
