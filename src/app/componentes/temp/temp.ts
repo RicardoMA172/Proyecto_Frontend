@@ -104,58 +104,64 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initChart(data: any[]) {
-    const ctx = document.getElementById('tempChart') as HTMLCanvasElement;
-    if (!ctx) return;
-    if (this.chart) this.chart.destroy();
+  const ctx = document.getElementById('tempChart') as HTMLCanvasElement;
+  if (!ctx) return;
+  if (this.chart) this.chart.destroy();
 
-    // Etiquetas estáticas AM/PM
-    const labels = [
-      '12AM','1AM','2AM','3AM','4AM','5AM','6AM','7AM','8AM','9AM','10AM','11AM',
-      '12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM','9PM','10PM','11PM'
-    ];
+  const labels = [
+    '12AM','1AM','2AM','3AM','4AM','5AM','6AM','7AM','8AM','9AM','10AM','11AM',
+    '12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM','9PM','10PM','11PM'
+  ];
 
-    // Inicializamos 24 valores en null
-    const hourlySums: number[] = new Array(24).fill(0);
-    const hourlyCounts: number[] = new Array(24).fill(0);
+  const hourlyData: (number | null)[] = new Array(24).fill(null);
 
-    data.forEach(d => {
-      const date = new Date(d.fecha_hora.replace(' ', 'T'));
-      const hour = date.getHours();
-      const temp = Number(d.temp);
-      if (!isNaN(temp)) {
-        hourlySums[hour] += temp;
-        hourlyCounts[hour] += 1;
-      }
-    });
+  // Llenamos hourlyData con promedio por hora
+  const hourlySums: number[] = new Array(24).fill(0);
+  const hourlyCounts: number[] = new Array(24).fill(0);
 
-    const hourlyData = hourlySums.map((sum, idx) =>
-      hourlyCounts[idx] ? +(sum / hourlyCounts[idx]).toFixed(2) : null
-    );
+  data.forEach(d => {
+    const date = new Date(d.fecha_hora.replace(' ', 'T'));
+    const hour = date.getHours();
+    const temp = Number(d.temp);
+    if (!isNaN(temp)) {
+      hourlySums[hour] += temp;
+      hourlyCounts[hour] += 1;
+    }
+  });
 
-    this.chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Temp (°C)',
-          data: hourlyData,
-          borderColor: '#2980b9',
-          backgroundColor: 'rgba(41, 128, 185, 0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'top' } },
-        scales: {
-          x: { display: true, ticks: { maxRotation: 0, minRotation: 0 } },
-          y: { display: true }
-        }
-      }
-    });
+  for (let i = 0; i < 24; i++) {
+    if (hourlyCounts[i] > 0) {
+      hourlyData[i] = +(hourlySums[i] / hourlyCounts[i]).toFixed(2);
+    }
   }
 
+  this.chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Temp (°C)',
+        data: hourlyData,
+        borderColor: '#2980b9',
+        backgroundColor: 'rgba(41, 128, 185, 0.2)',
+        fill: true,
+        tension: 0.3,
+        spanGaps: true // ← esto hace que la línea conecte los nulls
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        x: { display: true, ticks: { maxRotation: 0, minRotation: 0 } },
+        y: { display: true }
+      }
+    }
+  });
+}
+
+
+  // ✅ Corregido: calcula promedio, min y max correctamente
   private computeStats(data: any[], campo: string) {
     if (!data?.length) {
       this.avg = this.min = this.max = 0;
@@ -165,7 +171,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
     const selDateStr = this.selectedDate.toISOString().split('T')[0];
 
     const filtered = data.filter(d => {
-      const fechaStr = d.fecha_hora.split(' ')[0];
+      const fechaStr = d.fecha_hora.split(' ')[0]; // ✅ extrae "YYYY-MM-DD"
       return fechaStr === selDateStr;
     });
 
