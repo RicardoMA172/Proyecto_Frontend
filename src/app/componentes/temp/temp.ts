@@ -108,19 +108,11 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   if (!ctx) return;
   if (this.chart) this.chart.destroy();
 
-  // Eje X: 12 horas tipo reloj
-  const labels = Array.from({ length: 12 }, (_, i) => ((i + 1) % 12 || 12).toString());
-
-  // Inicializa valores
-  const tempByHour: (number | null)[] = Array(12).fill(null);
-
-  data.forEach(d => {
-    const fecha = new Date(d.fecha_hora.replace(' ', 'T'));
-    let hour = fecha.getHours() % 12; // convierte 24h a 12h
-    if (hour === 0) hour = 11;       // 0 = 12
-    else hour -= 1;                  // ajusta índice 0-11
-    tempByHour[hour] = d.temp;       // aquí podrías hacer promedio si hay varios registros en la misma hora
-  });
+  // Etiquetas estáticas 12 horas AM/PM
+  const labels = [
+    '12AM','1AM','2AM','3AM','4AM','5AM','6AM','7AM','8AM','9AM','10AM','11AM',
+    '12PM','1PM','2PM','3PM','4PM','5PM','6PM','7PM','8PM','9PM','10PM','11PM'
+  ];
 
   this.chart = new Chart(ctx, {
     type: 'line',
@@ -128,7 +120,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       labels: labels,
       datasets: [{
         label: 'Temp (°C)',
-        data: tempByHour,
+        data: data.map(d => d.temp), // deja tus datos igual
         borderColor: '#2980b9',
         backgroundColor: 'rgba(41, 128, 185, 0.2)',
         fill: true,
@@ -138,9 +130,16 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
     options: {
       responsive: true,
       plugins: { legend: { position: 'top' } },
-      scales: { 
-        x: { display: true, title: { display: true, text: 'Hora del día (12h)' } }, 
-        y: { display: true } 
+      scales: {
+        x: {
+          display: true,
+          ticks: {
+            autoSkip: true,  // evita saturación
+            maxRotation: 0,
+            minRotation: 0
+          }
+        },
+        y: { display: true }
       }
     }
   });
