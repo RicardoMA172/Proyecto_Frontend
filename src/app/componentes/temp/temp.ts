@@ -8,13 +8,13 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-co',
+  selector: 'app-temp',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './co.html',
-  styleUrls: ['./co.css']
+  templateUrl: './temp.html',
+  styleUrls: ['./temp.css']
 })
-export class COComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   data: any[] = [];
   chartData: any[] = [];
   chart: any;
@@ -87,7 +87,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('📊 Datos recibidos:', data.length, data.slice(0, 5));
       this.chartData = data;
       this.initChart(this.chartData);
-      this.computeStats(this.chartData, 'co');
+      this.computeStats(this.chartData, 'temp');
     });
 
     if (this.isToday(date)) {
@@ -104,7 +104,7 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initChart(data: any[]) {
-    const ctx = document.getElementById('coChart') as HTMLCanvasElement;
+    const ctx = document.getElementById('tempChart') as HTMLCanvasElement;
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
@@ -120,8 +120,8 @@ export class COComponent implements OnInit, AfterViewInit, OnDestroy {
       data: {
         labels: labels,
         datasets: [{
-          label: 'CO (ppm)',
-          data: data.map(d => d.co),
+          label: 'temp (ppm)',
+          data: data.map(d => d.temp),
           borderColor: '#2980b9',
           backgroundColor: 'rgba(41, 128, 185, 0.2)',
           fill: true,
