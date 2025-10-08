@@ -26,7 +26,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedDate: Date = new Date();
   visibleDates: Date[] = [];
   private destroy$ = new Subject<void>();
-  private pollingIntervalMs = 50000; // 50 segundos
+  private pollingIntervalMs = 5000; // 5 segundos
   private tableLimit = 5;
 
   private selectedDate$ = new BehaviorSubject<Date>(this.selectedDate);
@@ -187,15 +187,8 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   selectDate(date: Date) {
-  this.selectedDate = new Date(date);
-  this.selectedDate$.next(this.selectedDate);
-
-  // Reinicia visibleDates correctamente
-  this.updateVisibleDates();
-
-  // Carga datos y gráfica
-  this.loadDataForDate(this.selectedDate);
-}
+    this.loadDataForDate(date);
+  }
 
   getDateClass(date: Date): string {
     if (this.isToday(date)) return 'today';
