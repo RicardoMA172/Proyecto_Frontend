@@ -104,16 +104,23 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initChart(data: any[]) {
-    const ctx = document.getElementById('tempChart') as HTMLCanvasElement;
-    if (!ctx) return;
-    if (this.chart) this.chart.destroy();
+  const ctx = document.getElementById('tempChart') as HTMLCanvasElement;
+  if (!ctx) return;
+  if (this.chart) this.chart.destroy();
 
-    const labels = data.map(d => {
-      const fecha = new Date(d.fecha_hora.replace(' ', 'T')); // ✅ se convierte correctamente
-      const hours = fecha.getHours().toString().padStart(2, '0');
-      const minutes = fecha.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
-    });
+  // Eje X: 12 horas tipo reloj
+  const labels = Array.from({ length: 12 }, (_, i) => ((i + 1) % 12 || 12).toString());
+
+  // Inicializa valores
+  const tempByHour: (number | null)[] = Array(12).fill(null);
+
+  data.forEach(d => {
+    const fecha = new Date(d.fecha_hora.replace(' ', 'T'));
+    let hour = fecha.getHours() % 12; // convierte 24h a 12h
+    if (hour === 0) hour = 11;       // 0 = 12
+    else hour -= 1;                  // ajusta índice 0-11
+    tempByHour[hour] = d.temp;       // aquí podrías hacer promedio si hay varios registros en la misma hora
+  });
 
     this.chart = new Chart(ctx, {
       type: 'line',
