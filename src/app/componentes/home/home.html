@@ -2,7 +2,6 @@
 
   <!-- Main content -->
   <main class="content">
-    <div class="panel">
       <div class="tabs" role="tablist">
         <button *ngFor="let t of tabs; let i = index"
                 #tabButton
@@ -16,7 +15,7 @@
           {{t.label}}
         </button>
       </div>
-      <div class="panel-body">
+      <div class="home-body">
         <h1>Resumen de la calidad del aire</h1>
         <div *ngIf="activeTab === 'summary'" class="stats">
       <div class="card">
@@ -48,6 +47,5 @@
           </div>
         </div>
       </div>
-    </div>
   </main>
 </div>
