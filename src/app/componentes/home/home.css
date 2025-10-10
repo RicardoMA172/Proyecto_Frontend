@@ -46,32 +46,27 @@
 /* Estilos para pestañas */
 .tabs {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 10px;
+  align-items: center;
 }
 .tabs button {
   background: transparent;
   border: none;
-  padding: 10px 16px;
-  border-radius: 999px;
+  padding: 8px 14px;
+  border-radius: 6px 6px 0 0;
   cursor: pointer;
-  color: #2c3e50;
+  color: rgba(255,255,255,0.9);
   font-weight: 600;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+  transition: background 160ms ease, color 160ms ease;
 }
 .tabs button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.06);
 }
-.tabs button:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(41,128,185,0.08);
-}
+.tabs button:focus { outline: none; }
 .tabs button.active {
-  background: #2980b9;
-  color: #ffffff;
-  transform: translateY(-6px);
-  box-shadow: 0 14px 30px rgba(41,128,185,0.18);
+  background: #ffffff;
+  color: #1f6fa8;
+  box-shadow: none;
 }
 
 /* Wrapper que sobresale por encima del título */
@@ -81,45 +76,30 @@
   display: flex;
   justify-content: center;
 }
-.tabs {
-  /* fondo de la barra de pestañas (pill) */
-  background: rgba(255,255,255,0.9);
-  padding: 6px;
-  border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.10);
-  transform: translateY(-50%);
-  border: 1px solid rgba(0,0,0,0.04);
+.panel-header {
+  background: linear-gradient(90deg,#2c8fd1,#1f6fa8);
+  padding: 12px 18px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
+
+.panel-header .tabs { background: transparent; margin-left: 6px; }
 
 /* Panel principal que contiene el contenido y las pestañas adheridas */
 .panel {
   position: relative;
   position: relative;
-  background: linear-gradient(180deg,#2c8fd1,#1f6fa8); /* azulito degradado */
-  padding-top: 40px; /* espacio para las pestañas */
-  border-radius: 14px;
-  padding-bottom: 24px;
-  border: 1px solid rgba(0,0,0,0.06);
-}
-.panel .tabs {
-  position: absolute;
-  top: -28px; /* sobresale del borde superior */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
-  display: flex;
-  gap: 10px;
-}
-.panel .panel-inner {
-  background: #ffffff;
-  margin: 0 18px;
-  border-radius: 10px;
-  padding-top: 18px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  background: transparent;
+  border-radius: 12px;
   overflow: hidden;
 }
 .panel .panel-body {
+  background: #ffffff;
+  border-radius: 0 0 12px 12px;
   padding: 20px 22px 26px 22px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
 }
 
 /* Responsividad: pestañas más compactas en pantallas pequeñas */
