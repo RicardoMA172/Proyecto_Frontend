@@ -7,7 +7,8 @@
         <button (click)="setTab('summary')" [class.active]="activeTab==='summary'" role="tab">Promedios</button>
         <button (click)="setTab('charts')" [class.active]="activeTab==='charts'" role="tab">Gráficas</button>
       </div>
-      <div class="panel-body">
+      <div class="panel-inner">
+        <div class="panel-body">
         <h1>Resumen de la calidad del aire</h1>
         <div *ngIf="activeTab === 'summary'" class="stats">
       <div class="card">
@@ -37,6 +38,7 @@
             <h3>{{p.label}} - Hoy</h3>
             <canvas [attr.data-key]="p.key" #pollChart width="800" height="160"></canvas>
           </div>
+        </div>
         </div>
       </div>
     </div>

@@ -94,23 +94,32 @@
 /* Panel principal que contiene el contenido y las pestañas adheridas */
 .panel {
   position: relative;
-  background: #ecf0f1;
-  padding-top: 30px; /* espacio para las pestañas */
-  border-radius: 12px;
-  padding-bottom: 20px;
-  border: 1px solid rgba(0,0,0,0.04);
+  position: relative;
+  background: linear-gradient(180deg,#2c8fd1,#1f6fa8); /* azulito degradado */
+  padding-top: 40px; /* espacio para las pestañas */
+  border-radius: 14px;
+  padding-bottom: 24px;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 .panel .tabs {
   position: absolute;
   top: -28px; /* sobresale del borde superior */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 20;
+  z-index: 40;
   display: flex;
   gap: 10px;
 }
+.panel .panel-inner {
+  background: #ffffff;
+  margin: 0 18px;
+  border-radius: 10px;
+  padding-top: 18px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
 .panel .panel-body {
-  padding: 20px 30px 30px 30px;
+  padding: 20px 22px 26px 22px;
 }
 
 /* Responsividad: pestañas más compactas en pantallas pequeñas */
