@@ -42,3 +42,26 @@
   font-size: 16px;
   color: #333;
 }
+
+/* Estilos para pestañas */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.tabs button {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #2c3e50;
+}
+.tabs button.active {
+  background: #2980b9;
+  color: white;
+  border-color: #2980b9;
+}
+.tabs button:hover {
+  background: #e8f4fb;
+}

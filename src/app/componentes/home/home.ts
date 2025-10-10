@@ -31,6 +31,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     { key: 'pm10', label: 'PM10 (µg/m³)', color: '#8e44ad' },
     { key: 'pm25', label: 'PM2.5 (µg/m³)', color: '#c0392b' },
   ];
+  // pestaña activa: 'summary' | 'charts'
+  activeTab: 'summary' | 'charts' = 'charts';
 
   constructor(private caService: CalidadAireService) {}
 
@@ -43,8 +45,19 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.caService.getLatestByDate(today, 50).subscribe(data => {
       this.todayData = data;
       // inicializar o actualizar las gráficas cuando lleguen los datos
-      setTimeout(() => this.initAllCharts(), 0);
+      // si la pestaña de gráficas está activa, inicializamos ahora
+      if (this.activeTab === 'charts') {
+        setTimeout(() => this.initAllCharts(), 0);
+      }
     });
+  }
+
+  setTab(tab: 'summary' | 'charts') {
+    this.activeTab = tab;
+    if (tab === 'charts') {
+      // esperar a que Angular renderice los canvases y luego inicializar
+      setTimeout(() => this.initAllCharts(), 0);
+    }
   }
 
   ngAfterViewInit(): void {
