@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
 import { Chart, registerables } from 'chart.js';
@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   resumen: any = {};
   todayData: any[] = [];
   chart: any;
+  @ViewChild('homeChart') homeChart!: ElementRef<HTMLCanvasElement>;
 
   constructor(private caService: CalidadAireService) {}
 
@@ -28,7 +29,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const today = new Date();
     this.caService.getLatestByDate(today, 50).subscribe(data => {
       this.todayData = data;
-      if (this.chart) this.initChart(this.todayData);
+      // inicializar o actualizar la gráfica cuando lleguen los datos
+      this.initChart(this.todayData);
     });
   }
 
@@ -37,7 +39,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   private initChart(data: any[]) {
-    const ctx = document.getElementById('homeChart') as HTMLCanvasElement;
+    if (!this.homeChart) {
+      console.warn('homeChart canvas not available');
+      return;
+    }
+    const ctx = this.homeChart.nativeElement as HTMLCanvasElement;
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
