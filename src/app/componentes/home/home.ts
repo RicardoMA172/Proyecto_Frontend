@@ -31,8 +31,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     { key: 'pm10', label: 'PM10 (µg/m³)', color: '#8e44ad' },
     { key: 'pm25', label: 'PM2.5 (µg/m³)', color: '#c0392b' },
   ];
+  tabs = [
+    { id: 'summary', label: 'Promedios' },
+    { id: 'charts', label: 'Gráficas' }
+  ];
   // pestaña activa: 'summary' | 'charts'
   activeTab: 'summary' | 'charts' = 'charts';
+
+  @ViewChildren('tabButton') tabButtons!: QueryList<ElementRef<HTMLButtonElement>>;
 
   constructor(private caService: CalidadAireService) {}
 
@@ -58,6 +64,42 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // esperar a que Angular renderice los canvases y luego inicializar
       setTimeout(() => this.initAllCharts(), 0);
     }
+    // move focus to active tab button if present
+    setTimeout(() => {
+      const arr = this.tabButtons ? this.tabButtons.toArray() : [];
+      const idx = this.tabs.findIndex(t => t.id === tab);
+      if (arr && arr[idx]) {
+        try { arr[idx].nativeElement.focus(); } catch (e) {}
+      }
+    }, 0);
+  }
+
+  onTabKeydown(event: KeyboardEvent, index: number) {
+    const key = event.key;
+    const last = this.tabs.length - 1;
+    let newIndex = index;
+    if (key === 'ArrowRight' || key === 'ArrowDown') {
+      newIndex = index === last ? 0 : index + 1;
+    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      newIndex = index === 0 ? last : index - 1;
+    } else if (key === 'Home') {
+      newIndex = 0;
+    } else if (key === 'End') {
+      newIndex = last;
+    } else if (key === 'Enter' || key === ' ') {
+      // activate current focused tab
+      event.preventDefault();
+      const id = this.tabs[index].id as 'summary' | 'charts';
+      this.setTab(id);
+      return;
+    } else {
+      return; // ignore other keys
+    }
+
+    event.preventDefault();
+    // set active tab and move focus
+    const id = this.tabs[newIndex].id as 'summary' | 'charts';
+    this.setTab(id);
   }
 
   ngAfterViewInit(): void {

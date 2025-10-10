@@ -65,7 +65,8 @@
 }
 .tabs button:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(41,128,185,0.08);
+  box-shadow: 0 0 0 4px rgba(41,128,185,0.12);
+  border-radius: 8px 8px 0 0;
 }
 .tabs button.active {
   background: #2980b9;
