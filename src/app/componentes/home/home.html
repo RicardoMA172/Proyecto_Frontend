@@ -2,20 +2,12 @@
 
   <!-- Main content -->
   <main class="content">
+    <div class="panel">
       <div class="tabs" role="tablist">
-        <button *ngFor="let t of tabs; let i = index"
-                #tabButton
-                role="tab"
-                [attr.aria-selected]="activeTab === t.id"
-                [attr.aria-controls]="'panel-' + t.id"
-                [attr.tabindex]="activeTab === t.id ? 0 : -1"
-                (click)="setTab(t.id)"
-                (keydown)="onTabKeydown($event, i)"
-                [class.active]="activeTab === t.id">
-          {{t.label}}
-        </button>
+        <button (click)="setTab('summary')" [class.active]="activeTab==='summary'" role="tab">Promedios</button>
+        <button (click)="setTab('charts')" [class.active]="activeTab==='charts'" role="tab">Gráficas</button>
       </div>
-      <div class="home-body">
+      <div class="panel-body">
         <h1>Resumen de la calidad del aire</h1>
         <div *ngIf="activeTab === 'summary'" class="stats">
       <div class="card">
@@ -47,5 +39,6 @@
           </div>
         </div>
       </div>
+    </div>
   </main>
 </div>
