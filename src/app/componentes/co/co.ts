@@ -14,7 +14,7 @@ Chart.register(...registerables);
   templateUrl: './co.html',
   styleUrls: ['./co.css']
 })
-export class COComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CoComponent implements OnInit, AfterViewInit, OnDestroy {
   data: any[] = [];
   chartData: any[] = [];
   chart: any;

@@ -1,8 +1,8 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
 import { Chart, registerables } from 'chart.js';
-import { interval, Subject, forkJoin } from 'rxjs';
+import { interval, Subject, BehaviorSubject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 
 Chart.register(...registerables);
@@ -22,73 +22,55 @@ export class NoxComponent implements OnInit, AfterViewInit, OnDestroy {
   min: number = 0;
   max: number = 0;
 
+  today: Date = new Date();
+  selectedDate: Date = new Date();
+  visibleDates: Date[] = [];
   private destroy$ = new Subject<void>();
-  private pollingIntervalMs = 5000; // 🔹 cada 5 segundos
-  private fullRefreshIntervalMs = 5000; // 🔹 cada 5 segundos
+  private pollingIntervalMs = 50000; // 50 segundos
   private tableLimit = 5;
+
+  private selectedDate$ = new BehaviorSubject<Date>(this.selectedDate);
+
+  @ViewChild('hiddenDateInput') hiddenDateInput!: ElementRef<HTMLInputElement>;
 
   constructor(private caService: CalidadAireService) {}
 
   ngOnInit(): void {
-    // 🔹 Carga inicial: todos para gráfica + últimos 5 para tabla
-    forkJoin([
-      this.caService.getAll(),
-      this.caService.getLatest(this.tableLimit)
-    ]).pipe(takeUntil(this.destroy$))
-      .subscribe(([all, latest]) => {
-        this.chartData = (all || []).sort((a: any, b: any) =>
-          new Date(a.fecha_hora).getTime() - new Date(b.fecha_hora).getTime()
-        );
+    this.updateVisibleDates();
+    this.loadDataForDate(this.selectedDate);
 
+    // Polling gráfico
+    interval(this.pollingIntervalMs)
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() => this.caService.getByDate(this.selectedDate$.value))
+      )
+      .subscribe(data => {
+        this.chartData = data;
         this.initChart(this.chartData);
-        this.computeStats(this.chartData);
-
-        this.data = (latest || []).reverse(); // últimos 5 en la tabla
+        this.computeStats(this.chartData, 'nox');
       });
 
-    // 🔹 Polling incremental para gráfica (cada 5s)
+    // Polling tabla
     interval(this.pollingIntervalMs)
       .pipe(
         takeUntil(this.destroy$),
         switchMap(() => {
-          if (!this.chartData.length) return this.caService.getAll();
-          const lastTimestamp = this.chartData[this.chartData.length - 1].fecha_hora;
-          return this.caService.getSince(lastTimestamp);
+          if (this.isToday(this.selectedDate$.value)) {
+            return this.caService.getLatestByDate(this.selectedDate$.value, this.tableLimit);
+          } else {
+            return this.caService.getByDate(this.selectedDate$.value);
+          }
         })
       )
-      .subscribe(newRecords => {
-        if (!newRecords?.length) return;
-        this.appendToChart(newRecords);
+      .subscribe(latest => {
+        const selDateStr = this.selectedDate.toISOString().split('T')[0];
+        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
-
-    // 🔹 Refresh completo cada 5s (para reflejar eliminaciones/ediciones)
-    interval(this.fullRefreshIntervalMs)
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap(() => this.caService.getAll())
-      )
-      .subscribe(all => {
-        if (!all?.length) return;
-        this.chartData = all.sort((a: any, b: any) =>
-          new Date(a.fecha_hora).getTime() - new Date(b.fecha_hora).getTime()
-        );
-        this.initChart(this.chartData);
-        this.computeStats(this.chartData);
-      });
-
-    // 🔹 Polling para la tabla (últimos 5 registros)
-    interval(this.pollingIntervalMs)
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap(() => this.caService.getLatest(this.tableLimit))
-      )
-      .subscribe(t => this.data = (t || []).reverse());
   }
 
   ngAfterViewInit(): void {
-    if (this.chartData.length) {
-      this.initChart(this.chartData);
-    }
+    if (this.chartData.length) this.initChart(this.chartData);
   }
 
   ngOnDestroy(): void {
@@ -96,18 +78,41 @@ export class NoxComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // 🔹 Inicializar gráfica solo con registros del día actual
-    private initChart(data: any[]) {
-    const today = new Date();
-    const todayData = data.filter(d => new Date(d.fecha_hora).toDateString() === today.toDateString());
+  private loadDataForDate(date: Date) {
+    this.selectedDate = new Date(date);
+    this.selectedDate$.next(this.selectedDate);
+    this.updateVisibleDates();
 
+    this.caService.getByDate(date).subscribe(data => {
+      console.log('📊 Datos recibidos:', data.length, data.slice(0, 5));
+      this.chartData = data;
+      this.initChart(this.chartData);
+      this.computeStats(this.chartData, 'nox');
+    });
+
+    if (this.isToday(date)) {
+      this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
+        const selDateStr = this.selectedDate.toISOString().split('T')[0];
+        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
+      });
+    } else {
+      this.caService.getByDate(date).subscribe(allData => {
+        const selDateStr = this.selectedDate.toISOString().split('T')[0];
+        this.data = allData.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
+      });
+    }
+  }
+
+  private initChart(data: any[]) {
     const ctx = document.getElementById('noxChart') as HTMLCanvasElement;
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
-    const labels = todayData.map(d => {
-      const fecha = new Date(d.fecha_hora);
-      return fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // 🔹 quitar seconds
+    const labels = data.map(d => {
+      const fecha = new Date(d.fecha_hora.replace(' ', 'T')); // ✅ se convierte correctamente
+      const hours = fecha.getHours().toString().padStart(2, '0');
+      const minutes = fecha.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
     });
 
     this.chart = new Chart(ctx, {
@@ -115,8 +120,8 @@ export class NoxComponent implements OnInit, AfterViewInit, OnDestroy {
       data: {
         labels: labels,
         datasets: [{
-          label: 'NOx (ppm)',
-          data: todayData.map(d => d.nox),
+          label: 'NOX (ppm)',
+          data: data.map(d => d.nox),
           borderColor: '#2980b9',
           backgroundColor: 'rgba(41, 128, 185, 0.2)',
           fill: true,
@@ -129,35 +134,85 @@ export class NoxComponent implements OnInit, AfterViewInit, OnDestroy {
         scales: { x: { display: true }, y: { display: true } }
       }
     });
-
-    this.computeStats(todayData);
   }
 
-  // 🔹 Agregar solo los nuevos registros del día actual
-  private appendToChart(newRecords: any[]) {
-    const today = new Date();
-    const todayRecords = newRecords.filter(d => new Date(d.fecha_hora).toDateString() === today.toDateString());
-    if (!todayRecords.length) return;
+  // ✅ Corregido: calcula promedio, min y max correctamente
+  private computeStats(data: any[], campo: string) {
+    if (!data?.length) {
+      this.avg = this.min = this.max = 0;
+      return;
+    }
 
-    todayRecords.forEach(r => this.chartData.push(r));
+    const selDateStr = this.selectedDate.toISOString().split('T')[0];
 
-    todayRecords.forEach(r => {
-      const hora = new Date(r.fecha_hora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // 🔹 quitar seconds
-      this.chart.data.labels.push(hora);
-      this.chart.data.datasets[0].data.push(r.nox);
+    const filtered = data.filter(d => {
+      const fechaStr = d.fecha_hora.split(' ')[0]; // ✅ extrae "YYYY-MM-DD"
+      return fechaStr === selDateStr;
     });
 
-    this.chart.update();
-    this.computeStats(this.chartData.filter(d => new Date(d.fecha_hora).toDateString() === today.toDateString()));
-  }
+    const vals = filtered.map(r => Number(r[campo])).filter(v => !isNaN(v));
 
-  // 🔹 Calcular estadísticas (promedio, min, max)
-  private computeStats(data: any[]) {
-    if (!data?.length) return;
-    const vals = data.map(r => Number(r.nox) || 0);
+    if (!vals.length) {
+      this.avg = this.min = this.max = 0;
+      return;
+    }
+
     const sum = vals.reduce((a, b) => a + b, 0);
-    this.avg = sum / vals.length;
+    this.avg = parseFloat((sum / vals.length).toFixed(2));
     this.min = Math.min(...vals);
     this.max = Math.max(...vals);
+
+    console.log(`📈 ${campo.toUpperCase()} — Promedio: ${this.avg}, Min: ${this.min}, Max: ${this.max}`);
   }
+
+  private updateVisibleDates() {
+    this.visibleDates = [];
+    for (let i = -3; i <= 3; i++) {
+      const d = new Date(this.selectedDate.getTime());
+      d.setDate(d.getDate() + i);
+      this.visibleDates.push(d);
+    }
+  }
+
+  isToday(date: Date): boolean {
+    const today = new Date();
+    return date.getDate() === today.getDate() &&
+           date.getMonth() === today.getMonth() &&
+           date.getFullYear() === today.getFullYear();
+  }
+
+  formatDate(date: Date): string {
+    if (this.isToday(date)) return 'Hoy';
+    return `${date.getDate().toString().padStart(2,'0')}/${(date.getMonth()+1).toString().padStart(2,'0')}`;
+  }
+
+  selectDate(date: Date) {
+    this.loadDataForDate(date);
+  }
+
+  getDateClass(date: Date): string {
+    if (this.isToday(date)) return 'today';
+    if (date.toDateString() === this.selectedDate.toDateString()) return 'selected';
+    return '';
+  }
+
+  openCalendar() {
+    this.hiddenDateInput.nativeElement.click();
+  }
+
+  onDatePicked(event: any) {
+    const pickedDate = new Date(event.target.value);
+    if (!isNaN(pickedDate.getTime())) {
+      this.selectDate(pickedDate);
+    }
+  }
+
+  shiftVisibleDates(direction: number) {
+    this.visibleDates = this.visibleDates.map(d => {
+      const newDate = new Date(d.getTime());
+      newDate.setDate(newDate.getDate() + direction);
+      return newDate;
+    });
+  }
+
 }
