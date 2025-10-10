@@ -24,9 +24,10 @@
         <h3>PM2.5</h3>
         <p>Promedio: 12 µg/m³</p>
       </div>
-      <div class="card" style="grid-column: 1 / -1;">
-        <h3>CO - Hoy</h3>
-  <canvas #homeChart id="homeChart" width="400" height="120"></canvas>
+      <!-- Gráficas del día para cada contaminante: una por tarjeta, apiladas -->
+      <div class="card" style="grid-column: 1 / -1;" *ngFor="let p of pollutants">
+        <h3>{{p.label}} - Hoy</h3>
+        <canvas data-key="{{p.key}}" #pollChart width="800" height="160"></canvas>
       </div>
     </div>
   </main>

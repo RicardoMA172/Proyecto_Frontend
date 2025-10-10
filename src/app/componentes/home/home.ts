@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
 import { Chart, registerables } from 'chart.js';
@@ -18,6 +18,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   todayData: any[] = [];
   chart: any;
   @ViewChild('homeChart') homeChart!: ElementRef<HTMLCanvasElement>;
+  @ViewChildren('pollChart') pollCharts!: QueryList<ElementRef<HTMLCanvasElement>>;
+
+  pollutants = [
+    { key: 'co', label: 'CO (ppm)' },
+    { key: 'nox', label: 'NOx (µg/m³)' },
+    { key: 'sox', label: 'SOx (µg/m³)' },
+    { key: 'pm10', label: 'PM10 (µg/m³)' },
+    { key: 'pm25', label: 'PM2.5 (µg/m³)' }
+  ];
 
   constructor(private caService: CalidadAireService) {}
 
@@ -29,8 +38,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const today = new Date();
     this.caService.getLatestByDate(today, 50).subscribe(data => {
       this.todayData = data;
-      // inicializar o actualizar la gráfica cuando lleguen los datos
-      this.initChart(this.todayData);
+      // inicializar o actualizar las gráficas cuando lleguen los datos
+      setTimeout(() => this.initAllCharts(), 0);
     });
   }
 
@@ -70,6 +79,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
         ]
       },
       options: { responsive: true, plugins: { legend: { position: 'top' } } }
+    });
+  }
+
+  private initAllCharts() {
+    if (!this.pollCharts || !this.pollCharts.length) return;
+    this.pollCharts.forEach((elRef: ElementRef<HTMLCanvasElement>, idx: number) => {
+      const canvas: HTMLCanvasElement = elRef.nativeElement;
+      const key = canvas.getAttribute('data-key');
+      if (!key) return;
+      const labels = this.todayData.map(d => {
+        const fecha = new Date(d.fecha_hora.replace(' ', 'T'));
+        const hours = fecha.getHours().toString().padStart(2, '0');
+        const minutes = fecha.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+      });
+      const dataset = this.todayData.map(d => d[key]);
+      // crear chart
+      new Chart(canvas, {
+        type: 'line',
+        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: '#2980b9', backgroundColor: 'rgba(41,128,185,0.15)', fill: true }] },
+        options: { responsive: true }
+      });
     });
   }
 }
