@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { parseInputDate } from '../../utils/date.util';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
 import { Chart, registerables } from 'chart.js';
@@ -201,7 +202,7 @@ export class HumComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onDatePicked(event: any) {
-    const pickedDate = new Date(event.target.value);
+    const pickedDate = parseInputDate(event.target.value);
     if (!isNaN(pickedDate.getTime())) {
       this.selectDate(pickedDate);
     }
