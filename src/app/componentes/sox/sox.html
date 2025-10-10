@@ -1,51 +1,72 @@
 <div class="dashboard">
   <main class="content">
-  <h1>Óxidos de Azufre (SOx)</h1>
+    <h1>Óxidos de Azufre (SOx)</h1>
 
-  <!-- Sección tabla de últimos registros -->
-  <section class="records-section">
-    <h2>Últimos registros</h2>
-    <table class="records-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>SOx</th>
-          <th>Fecha</th>
-          <th>Hora</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let r of data; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ r.sox }}</td>
-          <td>{{ r.fecha_hora | date:'yyyy-MM-dd' }}</td>
-          <td>{{ r.fecha_hora | date:'HH:mm' }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+    <!-- Tabla de últimos registros -->
+    <section class="records-section">
+      <h2>Últimos registros</h2>
+      <table class="records-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>SOx</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of data; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ r.sox }}</td>
+            <td>{{ r.fecha_hora | date:'yyyy-MM-dd' }}</td>
+            <td>{{ r.fecha_hora | date:'HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-  <!-- Sección estadísticas -->
-  <section class="stats-section">
-    <div class="stats">
-      <div class="card">
-        <h3>Promedio</h3>
-        <p>{{ avg | number:'1.1-2' }}</p>
+    <!-- Sección estadísticas -->
+    <section class="stats-section">
+      <div class="stats">
+        <div class="card">
+          <h3>Promedio</h3>
+          <p>{{ avg | number:'1.1-2' }}</p>
+        </div>
+        <div class="card">
+          <h3>Mínimo</h3>
+          <p>{{ min }}</p>
+        </div>
+        <div class="card">
+          <h3>Máximo</h3>
+          <p>{{ max }}</p>
+        </div>
       </div>
-      <div class="card">
-        <h3>Mínimo</h3>
-        <p>{{ min }}</p>
-      </div>
-      <div class="card">
-        <h3>Máximo</h3>
-        <p>{{ max }}</p>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Gráfica -->
-  <section class="chart-section">
-    <canvas id="soxChart"></canvas>
-  </section>
-</main>
+    <!-- Gráfica -->
+    <section class="chart-section">
+      <canvas id="soxChart"></canvas>
+    </section>
+
+    <!-- Barra de fechas y calendario debajo de la gráfica -->
+    <div class="date-bar-container">
+  <button class="arrow-button" (click)="shiftVisibleDates(-1)">&#8592;</button>
+
+  <div class="date-bar">
+    <button *ngFor="let d of visibleDates"
+            [ngClass]="getDateClass(d)"
+            (click)="selectDate(d)">
+      {{ formatDate(d) }}
+    </button>
+  </div>
+
+  <button class="arrow-button" (click)="shiftVisibleDates(1)">&#8594;</button>
+
+  <div class="calendar-container">
+    <input type="date" #hiddenDateInput class="hidden-date-input" (change)="onDatePicked($event)">
+  </div>
+</div>
+
+
+  </main>
 </div>
