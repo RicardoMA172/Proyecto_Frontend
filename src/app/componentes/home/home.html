@@ -32,8 +32,7 @@
       </div>
       <!-- Gráficas del día para cada contaminante: una por tarjeta, apiladas -->
 </div>
-  </div>
-        <div *ngIf="activeTab === 'charts'" class="stats">
+  <div *ngIf="activeTab === 'charts'" class="stats">
           <div class="card" style="grid-column: 1 / -1;" *ngFor="let p of pollutants">
             <h3>{{p.label}} - Hoy</h3>
             <canvas [attr.data-key]="p.key" #pollChart width="800" height="160"></canvas>
