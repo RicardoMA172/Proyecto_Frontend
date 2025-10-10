@@ -46,27 +46,24 @@
 /* Estilos para pestañas */
 .tabs {
   display: flex;
-  gap: 10px;
-  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 .tabs button {
   background: transparent;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px 6px 0 0;
+  border: 1px solid transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
   cursor: pointer;
-  color: rgba(255,255,255,0.9);
-  font-weight: 600;
-  transition: background 160ms ease, color 160ms ease;
+  color: #2c3e50;
+}
+.tabs button.active {
+  background: #2980b9;
+  color: white;
+  border-color: #2980b9;
 }
 .tabs button:hover {
-  background: rgba(255,255,255,0.06);
-}
-.tabs button:focus { outline: none; }
-.tabs button.active {
-  background: #ffffff;
-  color: #1f6fa8;
-  box-shadow: none;
+  background: #e8f4fb;
 }
 
 /* Wrapper que sobresale por encima del título */
@@ -76,40 +73,33 @@
   display: flex;
   justify-content: center;
 }
-.panel-header {
-  background: linear-gradient(90deg,#2c8fd1,#1f6fa8);
-  padding: 12px 18px;
-  border-radius: 12px 12px 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+.tabs {
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  transform: translateY(-50%);
+  border: 1px solid rgba(0,0,0,0.04);
 }
-
-.panel-header .tabs { background: transparent; margin-left: 6px; }
 
 /* Panel principal que contiene el contenido y las pestañas adheridas */
 .panel {
   position: relative;
-  position: relative;
-  background: transparent;
+  background: #ecf0f1;
+  padding-top: 30px; /* espacio para las pestañas */
   border-radius: 12px;
-  overflow: hidden;
+  padding-bottom: 20px;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.panel .tabs {
+  position: absolute;
+  top: -22px; /* sobresale del borde superior */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 8px;
 }
 .panel .panel-body {
-  background: #ffffff;
-  border-radius: 0 0 12px 12px;
-  padding: 20px 22px 26px 22px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-}
-
-/* Responsividad: pestañas más compactas en pantallas pequeñas */
-@media (max-width: 600px) {
-  .tabs button {
-    padding: 8px 10px;
-    font-size: 14px;
-  }
-  .panel .tabs {
-    gap: 6px;
-    top: -24px;
-  }
+  padding: 20px 30px 30px 30px;
 }
