@@ -21,11 +21,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChildren('pollChart') pollCharts!: QueryList<ElementRef<HTMLCanvasElement>>;
 
   pollutants = [
-    { key: 'co', label: 'CO (ppm)' },
-    { key: 'nox', label: 'NOx (µg/m³)' },
-    { key: 'sox', label: 'SOx (µg/m³)' },
-    { key: 'pm10', label: 'PM10 (µg/m³)' },
-    { key: 'pm25', label: 'PM2.5 (µg/m³)' }
+    { key: 'co', label: 'CO (ppm)', color: '#2980b9' },
+    { key: 'nox', label: 'NOx (µg/m³)', color: '#27ae60' },
+    { key: 'sox', label: 'SOx (µg/m³)', color: '#f39c12' },
+    { key: 'pm10', label: 'PM10 (µg/m³)', color: '#8e44ad' },
+    { key: 'pm25', label: 'PM2.5 (µg/m³)', color: '#c0392b' },
+    // Agregar temperatura, humedad y amoníaco
+    { key: 'temp', label: 'Temperatura (°C)', color: '#1abc9c' },
+    { key: 'hum', label: 'Humedad (%)', color: '#3498db' },
+    { key: 'amon', label: 'Amoníaco (ppm)', color: '#7f8c8d' }
   ];
 
   constructor(private caService: CalidadAireService) {}
@@ -94,13 +98,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
         const minutes = fecha.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
       });
-      const dataset = this.todayData.map(d => d[key]);
+      const dataset = this.todayData.map(d => {
+        const v = d[key];
+        const n = Number(v);
+        return isNaN(n) ? null : n;
+      });
+      const color = this.pollutants[idx]?.color || '#2980b9';
       // crear chart
       new Chart(canvas, {
         type: 'line',
-        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: '#2980b9', backgroundColor: 'rgba(41,128,185,0.15)', fill: true }] },
+        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true }] },
         options: { responsive: true }
       });
     });
+  }
+
+  private hexToRgba(hex: string, alpha: number) {
+    if (!hex) return `rgba(41,128,185,${alpha})`;
+    const h = hex.replace('#', '');
+    const bigint = parseInt(h, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `rgba(${r},${g},${b},${alpha})`;
   }
 }
