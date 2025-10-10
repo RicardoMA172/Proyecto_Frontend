@@ -2,12 +2,14 @@
 
   <!-- Main content -->
   <main class="content">
-    <h1>Resumen de la calidad del aire</h1>
-    <!-- Pestañas -->
-    <div style="display:flex; gap:8px; margin-bottom:16px;">
-      <button (click)="setTab('summary')" [class.active]="activeTab==='summary'">Promedios</button>
-      <button (click)="setTab('charts')" [class.active]="activeTab==='charts'">Gráficas</button>
+    <!-- Pestañas: extensión encima del título -->
+    <div class="tabs-wrapper">
+      <div class="tabs">
+        <button (click)="setTab('summary')" [class.active]="activeTab==='summary'">Promedios</button>
+        <button (click)="setTab('charts')" [class.active]="activeTab==='charts'">Gráficas</button>
+      </div>
     </div>
+    <h1>Resumen de la calidad del aire</h1>
 
     <div *ngIf="activeTab === 'summary'" class="stats">
       <div class="card">

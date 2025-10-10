@@ -65,3 +65,19 @@
 .tabs button:hover {
   background: #e8f4fb;
 }
+
+/* Wrapper que sobresale por encima del título */
+.tabs-wrapper {
+  position: relative;
+  margin-bottom: -20px; /* hace que se superponga con el título */
+  display: flex;
+  justify-content: center;
+}
+.tabs {
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  transform: translateY(-50%);
+  border: 1px solid rgba(0,0,0,0.04);
+}
