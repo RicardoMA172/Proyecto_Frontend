@@ -39,6 +39,7 @@ body, html {
   /* efecto de abrir/cerrar */
   transform: translateX(0);
   transition: transform 0.5s ease-in-out; /* más suave */
+  font-family: Arial, sans-serif; /* usar la misma tipografía que los componentes */
 }
 
 
@@ -91,6 +92,7 @@ body, html {
   color: var(--text);
   font-weight: 400; /* Normal */
   transition: background 0.3s, color 0.3s;
+  font-family: inherit; /* asegurar que los enlaces usen la tipografía de la sidebar */
 }
 
 /* Hover de botones con fondo gris ligero */
