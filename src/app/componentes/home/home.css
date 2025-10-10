@@ -53,26 +53,26 @@
 .tabs button {
   background: transparent;
   border: none;
-  padding: 10px 16px;
-  border-radius: 999px;
+  padding: 10px 14px;
+  border-radius: 8px; /* esquinas ligeramente redondeadas */
   cursor: pointer;
   color: #2c3e50;
   font-weight: 600;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
 }
 .tabs button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transform: translateY(-8px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
 }
 .tabs button:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(41,128,185,0.08);
+  box-shadow: 0 0 0 4px rgba(41,128,185,0.12);
 }
 .tabs button.active {
   background: #2980b9;
   color: #ffffff;
-  transform: translateY(-6px);
-  box-shadow: 0 14px 30px rgba(41,128,185,0.18);
+  transform: translateY(-16px);
+  box-shadow: 0 22px 42px rgba(41,128,185,0.22);
 }
 
 /* Wrapper que sobresale por encima del título */
@@ -103,12 +103,12 @@
 }
 .dashboard .tabs {
   position: absolute;
-  top: -28px; /* sobresale del borde superior */
+  top: -44px; /* sobresale aún más del borde superior */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 20;
+  z-index: 40;
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 .dashboard .dashboard-body {
   padding: 20px 30px 30px 30px;
