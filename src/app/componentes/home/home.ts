@@ -21,15 +21,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChildren('pollChart') pollCharts!: QueryList<ElementRef<HTMLCanvasElement>>;
 
   pollutants = [
+    // Agregar temperatura, humedad y amoníaco
+    { key: 'temp', label: 'Temperatura (°C)', color: '#1abc9c' },
+    { key: 'hum', label: 'Humedad (%)', color: '#3498db' },
+    { key: 'amon', label: 'Amoníaco (ppm)', color: '#7f8c8d' },
     { key: 'co', label: 'CO (ppm)', color: '#2980b9' },
     { key: 'nox', label: 'NOx (µg/m³)', color: '#27ae60' },
     { key: 'sox', label: 'SOx (µg/m³)', color: '#f39c12' },
     { key: 'pm10', label: 'PM10 (µg/m³)', color: '#8e44ad' },
     { key: 'pm25', label: 'PM2.5 (µg/m³)', color: '#c0392b' },
-    // Agregar temperatura, humedad y amoníaco
-    { key: 'temp', label: 'Temperatura (°C)', color: '#1abc9c' },
-    { key: 'hum', label: 'Humedad (%)', color: '#3498db' },
-    { key: 'amon', label: 'Amoníaco (ppm)', color: '#7f8c8d' }
   ];
 
   constructor(private caService: CalidadAireService) {}
