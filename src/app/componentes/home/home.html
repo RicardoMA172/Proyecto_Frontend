@@ -2,14 +2,14 @@
 
   <!-- Main content -->
   <main class="content">
-    <div class="panel">
-      <div class="tabs" role="tablist">
-        <button (click)="setTab('summary')" [class.active]="activeTab==='summary'" role="tab">Promedios</button>
-        <button (click)="setTab('charts')" [class.active]="activeTab==='charts'" role="tab">Gráficas</button>
-      </div>
-      <div class="panel-body">
-        <h1>Resumen de la calidad del aire</h1>
-        <div *ngIf="activeTab === 'summary'" class="stats">
+    <h1>Resumen de la calidad del aire</h1>
+    <!-- Pestañas -->
+    <div style="display:flex; gap:8px; margin-bottom:16px;">
+      <button (click)="setTab('summary')" [class.active]="activeTab==='summary'">Promedios</button>
+      <button (click)="setTab('charts')" [class.active]="activeTab==='charts'">Gráficas</button>
+    </div>
+
+    <div *ngIf="activeTab === 'summary'" class="stats">
       <div class="card">
         <h3>CO</h3>
         <p>Promedio: 0.8 ppm</p>
@@ -33,13 +33,10 @@
       <!-- Gráficas del día para cada contaminante: una por tarjeta, apiladas -->
     </div>
 
-</div>
-        <div *ngIf="activeTab === 'charts'" class="stats">
-          <div class="card" style="grid-column: 1 / -1;" *ngFor="let p of pollutants">
-            <h3>{{p.label}} - Hoy</h3>
-            <canvas [attr.data-key]="p.key" #pollChart width="800" height="160"></canvas>
-          </div>
-        </div>
+    <div *ngIf="activeTab === 'charts'" class="stats">
+      <div class="card" style="grid-column: 1 / -1;" *ngFor="let p of pollutants">
+        <h3>{{p.label}} - Hoy</h3>
+        <canvas [attr.data-key]="p.key" #pollChart width="800" height="160"></canvas>
       </div>
     </div>
   </main>
