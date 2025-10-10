@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     { key: 'pm10', label: 'PM10 (µg/m³)', color: '#8e44ad' },
     { key: 'pm25', label: 'PM2.5 (µg/m³)', color: '#c0392b' },
   ];
-  tabs = [
+  tabs: { id: 'summary' | 'charts'; label: string }[] = [
     { id: 'summary', label: 'Promedios' },
     { id: 'charts', label: 'Gráficas' }
   ];
