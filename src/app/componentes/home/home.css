@@ -93,7 +93,7 @@
 }
 
 /* Panel principal que contiene el contenido y las pestañas adheridas */
-.panel {
+.dashboard{
   position: relative;
   background: #ecf0f1;
   padding-top: 30px; /* espacio para las pestañas */
@@ -101,7 +101,7 @@
   padding-bottom: 20px;
   border: 1px solid rgba(0,0,0,0.04);
 }
-.panel .tabs {
+.dashboard .tabs {
   position: absolute;
   top: -28px; /* sobresale del borde superior */
   left: 50%;
@@ -110,7 +110,7 @@
   display: flex;
   gap: 10px;
 }
-.panel .panel-body {
+.dashboard .dashboard-body {
   padding: 20px 30px 30px 30px;
 }
 
