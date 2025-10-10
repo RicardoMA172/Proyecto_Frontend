@@ -81,3 +81,25 @@
   transform: translateY(-50%);
   border: 1px solid rgba(0,0,0,0.04);
 }
+
+/* Panel principal que contiene el contenido y las pestañas adheridas */
+.panel {
+  position: relative;
+  background: #ecf0f1;
+  padding-top: 30px; /* espacio para las pestañas */
+  border-radius: 12px;
+  padding-bottom: 20px;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.panel .tabs {
+  position: absolute;
+  top: -22px; /* sobresale del borde superior */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+}
+.panel .panel-body {
+  padding: 20px 30px 30px 30px;
+}
