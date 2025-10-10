@@ -4,6 +4,7 @@ export const routes: Routes = [
   { path: '', loadComponent: () => import('./componentes/home/home').then(m => m.HomeComponent) },
   { path: 'temp', loadComponent: () => import('./componentes/temp/temp').then(m => m.TempComponent) },
   { path: 'hum', loadComponent: () => import('./componentes/hum/hum').then(m => m.HumComponent) },
+  { path: 'amon', loadComponent: () => import('./componentes/amon/amon').then(m => m.AmonComponent) },
   { path: 'co',   loadComponent: () => import('./componentes/co/co').then(m => m.COComponent) },
   { path: 'nox',  loadComponent: () => import('./componentes/nox/nox').then(m => m.NoxComponent) },
   { path: 'sox',  loadComponent: () => import('./componentes/sox/sox').then(m => m.SoxComponent) },
