@@ -41,21 +41,43 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(private caService: CalidadAireService) {}
 
-  ngOnInit(): void {
-    this.caService.getDashboard().subscribe(data => {
-      this.resumen = data;
-    });
 
-    const today = new Date();
-    this.caService.getLatestByDate(today, 50).subscribe(data => {
+  // 🔹 Modificada la función ngOnInit para cargar datos iniciales
+  ngOnInit(): void {
+  // Cargar promedios del día actual (reemplaza getDashboard)
+  this.caService.getTodayAverage().subscribe({
+    next: data => {
+      // `data` contiene co,nox,sox,pm10,pm25,temp,hum,start,end
+      // lo asignamos directamente a `resumen` para que el template lo consuma
+      this.resumen = data ?? {};
+    },
+    error: err => {
+      console.error('Error al obtener promedios del día:', err);
+      this.resumen = {}; // fallback
+    }
+  });
+
+  // Cargar datos para las gráficas del día
+  const today = new Date();
+  this.caService.getLatestByDate(today, 50).subscribe({
+    next: data => {
       this.todayData = data;
-      this.calcularPromedios(); // ← calcula promedios del día
       if (this.activeTab === 'charts') {
         setTimeout(() => this.initAllCharts(), 0);
       }
-    });
-  }
+    },
+    error: err => {
+      console.error('Error al obtener datos de hoy:', err);
+      this.todayData = [];
+    }
+  });
+}
 
+
+
+
+
+  // 🔹 Nueva función: cambiar pestaña
   setTab(tab: 'summary' | 'charts') {
     this.activeTab = tab;
     if (tab === 'charts') {
@@ -69,7 +91,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }, 0);
   }
-
+  // Manejo de teclado para accesibilidad
   onTabKeydown(event: KeyboardEvent, index: number) {
     const key = event.key;
     const last = this.tabs.length - 1;
@@ -99,7 +121,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.todayData.length) this.initChart(this.todayData);
   }
-
+  // 🔹 Modificada la función initChart para el contaminante CO
   private initChart(data: any[]) {
     if (!this.homeChart) {
       console.warn('homeChart canvas not available');
@@ -134,7 +156,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       options: { responsive: true, plugins: { legend: { position: 'top' } } }
     });
   }
-
+  // 🔹 Nueva función: inicializar todas las gráficas de contaminantes
   private initAllCharts() {
     if (!this.pollCharts || !this.pollCharts.length) return;
     this.pollCharts.forEach((elRef: ElementRef<HTMLCanvasElement>, idx: number) => {
@@ -171,31 +193,4 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return `rgba(${r},${g},${b},${alpha})`;
   }
 
-  // 🔹 Nueva función: calcular promedios solo del día actual
-  private calcularPromedios() {
-    if (!this.todayData.length) return;
-
-    const suma: any = {};
-    const conteo = this.todayData.length;
-
-    for (const p of this.pollutants) {
-      suma[p.key] = 0;
-    }
-
-    for (const d of this.todayData) {
-      for (const p of this.pollutants) {
-        const valor = Number(d[p.key]);
-        if (!isNaN(valor)) {
-          suma[p.key] += valor;
-        }
-      }
-    }
-
-    const promedios: any = {};
-    for (const p of this.pollutants) {
-      promedios[p.key] = (suma[p.key] / conteo).toFixed(2);
-    }
-
-    this.resumen = promedios;
-  }
 }

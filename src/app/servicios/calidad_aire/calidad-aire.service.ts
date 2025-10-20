@@ -49,8 +49,9 @@ export class CalidadAireService {
     return this.http.get(`${this.apiUrl}/device/latest-by-date?date=${d}&limit=${limit}`);
   }
 
-
-  
-
+  // Obtener los promedios de hoy
+  getTodayAverage(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/device/today-average`);
+}
   
 }
