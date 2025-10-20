@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 })
 export class App {
   protected readonly title = signal('frontend');
-  sidebarClosed = false;
+  sidebarClosed = true;
 
   toggleSidebar() {
     this.sidebarClosed = !this.sidebarClosed;

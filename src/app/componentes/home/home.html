@@ -11,24 +11,36 @@
         <h1>Resumen de la calidad del aire</h1>
         <div *ngIf="activeTab === 'summary'" class="stats">
       <div class="card">
-        <h3>CO</h3>
-        <p>Promedio: 0.8 ppm</p>
+        <h3>Temperatura</h3>
+        <p>Promedio: {{ resumen.temp || 0 }} °C</p>
       </div>
       <div class="card">
-        <h3>NOx</h3>
-        <p>Promedio: 15 µg/m³</p>
+        <h3>Humedad</h3>
+        <p>Promedio: {{ resumen.hum || 0 }} %</p>
       </div>
       <div class="card">
-        <h3>SOx</h3>
-        <p>Promedio: 5 µg/m³</p>
+        <h3>Amoníaco (NH3)</h3>
+        <p>Promedio: {{ resumen.amon || 0 }} ppm</p>
       </div>
       <div class="card">
-        <h3>PM10</h3>
-        <p>Promedio: 25 µg/m³</p>
+        <h3>Monóxido de Carbono (CO)</h3>
+        <p>Promedio: {{ resumen.co || 0 }} ppm</p>
       </div>
       <div class="card">
-        <h3>PM2.5</h3>
-        <p>Promedio: 12 µg/m³</p>
+        <h3>Óxidos de Nitrógeno (NOx)</h3>
+        <p>Promedio: {{ resumen.nox || 0 }} µg/m³</p>
+      </div>
+      <div class="card">
+        <h3>Óxidos de Azufre (SOx)</h3>
+        <p>Promedio: {{ resumen.sox || 0 }} µg/m³</p>
+      </div>
+      <div class="card">
+        <h3>Partículas PM10</h3>
+        <p>Promedio: {{ resumen.pm10 || 0 }} µg/m³</p>
+      </div>
+      <div class="card">
+        <h3>Partículas PM2.5</h3>
+        <p>Promedio: {{ resumen.pm25 || 0 }} µg/m³</p>
       </div>
       <!-- Gráficas del día para cada contaminante: una por tarjeta, apiladas -->
 </div>

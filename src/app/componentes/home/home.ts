@@ -5,7 +5,6 @@ import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
 
-
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -21,7 +20,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChildren('pollChart') pollCharts!: QueryList<ElementRef<HTMLCanvasElement>>;
 
   pollutants = [
-    // Agregar temperatura, humedad y amoníaco
     { key: 'temp', label: 'Temperatura (°C)', color: '#1abc9c' },
     { key: 'hum', label: 'Humedad (%)', color: '#3498db' },
     { key: 'amon', label: 'Amoníaco (ppm)', color: '#7f8c8d' },
@@ -31,12 +29,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     { key: 'pm10', label: 'PM10 (µg/m³)', color: '#8e44ad' },
     { key: 'pm25', label: 'PM2.5 (µg/m³)', color: '#c0392b' },
   ];
+
   tabs: { id: 'summary' | 'charts'; label: string }[] = [
     { id: 'summary', label: 'Promedios' },
     { id: 'charts', label: 'Gráficas' }
   ];
-  // pestaña activa: 'summary' | 'charts'
-  activeTab: 'summary' | 'charts' = 'charts';
+
+  activeTab: 'summary' | 'charts' = 'summary';
 
   @ViewChildren('tabButton') tabButtons!: QueryList<ElementRef<HTMLButtonElement>>;
 
@@ -50,8 +49,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const today = new Date();
     this.caService.getLatestByDate(today, 50).subscribe(data => {
       this.todayData = data;
-      // inicializar o actualizar las gráficas cuando lleguen los datos
-      // si la pestaña de gráficas está activa, inicializamos ahora
+      this.calcularPromedios(); // ← calcula promedios del día
       if (this.activeTab === 'charts') {
         setTimeout(() => this.initAllCharts(), 0);
       }
@@ -61,10 +59,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   setTab(tab: 'summary' | 'charts') {
     this.activeTab = tab;
     if (tab === 'charts') {
-      // esperar a que Angular renderice los canvases y luego inicializar
       setTimeout(() => this.initAllCharts(), 0);
     }
-    // move focus to active tab button if present
     setTimeout(() => {
       const arr = this.tabButtons ? this.tabButtons.toArray() : [];
       const idx = this.tabs.findIndex(t => t.id === tab);
@@ -87,17 +83,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     } else if (key === 'End') {
       newIndex = last;
     } else if (key === 'Enter' || key === ' ') {
-      // activate current focused tab
       event.preventDefault();
       const id = this.tabs[index].id as 'summary' | 'charts';
       this.setTab(id);
       return;
     } else {
-      return; // ignore other keys
+      return;
     }
 
     event.preventDefault();
-    // set active tab and move focus
     const id = this.tabs[newIndex].id as 'summary' | 'charts';
     this.setTab(id);
   }
@@ -159,7 +153,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         return isNaN(n) ? null : n;
       });
       const color = this.pollutants[idx]?.color || '#2980b9';
-      // crear chart
       new Chart(canvas, {
         type: 'line',
         data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true }] },
@@ -176,5 +169,33 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const g = (bigint >> 8) & 255;
     const b = bigint & 255;
     return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  // 🔹 Nueva función: calcular promedios solo del día actual
+  private calcularPromedios() {
+    if (!this.todayData.length) return;
+
+    const suma: any = {};
+    const conteo = this.todayData.length;
+
+    for (const p of this.pollutants) {
+      suma[p.key] = 0;
+    }
+
+    for (const d of this.todayData) {
+      for (const p of this.pollutants) {
+        const valor = Number(d[p.key]);
+        if (!isNaN(valor)) {
+          suma[p.key] += valor;
+        }
+      }
+    }
+
+    const promedios: any = {};
+    for (const p of this.pollutants) {
+      promedios[p.key] = (suma[p.key] / conteo).toFixed(2);
+    }
+
+    this.resumen = promedios;
   }
 }

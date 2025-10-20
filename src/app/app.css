@@ -23,33 +23,39 @@ body, html {
 .layout {
   display: flex;
   min-height: 100vh;
+  align-items: stretch; /* asegurar que columnas se estiren igual verticalmente-------*/
+
 }
 
 /* Sidebar */
 .sidebar {
   width: 240px;
   background: var(--card);
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  border-right: none !important;
+  /*border-right: 1px solid rgba(0, 0, 0, 0.08); */
   transition: width .25s ease, transform .25s ease;
   padding: 16px 12px;
   box-shadow: 2px 0 8px rgba(0,0,0,0.05);
-
-
   position: relative;
+
+
+
+  overflow-y: auto;   /* permitir scroll interno */
+  overflow-x: hidden; 
+  max-height: 100vh;  /* no crecer más que la ventana */
+
   /* efecto de abrir/cerrar */
-  transform: translateX(0);
-  transition: transform 0.5s ease-in-out; /* más suave */
+  transform: none;
+  /* no usar transform para desplazar la barra - usamos solo width para abrir/cerrar */
+  transition: width 0.25s ease, box-shadow 0.25s ease; /* animar width en lugar de transform */
   font-family: Arial, sans-serif; /* usar la misma tipografía que los componentes */
 }
 
 
 
-
-
 .sidebar.closed {
-  width: 70px;
-  transform: translateX(-7px); /* mueve la barra hacia la izquierda, dejando espacio para iconos/data-short */
-
+  width: 88px;
+  transform: none; /* evitar desplazar la barra con translateX, solo se cambia el width */
 }
 
 .sidebar-header {
@@ -95,6 +101,26 @@ body, html {
   font-family: inherit; /* asegurar que los enlaces usen la tipografía de la sidebar */
 }
 
+/* Evitar reflow del texto: ocultar labels hasta que la sidebar termine de abrir
+   - por defecto (cerrada) los spans están ocultos (opacity 0)
+   - cuando .sidebar no tiene la clase .closed mostramos el texto con un pequeño delay
+     mayor al tiempo de la transición de width (0.25s) para que aparezca completo */
+.sidebar .menu a span {
+  display: inline-block;
+  opacity: 0;
+  white-space: nowrap; /* evitar salto de línea durante la apertura */
+  transition: opacity 140ms ease; /* fade rápido */
+}
+.sidebar:not(.closed) .menu a span {
+  opacity: 1;
+  transition-delay: 280ms; /* aparece después de que termine la animacion de width */
+}
+
+
+
+
+
+
 /* Hover de botones con fondo gris ligero */
 .menu a:hover {
   background: #e2e6ea; /* gris claro */
@@ -106,8 +132,11 @@ body, html {
 /* Content */
 .content {
   flex: 1;
-  padding: 32px;
+  min-height: 100vh; /* <- añadir *-------------------/
+  padding: 0 32px 32px 32px; /* sin padding-top para llegar hasta arriba */
   background: var(--bg);
+  /* eliminar margin-left negativo para evitar que el panel se desplace al togglear la sidebar */
+  padding-right: 0px;
 }
 
 /* Tarjetas bonitas para los resúmenes */
@@ -169,7 +198,7 @@ body, html {
   display: block;
   text-align: center;
   color: var(--accent);
-    transition: none; /* aparece de golpe */
+  transition: none; /* aparece de golpe */
 
 }
 
@@ -185,4 +214,20 @@ body, html {
 }
 
 
+
+/* DARK SIDEBAR OVERRIDES - added by editor */
+.sidebar {
+  background: #f9fafc !important; /* gris oscuro */
+  border-right: 1px solid rgba(0,0,0,0.2) !important;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.12) !important;
+  color: black !important;
+}
+.sidebar .menu a {
+  color: black !important; /* links color claro */
+
+}/* Sidebar */
+.sidebar .menu a:hover {
+  background: #e2e6ea !important;
+  color: var(--accent) !important;
+}
 
