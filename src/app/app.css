@@ -55,10 +55,6 @@ body, html {
 
 
 
-.sidebar.closed {
-  width: 88px;
-  transform: none; /* evitar desplazar la barra con translateX, solo se cambia el width */
-}
 
 .sidebar-header {
   display: flex;
@@ -103,20 +99,9 @@ body, html {
   font-family: inherit; /* asegurar que los enlaces usen la tipografía de la sidebar */
 }
 
-/* Evitar reflow del texto: ocultar labels hasta que la sidebar termine de abrir
-   - por defecto (cerrada) los spans están ocultos (opacity 0)
-   - cuando .sidebar no tiene la clase .closed mostramos el texto con un pequeño delay
-     mayor al tiempo de la transición de width (0.25s) para que aparezca completo */
-.sidebar .menu a span {
-  display: inline-block;
-  opacity: 0;
-  white-space: nowrap; /* evitar salto de línea durante la apertura */
-  transition: opacity 140ms ease; /* fade rápido */
-}
-.sidebar:not(.closed) .menu a span {
-  opacity: 1;
-  transition-delay: 280ms; /* aparece después de que termine la animacion de width */
-}
+/* Links del menú: siempre visibles cuando la sidebar está presente (ya no usamos .closed)
+   El comportamiento de "cerrado" ahora se controla con *ngIf: cuando no hay sidebar
+   en el DOM, sólo queda el botón toggle en el header. */
 
 
 
@@ -149,11 +134,11 @@ body, html {
   left: 0;
   right: 0;
   height: 56px;
-  background:#2980b9; /* header azul */
-  color: #fff;
+  background: #ffffff; /* header blanco */
+  color: var(--text);
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: 0 16px;
   box-shadow: 0 1px 6px rgba(0,0,0,0.06);
   z-index: 60;
@@ -170,6 +155,7 @@ body, html {
   pointer-events: auto;
 }
 
+.topbar-left { display: flex; align-items: center; }
 .topbar-right {
   display: flex;
   gap: 8px;
@@ -178,21 +164,16 @@ body, html {
 
 .topbar .btn {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  color: #fff;
+  border: 1px solid rgba(41,128,185,0.12);
+  color: var(--accent);
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.topbar .btn:hover {
-  background: rgba(255, 255, 255, 0.11);
-}
+.topbar .btn:hover { background: rgba(41,128,185,0.06); }
 
-.topbar .btn.active {
-  background:rgba(255, 255, 255, 0.11);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08) inset;
-}
+.topbar .btn.active { background: rgba(41,128,185,0.12); box-shadow: 0 2px 8px rgba(0,0,0,0.04) inset; color: #fff; }
 
 /* Estados de interacción más visibles */
 .topbar .btn:active,
@@ -203,10 +184,15 @@ body, html {
 }
 
 /* Mayor especificidad para asegurar que el botón activo se vea debajo del topbar */
-.topbar-right > .btn.active {
-  background: rgba(255,255,255,0.14) !important;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08) inset !important;
-}
+.topbar-right > .btn.active { background: rgba(41,128,185,0.16) !important; box-shadow: 0 3px 10px rgba(0,0,0,0.06) inset !important; }
+
+/* Toggle en header */
+.topbar .toggle { background: transparent; border: none; font-size: 20px; padding: 8px; cursor: pointer; color: var(--accent); }
+
+/* Sidebar visible/hidden behavior: cuando sidebar no está presente (ngIf), no se muestra nada; pero
+   mantener brand pequeño cuando esté visible */
+.sidebar { width: 240px; }
+.sidebar .brand { font-weight: 600; color: var(--accent); }
 
 .topbar .profile-panel,
 header.topbar .profile-panel {
@@ -307,38 +293,12 @@ header.topbar .profile-panel * {
 }
 
 /* Links del menú siempre visibles, pero con transición ligera al abrir */
+/* Asegurar una única regla para los spans dentro de la sidebar cuando está presente */
 .sidebar .menu a span {
   display: inline-block;
   opacity: 1;
   transform: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-/* Sidebar cerrado: ocultar texto */
-.sidebar.closed .menu a {
-  text-align: center;
-  padding: 10px; /* más compacto */
-}
-
-/* data-short para cuando esté cerrada la barra */
-.sidebar.closed .menu a::after {
-  content: attr(data-short);
-  display: block;
-  text-align: center;
-  color: var(--accent);
-  transition: none; /* aparece de golpe */
-
-}
-
-.sidebar.closed .menu a span {
-  display: none; /* oculta el texto largo */
-}
-
-/* Ocultar menú y deshabilitar enlaces */
-.sidebar.closed .menu {
-  pointer-events: none; /* no se puede clickear */
-  opacity: 0.1;           /* casi oculto */
-  transition: opacity 0.2s;
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
 
