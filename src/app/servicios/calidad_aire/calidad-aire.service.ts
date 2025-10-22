@@ -57,5 +57,17 @@ export class CalidadAireService {
   getTodayAverage(): Observable<any> {
   return this.http.get(`${this.apiUrl}/device/today-average`);
 }
+
+  // Exportar registros de un día (CSV/Excel) como Blob
+  exportDay(date: Date): Observable<Blob> {
+    const raw = (date instanceof Date) ? date.toISOString().split('T')[0] : String(date);
+    const encoded = encodeURIComponent(raw);
+    const url = `${this.apiUrl}/device/export-csv?date=${encoded}`;
+    const token = localStorage.getItem('token') ?? '';
+    const opts: any = { responseType: 'blob' as 'blob' };
+    if (token) opts.headers = { Authorization: `Bearer ${token}` };
+    console.debug('[CalidadAireService] exportDay -> url=', url);
+    return this.http.get(url, opts) as unknown as Observable<Blob>;
+  }
   
 }

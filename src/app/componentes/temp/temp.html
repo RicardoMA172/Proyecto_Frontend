@@ -4,7 +4,10 @@
 
     <!-- Tabla de últimos registros -->
     <section class="records-section">
-      <h2>Últimos registros</h2>
+      <div class="records-header">
+        <h2>Últimos registros</h2>
+        <button *ngIf="isAdmin" class="download-btn" (click)="downloadDayExport()">Descargar datos</button>
+      </div>
       <table class="records-table">
         <thead>
           <tr>
