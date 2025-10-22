@@ -1,0 +1,58 @@
+/* Estilos basados en el diseño del login */
+.login-container, .register-container {
+  max-width: 420px;
+  margin: 60px auto;
+  background: #ffffff;
+  padding: 28px 26px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  font-family: 'Roboto', system-ui, Arial, sans-serif;
+}
+
+.register-container h2 {
+  margin: 0 0 18px 0;
+  font-size: 20px;
+  color: #2c3e50;
+}
+
+.register-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register-container input[type="text"],
+.register-container input[type="email"],
+.register-container input[type="password"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  font-size: 14px;
+}
+
+.register-container button[type="submit"] {
+  background: #2980b9;
+  color: #fff;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.register-container button[type="submit"]:hover {
+  background: #2573a6;
+}
+
+.register-container .mensaje {
+  margin-top: 12px;
+  color: #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-container, .register-container {
+    margin: 20px;
+    padding: 18px;
+  }
+}
