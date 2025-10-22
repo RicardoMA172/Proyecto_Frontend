@@ -9,5 +9,7 @@ export const routes: Routes = [
   { path: 'nox',  loadComponent: () => import('./componentes/nox/nox').then(m => m.NoxComponent) },
   { path: 'sox',  loadComponent: () => import('./componentes/sox/sox').then(m => m.SoxComponent) },
   { path: 'pm10', loadComponent: () => import('./componentes/pm10/pm10').then(m => m.Pm10Component) },
-  { path: 'pm25', loadComponent: () => import('./componentes/pm25/pm25').then(m => m.Pm25Component) }
+  { path: 'pm25', loadComponent: () => import('./componentes/pm25/pm25').then(m => m.Pm25Component) },
+
+  { path: 'auth', loadComponent: () => import('./componentes/auth/login/login').then(m => m.LoginComponent) },
 ];

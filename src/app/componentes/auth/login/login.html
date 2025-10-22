@@ -1,0 +1,12 @@
+<div class="login-container">
+  <h2>Iniciar Sesión</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <input type="email" formControlName="email" placeholder="Correo electrónico" />
+    <input type="password" formControlName="password" placeholder="Contraseña" />
+
+    <button type="submit" [disabled]="form.invalid">Iniciar sesión</button>
+  </form>
+
+  <p class="mensaje">{{ mensaje }}</p>
+</div>
