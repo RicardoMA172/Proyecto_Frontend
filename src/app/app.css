@@ -400,3 +400,8 @@ header.topbar .profile-panel * {
 .content {
   transition: margin-left 0.25s ease;
 }
+
+/* ========== NUEVO: que el contenido se ajuste al abrir sidebar ========== */
+body.sidebar-open .content {
+  margin-left: 240px; /* mismo ancho que el sidebar */
+}
