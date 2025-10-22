@@ -1,5 +1,5 @@
 :root {
-  --bg: #f9fafc;         /* Fondo general */
+  --bg: #ecf0f1;         /* Fondo general (igual que el panel para evitar marco blanco) */
   --card: #ffffff;       /* Fondo tarjetas / sidebar */
   --accent: #3498db;     /* Azul minimalista */
   --accent-light: #ecf6fc; 
