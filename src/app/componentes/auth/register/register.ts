@@ -25,6 +25,8 @@ export class RegisterComponent implements OnDestroy {
   constructor(private auth: AuthService, private router: Router) {}
 
   onSubmit() {
+    console.log('RegisterComponent.onSubmit called', this.form.value);
+
     if (this.form.invalid) return;
 
     const name = this.form.get('name')?.value ?? '';
@@ -36,6 +38,7 @@ export class RegisterComponent implements OnDestroy {
       this.mensaje = 'Las contraseñas no coinciden.';
       return;
     }
+    this.mensaje = 'Registrando...';
 
     this.sub = this.auth.register({ name, email, password }).subscribe({
       next: (res) => {
