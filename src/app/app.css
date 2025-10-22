@@ -361,7 +361,7 @@ header.topbar .profile-panel * {
 
 /* Header blanco */
 .topbar {
-  background: #ffffff !important;
+  background: #2980b9 !important;
   color: var(--text) !important;
   justify-content: space-between !important;
 }
