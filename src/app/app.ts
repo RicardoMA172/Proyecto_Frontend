@@ -19,8 +19,16 @@ export class App implements OnDestroy {
   userProfile: any = null;
   showProfile = false;
   passwordVisible = false;
+  isAuthenticated = !!localStorage.getItem('token');
 
   private auth = inject(AuthService);
+  private authChangeHandler = () => {
+    this.isAuthenticated = !!localStorage.getItem('token');
+    if (!this.isAuthenticated) {
+      this.userProfile = null;
+      this.showProfile = false;
+    }
+  };
 
   private router = inject(Router);
   private sub = this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {
@@ -66,5 +74,11 @@ export class App implements OnDestroy {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+    window.removeEventListener('auth-changed', this.authChangeHandler);
+  }
+
+  constructor() {
+    // Escuchar cambios de auth (login/logout en otras partes de la app)
+    window.addEventListener('auth-changed', this.authChangeHandler);
   }
 }

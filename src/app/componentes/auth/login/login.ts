@@ -35,6 +35,7 @@ export class LoginComponent {
       this.authService.login(credentials).subscribe({
         next: (res) => {
           localStorage.setItem('token', res.token);
+          window.dispatchEvent(new Event('auth-changed'));
           this.mensaje = 'Inicio de sesión exitoso ✅';
           this.router.navigate(['/dashboard']);
         },

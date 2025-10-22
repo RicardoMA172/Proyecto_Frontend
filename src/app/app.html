@@ -1,5 +1,5 @@
 <div class="layout">
-  <header class="topbar">
+  <header class="topbar" *ngIf="isAuthenticated">
     <div class="topbar-right">
       <button class="btn" (click)="loadProfile()">Ver perfil</button>
       <button class="btn" (click)="logout()">Cerrar sesión</button>
@@ -13,7 +13,7 @@
         <span *ngIf="passwordVisible">{{ userProfile?.password ?? 'No disponible' }}</span>
         <button class="eye" (click)="togglePasswordVisibility()">👁️</button>
       </div>
-    </div>
+  </div>
 
   </header>
 

@@ -139,6 +139,52 @@ body, html {
   padding-right: 0px;
 }
 
+/* Topbar (header) en la parte superior, con botones a la derecha */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  z-index: 60;
+}
+
+.topbar-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.topbar .btn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.profile-panel {
+  position: absolute;
+  top: 56px;
+  right: 16px;
+  background: var(--card);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  min-width: 220px;
+}
+
+.profile-row { margin-bottom: 8px; }
+
+.eye { background: transparent; border: none; cursor: pointer; margin-left: 8px; }
+
 /* Tarjetas bonitas para los resúmenes */
 .card {
   background: var(--card);

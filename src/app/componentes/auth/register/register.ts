@@ -44,6 +44,7 @@ export class RegisterComponent implements OnDestroy {
       next: (res) => {
         if (res?.token) {
           localStorage.setItem('token', res.token);
+          window.dispatchEvent(new Event('auth-changed'));
         }
         this.router.navigateByUrl('/');
       },
