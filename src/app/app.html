@@ -1,7 +1,7 @@
 <div class="layout">
   <header class="topbar" *ngIf="isAuthenticated">
     <div class="topbar-right">
-      <button class="btn" (click)="loadProfile()">Ver perfil</button>
+      <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
       <button class="btn" (click)="logout()">Cerrar sesión</button>
     </div>
     <div class="profile-panel" *ngIf="showProfile">

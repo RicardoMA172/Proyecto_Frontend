@@ -187,6 +187,11 @@ body, html {
   background: rgba(255,255,255,0.06);
 }
 
+.topbar .btn.active {
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) inset;
+}
+
 .profile-panel {
   position: absolute;
   top: 56px;

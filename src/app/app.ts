@@ -76,6 +76,9 @@ export class App implements OnDestroy {
     localStorage.removeItem('token');
     this.userProfile = null;
     this.showProfile = false;
+    this.isAuthenticated = false;
+    // notificar cambio de auth para que otras partes de la app actualicen su estado
+    window.dispatchEvent(new Event('auth-changed'));
     this.router.navigateByUrl('/auth');
   }
 
