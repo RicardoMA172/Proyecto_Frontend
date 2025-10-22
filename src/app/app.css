@@ -176,7 +176,7 @@ body, html {
 
 .topbar .btn {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid rgba(255, 255, 255, 0.11);
   color: #fff;
   padding: 6px 10px;
   border-radius: 6px;
@@ -184,18 +184,18 @@ body, html {
 }
 
 .topbar .btn:hover {
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.11);
 }
 
 .topbar .btn.active {
-  background: rgba(255,255,255,0.12);
+  background:rgba(255, 255, 255, 0.11);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08) inset;
 }
 
 /* Estados de interacción más visibles */
 .topbar .btn:active,
 .topbar .btn:focus {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.11);
   transform: translateY(1px);
   outline: none;
 }
@@ -210,7 +210,7 @@ body, html {
   position: absolute;
   top: 56px;
   right: 16px;
-  background: #f3f4f6; /* gris muy claro, uniforme */
+  background: rgba(255, 255, 255, 0.11); /* gris muy claro, uniforme */
   color: var(--text);
   padding: 12px 14px;
   border-radius: 10px;
