@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } fr
 import { parseInputDate } from '../../utils/date.util';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
+import { AuthService } from '../../servicios/auth/auth';
 import { Chart, registerables } from 'chart.js';
 import { interval, Subject, BehaviorSubject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
@@ -31,12 +32,14 @@ export class NoxComponent implements OnInit, AfterViewInit, OnDestroy {
   private tableLimit = 5;
 
   private selectedDate$ = new BehaviorSubject<Date>(this.selectedDate);
+  isAdmin: boolean = false;
 
   @ViewChild('hiddenDateInput') hiddenDateInput!: ElementRef<HTMLInputElement>;
 
-  constructor(private caService: CalidadAireService) {}
+  constructor(private caService: CalidadAireService, private auth: AuthService) {}
 
   ngOnInit(): void {
+    this.auth.getUser().subscribe({ next: (u:any) => this.isAdmin = u?.role === 'admin', error: () => this.isAdmin = false });
     this.updateVisibleDates();
     this.loadDataForDate(this.selectedDate);
 
@@ -68,6 +71,24 @@ export class NoxComponent implements OnInit, AfterViewInit, OnDestroy {
         const selDateStr = this.selectedDate.toISOString().split('T')[0];
         this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
+  }
+
+  downloadDayExport() {
+    const dateStr = this.selectedDate.toISOString().split('T')[0];
+    this.caService.exportDay(this.selectedDate).subscribe({
+      next: (blob) => {
+        const filename = `registros-${dateStr}.csv`;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => { console.error('Error descargando export:', err); alert('No se pudo descargar el archivo.'); }
+    });
   }
 
   ngAfterViewInit(): void {
