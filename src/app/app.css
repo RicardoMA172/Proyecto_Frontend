@@ -133,8 +133,8 @@ body, html {
 .content {
   flex: 1;
   min-height: 100vh; /* <- añadir *-------------------/
-  /* el topbar es fixed, dejamos espacio superior para que el contenido sea clicable */
-  padding: 0 32px 32px 32px;
+  /* dejar espacio superior para que el contenido no quede debajo del topbar */
+  padding: 72px 32px 32px 32px;
   background: var(--bg);
   /* eliminar margin-left negativo para evitar que el panel se desplace al togglear la sidebar */
   padding-right: 0px;
@@ -154,6 +154,17 @@ body, html {
   padding: 0 16px;
   box-shadow: 0 1px 6px rgba(0,0,0,0.06);
   z-index: 60;
+}
+
+/* Evitar que el topbar capture todos los clicks: solo sus elementos interactivos aceptan eventos */
+.topbar {
+  pointer-events: none;
+}
+.topbar .topbar-right,
+.topbar .topbar-right .btn,
+.topbar .profile-panel,
+.topbar .profile-panel .eye {
+  pointer-events: auto;
 }
 
 .topbar-right {
