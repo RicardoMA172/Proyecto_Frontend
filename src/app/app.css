@@ -147,7 +147,8 @@ body, html {
   left: 0;
   right: 0;
   height: 56px;
-  background: var(--card);
+  background: var(--accent); /* header azul */
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -175,21 +176,26 @@ body, html {
 
 .topbar .btn {
   background: transparent;
-  border: 1px solid var(--accent);
-  color: var(--accent);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.topbar .btn:hover {
+  background: rgba(255,255,255,0.06);
 }
 
 .profile-panel {
   position: absolute;
   top: 56px;
   right: 16px;
-  background: var(--card);
+  background: var(--card); /* panel blanco para contraste */
+  color: var(--text);
   padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
   min-width: 220px;
 }
 

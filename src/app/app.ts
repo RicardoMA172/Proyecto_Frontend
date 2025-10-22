@@ -29,7 +29,14 @@ export class App implements OnDestroy {
       this.showProfile = false;
     }
   };
-
+  // Cerrar panel de perfil al clicar fuera
+  private outsideClickHandler = (ev: MouseEvent) => {
+    if (!this.showProfile) return;
+    const path = (ev as any).composedPath ? (ev as any).composedPath() : (ev as any).path;
+    const clickedInside = path ? path.some((el: any) => el && el.classList && (el.classList.contains('profile-panel') || el.classList.contains('topbar-right'))) : false;
+    if (!clickedInside) this.showProfile = false;
+  };
+  // Router events
   private router = inject(Router);
   private sub = this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {
     // Ocultar sidebar en rutas de auth
@@ -75,10 +82,13 @@ export class App implements OnDestroy {
   ngOnDestroy() {
     this.sub.unsubscribe();
     window.removeEventListener('auth-changed', this.authChangeHandler);
+    window.removeEventListener('click', this.outsideClickHandler);
   }
 
   constructor() {
     // Escuchar cambios de auth (login/logout en otras partes de la app)
     window.addEventListener('auth-changed', this.authChangeHandler);
+    // Cerrar panel de perfil al clicar fuera
+    window.addEventListener('click', this.outsideClickHandler);
   }
 }
