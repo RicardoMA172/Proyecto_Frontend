@@ -26,6 +26,7 @@ body, html {
   display: flex;
   min-height: 100vh;
   align-items: stretch; /* asegurar que columnas se estiren igual verticalmente-------*/
+  background: var(--bg); /* mismo fondo que el container/panel */
 
 }
 
