@@ -5,6 +5,8 @@
   --accent-light: #ecf6fc; 
   --text: #2c3e50;       /* Texto oscuro */
   --text-light: #7f8c8d; /* Texto gris */
+  --profile-bg: #2b3036; /* fondo oscuro para panel de perfil */
+  --profile-text: #eef2f5; /* texto claro para panel */
 }
 
 * {
@@ -206,28 +208,29 @@ body, html {
   box-shadow: 0 3px 10px rgba(0,0,0,0.08) inset !important;
 }
 
-.profile-panel {
+.topbar .profile-panel,
+header.topbar .profile-panel {
   position: absolute;
   top: 56px;
   right: 16px;
-  background: rgba(255, 255, 255, 0.11); /* gris muy claro, uniforme */
-  color: var(--text);
+  background: var(--profile-bg) !important; /* fondo oscuro garantizado */
+  color: var(--profile-text) !important;
   padding: 12px 14px;
   border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+  border: 1px solid rgba(0,0,0,0.18);
   min-width: 280px;
-  font-family: inherit; /* heredar tipografía global */
-  font-size: 14px; /* tamaño consistente con el resto */
+  font-family: inherit !important; /* forzar Roboto heredada */
+  font-size: 14px;
   line-height: 1.4;
   transition: transform 160ms ease, opacity 160ms ease, visibility 160ms ease;
   transform-origin: top right;
-  z-index: 70;
+  z-index: 120;
 }
 
-.profile-row { margin-bottom: 8px; display:flex; gap:8px; align-items:center; }
-.profile-row strong { width: 90px; font-weight: 600; color: var(--text); }
-.profile-row span { flex: 1; color: var(--text-light); font-family: inherit; }
+.profile-row { margin-bottom: 8px; display:flex; gap:8px; align-items:center; font-family: inherit !important; color: var(--profile-text) !important; }
+.profile-row strong { width: 90px; font-weight: 600; color: var(--profile-text) !important; }
+.profile-row span { flex: 1; color: var(--profile-text) !important; }
 
 .eye { background: transparent; border: none; cursor: pointer; margin-left: 8px; color: var(--text); }
 
