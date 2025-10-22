@@ -247,12 +247,6 @@
   cursor: pointer;
 }
 
-
-
-
-
-
-
 /* Contenedor del encabezado (hace que el título quede a la izquierda y el botón a la derecha) */
 .records-header {
   display: flex;
