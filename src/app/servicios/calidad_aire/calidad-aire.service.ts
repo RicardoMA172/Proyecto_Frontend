@@ -39,14 +39,18 @@ export class CalidadAireService {
   
   // Obtener todos los registros de un día específico
   getByDate(date: Date): Observable<any> {
-    const d = date.toISOString().split('T')[0]; // YYYY-MM-DD
-    return this.http.get(`${this.apiUrl}/device/by-date?date=${d}`);
+    const raw = (date instanceof Date) ? date.toISOString().split('T')[0] : String(date);
+    const encoded = encodeURIComponent(raw);
+    console.debug('[CalidadAireService] getByDate -> date=', raw, ' encoded=', encoded, ' url=', `${this.apiUrl}/device/by-date?date=${encoded}`);
+    return this.http.get(`${this.apiUrl}/device/by-date?date=${encoded}`);
   }
 
   // Obtener los últimos registros de un día específico
   getLatestByDate(date: Date, limit: number = 10): Observable<any> {
-    const d = date.toISOString().split('T')[0];
-    return this.http.get(`${this.apiUrl}/device/latest-by-date?date=${d}&limit=${limit}`);
+    const raw = (date instanceof Date) ? date.toISOString().split('T')[0] : String(date);
+    const encoded = encodeURIComponent(raw);
+    console.debug('[CalidadAireService] getLatestByDate -> date=', raw, ' encoded=', encoded, ' limit=', limit);
+    return this.http.get(`${this.apiUrl}/device/latest-by-date?date=${encoded}&limit=${limit}`);
   }
 
   // Obtener los promedios de hoy
