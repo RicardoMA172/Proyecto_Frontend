@@ -10,7 +10,7 @@
 .content {
   flex: 1;
   padding: 30px;
-  background-color: #ecf0f1;
+  background-color: var(--card);
 }
 
 .content h1 {
@@ -134,7 +134,7 @@
 /* Panel principal que contiene el contenido y las pestañas adheridas */
 .panel {
   position: relative;
-  background: var(--card);
+  background: #ecf0f1;
   margin-top: 30px; /* separa todo el panel del tope superior */
   padding-top: 1px; /* espacio para las pestañas */
   border-radius: 12px;
