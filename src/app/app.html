@@ -1,17 +1,8 @@
 <div class="layout">
   <header class="topbar" *ngIf="isAuthenticated">
-    <div class="topbar-right">
-      <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
-      <button class="btn" (click)="logout()">Cerrar sesión</button>
-    </div>
-    <div class="profile-panel" *ngIf="showProfile" style="position: fixed !important; top: 64px !important; right: 24px !important; z-index: 2147483647 !important; background: #2b3036 !important; color: #eef2f5 !important; font-family: Roboto, system-ui, Arial, sans-serif !important;">
-      <div class="profile-row"><strong>Nombre:</strong> {{ userProfile?.name }}</div>
-      <div class="profile-row"><strong>Email:</strong> {{ userProfile?.email }}</div>
-    </div>
 
-  </header>
 
-  <nav *ngIf="showSidebar" class="sidebar" [class.closed]="sidebarClosed">
+    <nav *ngIf="showSidebar" class="sidebar" [class.closed]="sidebarClosed">
     <div class="sidebar-header">
       <button class="toggle" (click)="toggleSidebar()">☰</button>
       <div class="brand" *ngIf="!sidebarClosed"></div>
@@ -29,6 +20,19 @@
       <li><a routerLink="/pm25" data-short="pm2.5"><span>Partículas PM2.5</span></a></li>
     </ul>
   </nav>
+
+
+
+    <div class="topbar-right">
+      <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
+      <button class="btn" (click)="logout()">Cerrar sesión</button>
+    </div>
+    <div class="profile-panel" *ngIf="showProfile" style="position: fixed !important; top: 64px !important; right: 24px !important; z-index: 2147483647 !important; background: #2b3036 !important; color: #eef2f5 !important; font-family: Roboto, system-ui, Arial, sans-serif !important;">
+      <div class="profile-row"><strong>Nombre:</strong> {{ userProfile?.name }}</div>
+      <div class="profile-row"><strong>Email:</strong> {{ userProfile?.email }}</div>
+    </div>
+
+  </header>
 
   <main class="content">
     <router-outlet></router-outlet>
