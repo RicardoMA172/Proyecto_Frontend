@@ -40,8 +40,6 @@ body, html {
   box-shadow: 2px 0 8px rgba(0,0,0,0.05);
   position: relative;
 
-
-
   overflow-y: auto;   /* permitir scroll interno */
   overflow-x: hidden; 
   max-height: 100vh;  /* no crecer más que la ventana */
@@ -120,10 +118,6 @@ body, html {
 /* Links del menú: siempre visibles cuando la sidebar está presente (ya no usamos .closed)
    El comportamiento de "cerrado" ahora se controla con *ngIf: cuando no hay sidebar
    en el DOM, sólo queda el botón toggle en el header. */
-
-
-
-
 
 
 /* Hover de botones con fondo gris ligero */
@@ -361,3 +355,48 @@ header.topbar .profile-panel * {
   color: var(--accent) !important;
 }
 
+/* ========================= */
+/* NUEVO: ajustes para mover botón al header y ocultar sidebar cerrado */
+/* ========================= */
+
+/* Header blanco */
+.topbar {
+  background: #ffffff !important;
+  color: var(--text) !important;
+  justify-content: space-between !important;
+}
+
+/* Botón ☰ en el header */
+.toggle-header {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--accent);
+  pointer-events: auto;
+}
+
+/* Sidebar oculto completamente cuando está cerrado */
+.sidebar.closed {
+  transform: translateX(-100%);
+  position: fixed;
+  top: 56px;
+  left: 0;
+  height: calc(100vh - 56px);
+  width: 240px;
+  transition: transform 0.25s ease;
+}
+
+/* Cuando está abierto */
+.sidebar:not(.closed) {
+  transform: translateX(0);
+  position: fixed;
+  top: 56px;
+  left: 0;
+  height: calc(100vh - 56px);
+}
+
+/* Transición suave del contenido */
+.content {
+  transition: margin-left 0.25s ease;
+}

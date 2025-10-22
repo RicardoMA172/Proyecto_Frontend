@@ -52,6 +52,7 @@ export class App implements OnDestroy {
   toggleSidebar() {
   this.sidebarClosed = !this.sidebarClosed;
   }
+  
 
   // Cargar perfil desde backend (si hay token)
   loadProfile() {

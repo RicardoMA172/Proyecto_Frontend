@@ -1,20 +1,23 @@
 <div class="layout">
   <header class="topbar" *ngIf="isAuthenticated">
+    <!-- Botón para abrir/cerrar sidebar -->
+    <button class="toggle-header" (click)="toggleSidebar()">☰</button>
+
     <div class="topbar-right">
       <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
       <button class="btn" (click)="logout()">Cerrar sesión</button>
     </div>
-    <div class="profile-panel" *ngIf="showProfile" style="position: fixed !important; top: 64px !important; right: 24px !important; z-index: 2147483647 !important; background: #2b3036 !important; color: #eef2f5 !important; font-family: Roboto, system-ui, Arial, sans-serif !important;">
+
+    <div class="profile-panel" *ngIf="showProfile">
       <div class="profile-row"><strong>Nombre:</strong> {{ userProfile?.name }}</div>
       <div class="profile-row"><strong>Email:</strong> {{ userProfile?.email }}</div>
     </div>
-
   </header>
 
-  <nav *ngIf="showSidebar" class="sidebar" [class.closed]="sidebarClosed">
+  <!-- Sidebar -->
+  <nav *ngIf="showSidebar && !sidebarClosed" class="sidebar">
     <div class="sidebar-header">
-      <button class="toggle" (click)="toggleSidebar()">☰</button>
-      <div class="brand" *ngIf="!sidebarClosed"></div>
+      <div class="brand"></div>
     </div>
 
     <ul class="menu">
@@ -30,6 +33,7 @@
     </ul>
   </nav>
 
+  <!-- Contenido principal -->
   <main class="content">
     <router-outlet></router-outlet>
   </main>
