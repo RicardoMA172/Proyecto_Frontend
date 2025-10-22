@@ -134,7 +134,7 @@ body, html {
   flex: 1;
   min-height: 100vh; /* <- añadir *-------------------/
   /* el topbar es fixed, dejamos espacio superior para que el contenido sea clicable */
-  padding: 72px 32px 32px 32px; /* espacio superior igual a la altura del topbar */
+  padding: 0 32px 32px 32px;
   background: var(--bg);
   /* eliminar margin-left negativo para evitar que el panel se desplace al togglear la sidebar */
   padding-right: 0px;
