@@ -13,7 +13,7 @@ import { AuthService } from './servicios/auth/auth';
 })
 export class App implements OnDestroy {
   protected readonly title = signal('frontend');
-  sidebarClosed = true;
+  sidebarClosed = false;
   showSidebar = true;
   // Perfil del usuario (nombre, email, password oculto)
   userProfile: any = null;
