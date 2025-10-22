@@ -13,6 +13,7 @@ import { filter } from 'rxjs/operators';
 export class App implements OnDestroy {
   protected readonly title = signal('frontend');
   sidebarClosed = true;
+  showSidebar = true;
 
   private router = inject(Router);
   private sub = this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {
@@ -20,6 +21,9 @@ export class App implements OnDestroy {
     const url: string = e.urlAfterRedirects ?? e.url ?? '';
     if (url.startsWith('/auth')) {
       this.sidebarClosed = true;
+      this.showSidebar = false;
+    } else {
+      this.showSidebar = true;
     }
   });
 

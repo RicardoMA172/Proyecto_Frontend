@@ -1,5 +1,5 @@
 <div class="layout">
-  <nav class="sidebar" [class.closed]="sidebarClosed">
+  <nav *ngIf="showSidebar" class="sidebar" [class.closed]="sidebarClosed">
     <div class="sidebar-header">
       <button class="toggle" (click)="toggleSidebar()">☰</button>
       <div class="brand" *ngIf="!sidebarClosed"></div>
