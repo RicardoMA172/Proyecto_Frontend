@@ -4,7 +4,7 @@
       <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
       <button class="btn" (click)="logout()">Cerrar sesión</button>
     </div>
-  <div class="profile-panel" *ngIf="showProfile" style="position: fixed !important; top: 64px !important; right: 24px !important; z-index: 2147483647 !important; background: #2b3036 !important; color: #eef2f5 !important; font-family: Roboto, system-ui, Arial, sans-serif !important; border: 2px solid magenta !important;">
+  <div class="profile-panel" *ngIf="showProfile" style="position: fixed !important; top: 64px !important; right: 24px !important; z-index: 2147483647 !important; background: #2b3036 !important; color: #eef2f5 !important; font-family: Roboto, system-ui, Arial, sans-serif !important;">
       <div class="profile-row"><strong>Nombre:</strong> {{ userProfile?.name }}</div>
       <div class="profile-row"><strong>Email:</strong> {{ userProfile?.email }}</div>
       <div class="profile-row">
