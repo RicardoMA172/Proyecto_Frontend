@@ -2,8 +2,9 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  // Ruta pública de login
+  // Rutas públicas de auth (login y registro)
   { path: 'auth', loadComponent: () => import('./componentes/auth/login/login').then(m => m.LoginComponent) },
+  { path: 'auth/registro', loadComponent: () => import('./componentes/auth/register/register').then(m => m.RegisterComponent) },
 
   // Rutas protegidas por authGuard
   { path: '', canActivate: [authGuard], loadComponent: () => import('./componentes/home/home').then(m => m.HomeComponent) },
