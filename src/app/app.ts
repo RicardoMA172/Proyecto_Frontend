@@ -55,14 +55,17 @@ export class App implements OnDestroy {
 
   // Cargar perfil desde backend (si hay token)
   loadProfile() {
+    // Mostrar el panel inmediatamente para dar feedback visual
+    this.showProfile = !this.showProfile;
+    // Si acabamos de abrir el panel, cargamos el perfil; si lo cerramos, no hacemos petición
+    if (!this.showProfile) return;
     this.auth.getUser().subscribe({
       next: (res) => {
         this.userProfile = res;
-        this.showProfile = true;
       },
       error: () => {
         this.userProfile = null;
-        this.showProfile = false;
+        this.showProfile = false; // revertir si falla
       }
     });
   }

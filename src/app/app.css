@@ -192,6 +192,20 @@ body, html {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08) inset;
 }
 
+/* Estados de interacción más visibles */
+.topbar .btn:active,
+.topbar .btn:focus {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(1px);
+  outline: none;
+}
+
+/* Mayor especificidad para asegurar que el botón activo se vea debajo del topbar */
+.topbar-right > .btn.active {
+  background: rgba(255,255,255,0.14) !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08) inset !important;
+}
+
 .profile-panel {
   position: absolute;
   top: 56px;
