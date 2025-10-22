@@ -1,8 +1,8 @@
 <div class="layout">
   <header class="topbar" *ngIf="isAuthenticated">
+    <!-- Toggle placed at the left edge of the header -->
+    <button class="toggle" (click)="toggleSidebar()">☰</button>
     <div class="topbar-right">
-      <!-- Toggle moved to header to control sidebar without changing its behavior -->
-      <button class="toggle" (click)="toggleSidebar()">☰</button>
       <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
       <button class="btn" (click)="logout()">Cerrar sesión</button>
     </div>
