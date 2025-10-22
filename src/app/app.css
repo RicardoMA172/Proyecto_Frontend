@@ -196,22 +196,24 @@ body, html {
   position: absolute;
   top: 56px;
   right: 16px;
-  background: #f5f7f9; /* gris claro */
+  background: #f3f4f6; /* gris muy claro, uniforme */
   color: var(--text);
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
   border: 1px solid rgba(0,0,0,0.06);
-  min-width: 260px;
-  font-family: inherit; /* usar la misma tipografía global */
-  transition: transform 160ms ease, opacity 160ms ease;
+  min-width: 280px;
+  font-family: inherit; /* heredar tipografía global */
+  font-size: 14px; /* tamaño consistente con el resto */
+  line-height: 1.4;
+  transition: transform 160ms ease, opacity 160ms ease, visibility 160ms ease;
   transform-origin: top right;
   z-index: 70;
 }
 
 .profile-row { margin-bottom: 8px; display:flex; gap:8px; align-items:center; }
 .profile-row strong { width: 90px; font-weight: 600; color: var(--text); }
-.profile-row span { flex: 1; color: var(--text-light); }
+.profile-row span { flex: 1; color: var(--text-light); font-family: inherit; }
 
 .eye { background: transparent; border: none; cursor: pointer; margin-left: 8px; color: var(--text); }
 
