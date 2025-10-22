@@ -42,7 +42,7 @@ export class App implements OnDestroy {
     // Ocultar sidebar en rutas de auth
     const url: string = e.urlAfterRedirects ?? e.url ?? '';
     if (url.startsWith('/auth')) {
-      this.sidebarClosed = true;
+      this.sidebarClosed = false;
       this.showSidebar = false;
     } else {
       this.showSidebar = true;
