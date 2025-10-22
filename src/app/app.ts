@@ -42,27 +42,17 @@ export class App implements OnDestroy {
     // Ocultar sidebar en rutas de auth
     const url: string = e.urlAfterRedirects ?? e.url ?? '';
     if (url.startsWith('/auth')) {
-      this.sidebarClosed = true;
+      this.sidebarClosed = false;
       this.showSidebar = false;
-      document.body.classList.remove('sidebar-open');
     } else {
       this.showSidebar = true;
-      // Si salimos de /auth y la barra no está cerrada, aseguramos la clase
-      if (!this.sidebarClosed && this.showSidebar) {
-        document.body.classList.add('sidebar-open');
-      }
     }
   });
 
   toggleSidebar() {
   this.sidebarClosed = !this.sidebarClosed;
-  if (this.sidebarClosed) {
-    document.body.classList.remove('sidebar-open');
-  } else {
-    document.body.classList.add('sidebar-open');
   }
-}
-
+  
 
   // Cargar perfil desde backend (si hay token)
   loadProfile() {
@@ -107,11 +97,5 @@ export class App implements OnDestroy {
     window.addEventListener('auth-changed', this.authChangeHandler);
     // Cerrar panel de perfil al clicar fuera
     window.addEventListener('click', this.outsideClickHandler);
-    // Inicializar la clase del body según el estado inicial
-    if (!this.sidebarClosed && this.showSidebar) {
-      document.body.classList.add('sidebar-open');
-    } else {
-      document.body.classList.remove('sidebar-open');
-    }
   }
 }
