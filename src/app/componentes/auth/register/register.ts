@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.html',
+  styleUrls: ['./register.css']
 })
 export class RegisterComponent implements OnDestroy {
   form = new FormBuilder().group({
