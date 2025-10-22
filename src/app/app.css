@@ -196,17 +196,27 @@ body, html {
   position: absolute;
   top: 56px;
   right: 16px;
-  background: var(--card); /* panel blanco para contraste */
+  background: #f5f7f9; /* gris claro */
   color: var(--text);
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-  min-width: 220px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  border: 1px solid rgba(0,0,0,0.06);
+  min-width: 260px;
+  font-family: inherit; /* usar la misma tipografía global */
+  transition: transform 160ms ease, opacity 160ms ease;
+  transform-origin: top right;
+  z-index: 70;
 }
 
-.profile-row { margin-bottom: 8px; }
+.profile-row { margin-bottom: 8px; display:flex; gap:8px; align-items:center; }
+.profile-row strong { width: 90px; font-weight: 600; color: var(--text); }
+.profile-row span { flex: 1; color: var(--text-light); }
 
-.eye { background: transparent; border: none; cursor: pointer; margin-left: 8px; }
+.eye { background: transparent; border: none; cursor: pointer; margin-left: 8px; color: var(--text); }
+
+/* pequeña transición para mostrar/ocultar (si se usa hidden attribute) */
+.profile-panel[hidden] { opacity: 0; transform: scale(0.98); pointer-events: none; }
 
 /* Tarjetas bonitas para los resúmenes */
 .card {
