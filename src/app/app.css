@@ -40,6 +40,8 @@ body, html {
   box-shadow: 2px 0 8px rgba(0,0,0,0.05);
   position: relative;
 
+
+
   overflow-y: auto;   /* permitir scroll interno */
   overflow-x: hidden; 
   max-height: 100vh;  /* no crecer más que la ventana */
@@ -120,6 +122,10 @@ body, html {
    en el DOM, sólo queda el botón toggle en el header. */
 
 
+
+
+
+
 /* Hover de botones con fondo gris ligero */
 .menu a:hover {
   background: #e2e6ea; /* gris claro */
@@ -139,6 +145,10 @@ body, html {
   padding-right: 0px;
 }
 
+
+
+
+
 /* Topbar (header) en la parte superior, con botones a la derecha */
 .topbar {
   position: fixed;
@@ -155,8 +165,6 @@ body, html {
   box-shadow: 0 1px 6px rgba(0,0,0,0.06);
   z-index: 60;
 }
-/*hola*/
-
 /* Evitar que el topbar capture todos los clicks: solo sus elementos interactivos aceptan eventos */
 .topbar {
   pointer-events: none;
@@ -355,48 +363,3 @@ header.topbar .profile-panel * {
   color: var(--accent) !important;
 }
 
-/* ========================= */
-/* NUEVO: ajustes para mover botón al header y ocultar sidebar cerrado */
-/* ========================= */
-
-/* Header blanco */
-.topbar {
-  background: #2980b9 !important;
-  color: var(--text) !important;
-  justify-content: space-between !important;
-}
-
-/* Botón ☰ en el header */
-.toggle-header {
-  background: transparent;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: var(--accent);
-  pointer-events: auto;
-}
-
-/* Sidebar oculto completamente cuando está cerrado */
-.sidebar.closed {
-  transform: translateX(-100%);
-  position: fixed;
-  top: 56px;
-  left: 0;
-  height: calc(100vh - 56px);
-  width: 240px;
-  transition: transform 0.25s ease;
-}
-
-/* Cuando está abierto */
-.sidebar:not(.closed) {
-  transform: translateX(0);
-  position: fixed;
-  top: 56px;
-  left: 0;
-  height: calc(100vh - 56px);
-}
-
-/* Transición suave del contenido */
-.content {
-  transition: margin-left 0.25s ease;
-}
