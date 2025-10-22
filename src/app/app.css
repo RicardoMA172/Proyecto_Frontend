@@ -214,7 +214,13 @@ header.topbar .profile-panel {
   top: 56px;
   right: 16px;
   background: var(--profile-bg) !important; /* fondo oscuro garantizado */
+  background-color: var(--profile-bg) !important;
+  background-image: none !important;
+  opacity: 1 !important;
   color: var(--profile-text) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  mix-blend-mode: normal !important;
   padding: 12px 14px;
   border-radius: 10px;
   box-shadow: 0 8px 28px rgba(0,0,0,0.35);
@@ -225,14 +231,38 @@ header.topbar .profile-panel {
   line-height: 1.4;
   transition: transform 160ms ease, opacity 160ms ease, visibility 160ms ease;
   transform-origin: top right;
-  z-index: 120;
+  z-index: 9999;
 }
 
-.profile-row { margin-bottom: 8px; display:flex; gap:8px; align-items:center; font-family: inherit !important; color: var(--profile-text) !important; }
-.profile-row strong { width: 90px; font-weight: 600; color: var(--profile-text) !important; }
-.profile-row span { flex: 1; color: var(--profile-text) !important; }
+/* Deshabilitar pseudo-elementos que puedan estar dibujando un fondo blanco */
+.topbar .profile-panel::before,
+.topbar .profile-panel::after,
+header.topbar .profile-panel::before,
+header.topbar .profile-panel::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  background-color: transparent !important;
+}
 
-.eye { background: transparent; border: none; cursor: pointer; margin-left: 8px; color: var(--text); }
+/* Forzar clipping y color en texto (soporte WebKit) */
+.topbar .profile-panel {
+  background-clip: padding-box !important;
+  -webkit-text-fill-color: var(--profile-text) !important;
+}
+
+/* Forzar color y tipografía en todos los elementos internos del panel */
+.topbar .profile-panel *,
+header.topbar .profile-panel * {
+  color: var(--profile-text) !important;
+  font-family: inherit !important;
+}
+
+.profile-row { margin-bottom: 8px; display:flex; gap:8px; align-items:center; }
+.profile-row strong { width: 90px; font-weight: 600; }
+.profile-row span { flex: 1; }
+
+.eye { background: transparent; border: none; cursor: pointer; margin-left: 8px; color: var(--profile-text) !important; }
 
 /* pequeña transición para mostrar/ocultar (si se usa hidden attribute) */
 .profile-panel[hidden] { opacity: 0; transform: scale(0.98); pointer-events: none; }
