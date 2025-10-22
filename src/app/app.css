@@ -147,8 +147,8 @@ body, html {
   left: 0;
   right: 0;
   height: 56px;
-  background: var(--accent); /* header azul */
-  color: #2980b9;
+  background:#2980b9; /* header azul */
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: flex-end;
