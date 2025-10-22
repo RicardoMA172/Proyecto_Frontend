@@ -21,4 +21,9 @@ export class AuthService {
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/logout`, {});
   }
+
+  getUser(): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    return this.http.get(`${this.apiUrl}/user`, { headers: { Authorization: `Bearer ${token}` } });
+  }
 }
