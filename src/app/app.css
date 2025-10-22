@@ -133,7 +133,8 @@ body, html {
 .content {
   flex: 1;
   min-height: 100vh; /* <- añadir *-------------------/
-  padding: 0 32px 32px 32px; /* sin padding-top para llegar hasta arriba */
+  /* el topbar es fixed, dejamos espacio superior para que el contenido sea clicable */
+  padding: 72px 32px 32px 32px; /* espacio superior igual a la altura del topbar */
   background: var(--bg);
   /* eliminar margin-left negativo para evitar que el panel se desplace al togglear la sidebar */
   padding-right: 0px;
@@ -255,7 +256,7 @@ body, html {
 /* Ocultar menú y deshabilitar enlaces */
 .sidebar.closed .menu {
   pointer-events: none; /* no se puede clickear */
-  opacity: 10;           /* se oculta */
+  opacity: 0.1;           /* casi oculto */
   transition: opacity 0.2s;
 }
 
