@@ -1,5 +1,9 @@
 <div class="layout">
   <header class="topbar" *ngIf="isAuthenticated">
+    <div class="sidebar-header">
+      <button class="toggle" (click)="toggleSidebar()">☰</button>
+      <div class="brand" *ngIf="!sidebarClosed"></div>
+    </div>
     <div class="topbar-right">
       <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
       <button class="btn" (click)="logout()">Cerrar sesión</button>
@@ -12,10 +16,6 @@
   </header>
 
   <nav *ngIf="showSidebar" class="sidebar" [class.closed]="sidebarClosed">
-    <div class="sidebar-header">
-      <button class="toggle" (click)="toggleSidebar()">☰</button>
-      <div class="brand" *ngIf="!sidebarClosed"></div>
-    </div>
 
     <ul class="menu">
       <li><a routerLink="/" data-short="🏠"><span>Inicio</span></a></li>
