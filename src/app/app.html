@@ -1,6 +1,8 @@
 <div class="layout">
   <header class="topbar" *ngIf="isAuthenticated">
     <div class="topbar-right">
+      <!-- Toggle moved to header to control sidebar without changing its behavior -->
+      <button class="toggle" (click)="toggleSidebar()">☰</button>
       <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
       <button class="btn" (click)="logout()">Cerrar sesión</button>
     </div>
@@ -13,7 +15,6 @@
 
   <nav *ngIf="showSidebar" class="sidebar" [class.closed]="sidebarClosed">
     <div class="sidebar-header">
-      <button class="toggle" (click)="toggleSidebar()">☰</button>
       <div class="brand" *ngIf="!sidebarClosed"></div>
     </div>
 
