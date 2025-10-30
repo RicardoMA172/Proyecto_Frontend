@@ -1,7 +1,7 @@
 /* Layout */
 .dashboard {
   display: flex;
-  min-height: 100vh;
+  min-height: 100%;
   font-family: Arial, sans-serif; /* tipografía consistente */
 }
 
