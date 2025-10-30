@@ -1,3 +1,4 @@
+
 :root {
   --bg: #ecf0f1;         /* Fondo general (igual que el panel para evitar marco blanco) */
   --card: #ffffff;       /* Fondo tarjetas / sidebar */
@@ -23,13 +24,12 @@ body, html {
   font-weight: 400; /* Normal, sin negritas */
 }
 
-/* Reservar espacio para el topbar fijo: usar padding en el body para evitar solapamiento */
 .layout {
   display: flex;
-  /* Empujar el layout hacia abajo sin tocar el <body> para evitar scroll doble
-     y espacios extra: usamos margin-top en lugar de padding en body. */
-  margin-top: var(--topbar-height);
+  /* Reservar el espacio del topbar y asegurar que el layout llegue hasta el fondo
+     de la ventana: altura = 100vh - altura del topbar */
   min-height: calc(100vh - var(--topbar-height));
+  margin-top: var(--topbar-height); /* empuja el layout debajo del topbar fijo */
   align-items: stretch; /* asegurar que columnas se estiren igual verticalmente */
   background: var(--bg); /* mismo fondo que el container/panel */
 }
@@ -158,12 +158,11 @@ body, html {
 /* Content */
 .content {
   flex: 1;
-  /* ocupar toda la altura del layout */
-  height: 100%;
+  /* ocupar toda la altura del layout (el layout ya está desplazado por el topbar) */
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-  /* permitir scroll interno si el contenido excede la altura disponible */
-  overflow: auto;
+  /* ajustar padding ahora que el topbar no solapa el contenido */
   padding: 20px 32px;
   background: var(--bg);
   padding-right: 0px;
@@ -405,4 +404,3 @@ header.topbar .profile-panel * {
   background: #e2e6ea !important;
   color: var(--accent) !important;
 }
-
