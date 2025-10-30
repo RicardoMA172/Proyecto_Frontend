@@ -1,17 +1,6 @@
 /* Global layout variables and rules - estos deben ser globales porque afectan a <body>
 	 y al layout completo; mover aquí evita que queden encapsulados por estilos de
 	 componentes y por eso el header fijo no tapará el contenido. */
-:root {
-	--bg: #ecf0f1;
-	--card: #ffffff;
-	--accent: #3498db;
-	--accent-light: #ecf6fc;
-	--text: #2c3e50;
-	--text-light: #7f8c8d;
-	--profile-bg: #2b3036;
-	--profile-text: #eef2f5;
-	--topbar-height: 56px;
-}
 
 html, body {
 	height: 100%;
