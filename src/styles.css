@@ -13,34 +13,30 @@
 	--topbar-height: 56px;
 }
 
+
 html, body {
 	height: 100%;
 	margin: 0;
 }
 
-/* Reservar el espacio del topbar fijo para que no tape el contenido */
-body {
-	padding-top: var(--topbar-height);
-}
-
-/* El `.layout` ocupa la altura restante de la ventana (viewport - topbar) */
+/* Evitar modificar el <body> para no generar scroll extra o espacios dobles.
+	 En su lugar empujamos el layout con margin-top y usamos min-height para
+	 ocupar el área restante. */
 .layout {
-	height: calc(100vh - var(--topbar-height));
 	display: flex;
+	margin-top: var(--topbar-height);
+	min-height: calc(100vh - var(--topbar-height));
 	align-items: stretch;
 }
 
-/* Forzar que el content use toda la altura disponible dentro del layout */
+/* Forzar que el content/sidebart ocupen la altura interna del layout.
+	 Evitamos overflow:auto en el content salvo que sea necesario. */
 .content {
-	height: 100%;
 	display: flex;
 	flex-direction: column;
-	overflow: auto;
 }
 
-/* sidebar height: ocupar toda la altura del layout */
 .sidebar {
-	height: 100%;
 	overflow-y: auto;
 }
 

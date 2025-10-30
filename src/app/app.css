@@ -24,15 +24,12 @@ body, html {
 }
 
 /* Reservar espacio para el topbar fijo: usar padding en el body para evitar solapamiento */
-body {
-  padding-top: var(--topbar-height);
-}
-
 .layout {
   display: flex;
-  /* Altura exacta del espacio restante (ventana - topbar). Usamos height en vez de
-     margin-top para evitar problemas de cálculo en distintos navegadores */
-  height: calc(100vh - var(--topbar-height));
+  /* Empujar el layout hacia abajo sin tocar el <body> para evitar scroll doble
+     y espacios extra: usamos margin-top en lugar de padding en body. */
+  margin-top: var(--topbar-height);
+  min-height: calc(100vh - var(--topbar-height));
   align-items: stretch; /* asegurar que columnas se estiren igual verticalmente */
   background: var(--bg); /* mismo fondo que el container/panel */
 }
