@@ -1,40 +1,55 @@
 /* Global layout variables and rules - estos deben ser globales porque afectan a <body>
-	 y al layout completo; mover aquí evita que queden encapsulados por estilos de
-	 componentes y por eso el header fijo no tapará el contenido. */
+   y al layout completo; mover aquí evita que queden encapsulados por estilos de
+   componentes y por eso el header fijo no tapará el contenido. */
 :root {
-
-	--topbar-height: 56px;
+  --topbar-height: 56px;
 }
 
+/* Reset general */
+* {
+  box-sizing: border-box;
+}
+
+/* Evitar scroll global del navegador */
 html, body {
-	height: 100%;
-	margin: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* 🔒 evita el scroll de todo el documento */
 }
 
 /* Reservar el espacio del topbar fijo para que no tape el contenido */
 body {
-	padding-top: var(--topbar-height);
+  padding-top: var(--topbar-height);
+  overflow-x: hidden; /* 🔒 evita scroll lateral del body */
+  font-family: "Roboto", system-ui, Arial, sans-serif;
+  background: var(--bg, #ecf0f1);
+  color: var(--text, #2c3e50);
 }
 
 /* El `.layout` ocupa la altura restante de la ventana (viewport - topbar) */
 .layout {
-	height: calc(100vh - var(--topbar-height));
-	display: flex;
-	align-items: stretch;
+  height: calc(100vh - var(--topbar-height));
+  display: flex;
+  align-items: stretch;
+  overflow: hidden; /* 🔒 evita scroll adicional en layout */
+}
+
+/* Sidebar */
+.sidebar {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Forzar que el content use toda la altura disponible dentro del layout */
 .content {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	overflow: auto;
-}
-
-/* sidebar height: ocupar toda la altura del layout */
-.sidebar {
-	height: 100%;
-	overflow-y: auto;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* ✅ solo aquí permitimos scroll vertical */
+  overflow-x: auto; /* ✅ si el contenido excede horizontalmente */
 }
 
 /* End global layout rules */
