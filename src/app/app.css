@@ -378,11 +378,12 @@ header.topbar .profile-panel * {
 
 /* Ocultar menú y deshabilitar enlaces */
 .sidebar.closed .menu {
-  pointer-events: none; /* no se puede clickear */
-  opacity: 0.1;           /* casi oculto */
+  
   transition: opacity 0.2s;
 
-  
+  /* permitir interacciones con los iconos cortos y mantener visibilidad */
+  pointer-events: auto; /* permitir click en los items (cuando se usan los data-short) */
+  opacity: 1;           /* visible, no tenue */
 }
 
 /* DARK SIDEBAR OVERRIDES - added by editor */
