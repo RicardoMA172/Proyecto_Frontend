@@ -1,1 +1,47 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global layout variables and rules - estos deben ser globales porque afectan a <body>
+	 y al layout completo; mover aquí evita que queden encapsulados por estilos de
+	 componentes y por eso el header fijo no tapará el contenido. */
+:root {
+	--bg: #ecf0f1;
+	--card: #ffffff;
+	--accent: #3498db;
+	--accent-light: #ecf6fc;
+	--text: #2c3e50;
+	--text-light: #7f8c8d;
+	--profile-bg: #2b3036;
+	--profile-text: #eef2f5;
+	--topbar-height: 56px;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+/* Reservar el espacio del topbar fijo para que no tape el contenido */
+body {
+	padding-top: var(--topbar-height);
+}
+
+/* El `.layout` ocupa la altura restante de la ventana (viewport - topbar) */
+.layout {
+	height: calc(100vh - var(--topbar-height));
+	display: flex;
+	align-items: stretch;
+}
+
+/* Forzar que el content use toda la altura disponible dentro del layout */
+.content {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+}
+
+/* sidebar height: ocupar toda la altura del layout */
+.sidebar {
+	height: 100%;
+	overflow-y: auto;
+}
+
+/* End global layout rules */
