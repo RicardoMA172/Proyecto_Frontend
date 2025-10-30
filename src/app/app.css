@@ -25,10 +25,12 @@ body, html {
 
 .layout {
   display: flex;
-  min-height: 100vh;
-  align-items: stretch; /* asegurar que columnas se estiren igual verticalmente-------*/
+  /* Reservar el espacio del topbar y asegurar que el layout llegue hasta el fondo
+     de la ventana: altura = 100vh - altura del topbar */
+  min-height: calc(100vh - var(--topbar-height));
+  margin-top: var(--topbar-height); /* empuja el layout debajo del topbar fijo */
+  align-items: stretch; /* asegurar que columnas se estiren igual verticalmente */
   background: var(--bg); /* mismo fondo que el container/panel */
-
 }
 
 /* Sidebar */
@@ -46,7 +48,8 @@ body, html {
 
   overflow-y: auto;   /* permitir scroll interno */
   overflow-x: hidden; 
-  max-height: 100vh;  /* no crecer más que la ventana */
+  /* ocupar toda la altura del layout (que ya está debajo del topbar) */
+  height: 100%;
 
   /* efecto de abrir/cerrar */
   transform: none;
@@ -154,11 +157,13 @@ body, html {
 /* Content */
 .content {
   flex: 1;
-  min-height: 100vh; /* <- añadir *------------------- */
-  /* dejar espacio superior para que el contenido no quede debajo del topbar */
-  padding: 72px 32px 32px 32px;
+  /* ocupar toda la altura del layout (el layout ya está desplazado por el topbar) */
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* ajustar padding ahora que el topbar no solapa el contenido */
+  padding: 20px 32px;
   background: var(--bg);
-  /* eliminar margin-left negativo para evitar que el panel se desplace al togglear la sidebar */
   padding-right: 0px;
 }
 
