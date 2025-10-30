@@ -7,6 +7,7 @@
   --text-light: #7f8c8d; /* Texto gris */
   --profile-bg: #2b3036; /* fondo oscuro para panel de perfil */
   --profile-text: #eef2f5; /* texto claro para panel */
+  --topbar-height: 56px; /* altura del topbar para layout fijo */
 }
 
 * {
@@ -380,6 +381,8 @@ header.topbar .profile-panel * {
   pointer-events: none; /* no se puede clickear */
   opacity: 0.1;           /* casi oculto */
   transition: opacity 0.2s;
+
+  
 }
 
 /* DARK SIDEBAR OVERRIDES - added by editor */
