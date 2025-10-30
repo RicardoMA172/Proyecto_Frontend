@@ -22,9 +22,6 @@ body, html {
   background: var(--bg);
   color: var(--text);
   font-weight: 400; /* Normal, sin negritas */
-
-  /* Evitar scrollbar del body; el scroll lo debe manejar el contenedor .content */
-  overflow: hidden;
 }
 
 
