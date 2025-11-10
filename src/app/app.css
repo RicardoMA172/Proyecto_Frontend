@@ -295,11 +295,19 @@ header.topbar .profile-panel {
   align-items: center;
   gap: 10px;
   color: #fff;
+  z-index: 70; /* asegurar que el brand esté encima de elementos superpuestos */
+  pointer-events: auto; /* permitir interacción con el brand (ej. menú o tooltip si aplica) */
 }
 .topbar .topbar-logo {
-  height: calc(var(--topbar-height) - 28px); /* small logo inside header */
-  width: auto;
-  display: block;
+  /* Forzar un alto razonable y asegurar que la imagen se muestre correctamente */
+  height: 40px !important;
+  max-height: calc(var(--topbar-height) - 18px) !important;
+  width: auto !important;
+  display: block !important;
+  object-fit: contain !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-right: 8px;
   border-radius: 4px;
 }
 .topbar .topbar-title {
