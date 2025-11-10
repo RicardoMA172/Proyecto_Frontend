@@ -288,7 +288,7 @@ header.topbar .profile-panel {
 /* Header brand (logo + title) placed right after toggle - keep toggle untouched */
 .topbar .header-brand {
   position: absolute;
-  left: 56px; /* enough space so it doesn't overlap toggle */
+  left: 80px; /* aumentar espacio para separar logo del botón toggle */
   top: 50%;
   transform: translateY(-50%);
   display: flex;
