@@ -19,6 +19,19 @@
   color: #2c3e50;
 }
 
+/* Estilo principal de la página de inicio */
+.page-title {
+  font-size: 28px;
+  color: var(--text);
+  text-align: center;
+  margin: 6px 0 18px 0;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .page-title { font-size: 20px; margin-top: 8px; }
+}
+
 /* Stats cards */
 .stats {
   display: grid;
