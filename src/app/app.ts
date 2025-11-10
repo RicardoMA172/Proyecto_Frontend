@@ -12,7 +12,7 @@ import { AuthService } from './servicios/auth/auth';
   styleUrls: ['./app.css']
 })
 export class App implements OnDestroy {
-  protected readonly title = signal('frontend');
+  protected readonly title = signal('Plataforma digital para monitoreo de la calidad del aire');
   sidebarClosed = false;
   showSidebar = true;
   // Perfil del usuario (nombre, email, password oculto)
