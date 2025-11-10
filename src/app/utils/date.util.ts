@@ -7,3 +7,12 @@ export function parseInputDate(value: string): Date {
   // Crear Date en horario local evitando interpretación UTC
   return new Date(year, month - 1, day);
 }
+
+// Formatea una Date (local) a 'YYYY-MM-DD' evitando conversiones a UTC
+export function formatLocalDate(date: Date | string): string {
+  if (!(date instanceof Date)) return String(date);
+  const y = date.getFullYear();
+  const m = (date.getMonth() + 1).toString().padStart(2, '0');
+  const d = date.getDate().toString().padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}

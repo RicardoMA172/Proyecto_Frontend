@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { parseInputDate } from '../../utils/date.util';
+import { parseInputDate, formatLocalDate } from '../../utils/date.util';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
 import { AuthService } from '../../servicios/auth/auth';
@@ -73,14 +73,14 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       )
       .subscribe(latest => {
-        const selDateStr = this.selectedDate.toISOString().split('T')[0];
-        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
+  const selDateStr = formatLocalDate(this.selectedDate);
+  this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
   }
 
   // Descargar los registros visibles del día actual en formato CSV/XLSX (según backend)
   downloadDayExport() {
-    const dateStr = this.selectedDate.toISOString().split('T')[0];
+  const dateStr = formatLocalDate(this.selectedDate);
     this.caService.exportDay(this.selectedDate).subscribe({
       next: (blob) => {
         const filename = `registros-${dateStr}.csv`;
@@ -123,12 +123,12 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.isToday(date)) {
       this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
-        const selDateStr = this.selectedDate.toISOString().split('T')[0];
-        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
+  const selDateStr = formatLocalDate(this.selectedDate);
+  this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
     } else {
       this.caService.getByDate(date).subscribe(allData => {
-        const selDateStr = this.selectedDate.toISOString().split('T')[0];
+  const selDateStr = formatLocalDate(this.selectedDate);
         this.data = allData.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
       });
     }
@@ -174,7 +174,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const selDateStr = this.selectedDate.toISOString().split('T')[0];
+  const selDateStr = formatLocalDate(this.selectedDate);
 
     const filtered = data.filter(d => {
       const fechaStr = d.fecha_hora.split(' ')[0]; // ✅ extrae "YYYY-MM-DD"
