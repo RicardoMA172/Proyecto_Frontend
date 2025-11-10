@@ -1,6 +1,11 @@
 <header class="topbar" *ngIf="isAuthenticated">
   <!-- Toggle placed at the left edge of the header -->
   <button class="toggle" (click)="toggleSidebar()">☰</button>
+  <!-- Brand (logo + title) placed right of the toggle. Do not change the toggle button. -->
+  <div class="header-brand">
+    <img src="assets/logo.png" alt="logo" class="topbar-logo" />
+    <span class="topbar-title">{{ title() }}</span>
+  </div>
   <div class="topbar-right">
     <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
     <button class="btn" (click)="logout()">Cerrar sesión</button>

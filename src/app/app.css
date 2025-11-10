@@ -8,7 +8,7 @@
   --text-light: #7f8c8d; /* Texto gris */
   --profile-bg: #2b3036; /* fondo oscuro para panel de perfil */
   --profile-text: #eef2f5; /* texto claro para panel */
-  --topbar-height: 56px; /* altura del topbar para layout fijo */
+  --topbar-height: 64px; /* altura del topbar para layout fijo (ligeramente mayor para logo y título) */
 }
 
 * {
@@ -186,7 +186,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 56px;
+  height: var(--topbar-height);
   background:#2980b9; /* header azul */
   color: #fff;
   display: flex;
@@ -248,7 +248,7 @@ body {
 .topbar .profile-panel,
 header.topbar .profile-panel {
   position: absolute;
-  top: 56px;
+  top: var(--topbar-height);
   right: 16px;
   background: var(--profile-bg) !important; /* fondo oscuro garantizado */
   background-color: var(--profile-bg) !important;
@@ -283,6 +283,30 @@ header.topbar .profile-panel {
   border: 1px solid rgba(255,255,255,0.08);
   padding: 6px 10px;
   border-radius: 6px;
+}
+
+/* Header brand (logo + title) placed right after toggle - keep toggle untouched */
+.topbar .header-brand {
+  position: absolute;
+  left: 56px; /* enough space so it doesn't overlap toggle */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+.topbar .topbar-logo {
+  height: calc(var(--topbar-height) - 28px); /* small logo inside header */
+  width: auto;
+  display: block;
+  border-radius: 4px;
+}
+.topbar .topbar-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
 }
 
 /* Ensure toggle remains clickable even though topbar pointer-events are none */
