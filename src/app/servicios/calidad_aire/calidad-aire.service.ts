@@ -39,7 +39,7 @@ export class CalidadAireService {
   
   // Obtener todos los registros de un día específico
   getByDate(date: Date): Observable<any> {
-    const raw = (date instanceof Date) ? date.toISOString().split('T')[0] : String(date);
+    const raw = this.formatLocalDate(date);
     const encoded = encodeURIComponent(raw);
     console.debug('[CalidadAireService] getByDate -> date=', raw, ' encoded=', encoded, ' url=', `${this.apiUrl}/device/by-date?date=${encoded}`);
     return this.http.get(`${this.apiUrl}/device/by-date?date=${encoded}`);
@@ -47,7 +47,7 @@ export class CalidadAireService {
 
   // Obtener los últimos registros de un día específico
   getLatestByDate(date: Date, limit: number = 10): Observable<any> {
-    const raw = (date instanceof Date) ? date.toISOString().split('T')[0] : String(date);
+    const raw = this.formatLocalDate(date);
     const encoded = encodeURIComponent(raw);
     console.debug('[CalidadAireService] getLatestByDate -> date=', raw, ' encoded=', encoded, ' limit=', limit);
     return this.http.get(`${this.apiUrl}/device/latest-by-date?date=${encoded}&limit=${limit}`);
@@ -60,7 +60,7 @@ export class CalidadAireService {
 
   // Exportar registros de un día (CSV/Excel) como Blob
   exportDay(date: Date): Observable<Blob> {
-    const raw = (date instanceof Date) ? date.toISOString().split('T')[0] : String(date);
+    const raw = this.formatLocalDate(date);
     const encoded = encodeURIComponent(raw);
     const url = `${this.apiUrl}/device/export-csv?date=${encoded}`;
     const token = localStorage.getItem('token') ?? '';
@@ -68,6 +68,15 @@ export class CalidadAireService {
     if (token) opts.headers = { Authorization: `Bearer ${token}` };
     console.debug('[CalidadAireService] exportDay -> url=', url);
     return this.http.get(url, opts) as unknown as Observable<Blob>;
+  }
+
+  // Formatea una Date a YYYY-MM-DD usando la fecha local (evita desfaces por zonas horarias)
+  private formatLocalDate(date: Date | string): string {
+    if (!(date instanceof Date)) return String(date);
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
   
 }
