@@ -6,7 +6,7 @@
     <section class="records-section">
       <div class="records-header">
         <h2>Últimos registros</h2>
-        <button *ngIf="isAdmin" class="download-btn" (click)="downloadDayExport()">Descargar datos</button>
+        <button *ngIf="isAdmin" class="download-btn" (click)="downloadDayExport()" title="Descargar todos los registros del día seleccionado">Descargar</button>
       </div>
       <table class="records-table">
         <thead>

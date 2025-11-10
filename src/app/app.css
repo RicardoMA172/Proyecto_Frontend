@@ -412,3 +412,18 @@ header.topbar .profile-panel * {
   background: #e2e6ea !important;
   color: var(--accent) !important;
 }
+
+/* Estilo global para botón de descarga usado en múltiples componentes */
+.download-btn {
+  background-color: #2980b9; /* azul principal coherente */
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+  transition: background-color 150ms ease, transform 100ms ease;
+}
+.download-btn:hover { background-color: #1f6fa3; transform: translateY(-1px); }
+.download-btn:focus { outline: 3px solid rgba(41,128,185,0.25); outline-offset: 2px; }
