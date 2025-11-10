@@ -2,7 +2,7 @@
    y al layout completo; mover aquí evita que queden encapsulados por estilos de
    componentes y por eso el header fijo no tapará el contenido. */
 :root {
-  --topbar-height: 64px;
+  --topbar-height: 78px;
 }
 
 /* Reset general */

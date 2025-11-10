@@ -8,7 +8,7 @@
   --text-light: #7f8c8d; /* Texto gris */
   --profile-bg: #2b3036; /* fondo oscuro para panel de perfil */
   --profile-text: #eef2f5; /* texto claro para panel */
-  --topbar-height: 64px; /* altura del topbar para layout fijo (ligeramente mayor para logo y título) */
+  --topbar-height: 78px; /* altura del topbar para layout fijo (ligeramente mayor para logo y título) */
 }
 
 * {
