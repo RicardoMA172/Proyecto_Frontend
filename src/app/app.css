@@ -68,7 +68,7 @@ body {
 
 
 .sidebar.closed {
-  width: 88px;
+  width: 0px;
   transform: none; /* evitar desplazar la barra con translateX, solo se cambia el width */
 }
 
@@ -397,8 +397,6 @@ header.topbar .profile-panel * {
 
 /* Mobile / tablet: off-canvas sidebar behavior and overlay */
 @media (max-width: 800px) {
-  /* Ajuste de la variable global para que todas las referencias usen la altura real del topbar móvil */
-  :root { --topbar-height: 56px; }
   .sidebar {
     top: var(--topbar-height);
     transform: translateX(-100%); /* ocultar por defecto fuera de pantalla */
@@ -440,6 +438,9 @@ header.topbar .profile-panel * {
     justify-content: space-between; /* repartir toggle/brand y acciones */
     align-items: center;
   }
+
+  /* Mantener el espacio reservado en el body igual a la altura del header móvil */
+  body { padding-top: 65px; }
 
   /* El body ya usa padding-top: var(--topbar-height) en la regla global; la variable
     se sobrescribe arriba para que todo (sidebar/overlay/topbar) esté sincronizado. */
