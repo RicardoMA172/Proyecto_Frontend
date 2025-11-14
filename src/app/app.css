@@ -429,6 +429,69 @@ header.topbar .profile-panel * {
   html, body { overflow: auto; }
 }
 
+/* Ajustes específicos para el header en pantallas pequeñas: evitar empalme y permitir que los elementos se reorganicen */
+@media (max-width: 800px) {
+  /* Reducir la altura del topbar para móviles y ajustar padding */
+  .topbar {
+    height: 56px;
+    padding: 0 12px;
+    justify-content: space-between; /* repartir toggle/brand y acciones */
+    align-items: center;
+  }
+
+  /* Mantener el espacio reservado en el body igual a la altura del header móvil */
+  body { padding-top: 56px; }
+
+  /* Hacer que el toggle y la brand estén en flujo normal (no absolute) para no empalmar) */
+  .topbar .toggle {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    margin: 0 8px 0 0;
+    font-size: 20px;
+  }
+
+  .topbar .header-brand {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    pointer-events: auto;
+    max-width: 60%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .topbar .topbar-logo { height: 32px !important; }
+
+  /* Reducir y truncar el título para evitar que empalme con los botones */
+  .topbar .topbar-title {
+    font-size: 14px;
+    max-width: calc(100% - 120px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Mostrar acciones a la derecha pero con menos espacio; si sigue habiendo empalme podemos ocultarlas en pantallas muy pequeñas */
+  .topbar .topbar-right { display: flex; gap: 6px; align-items: center; }
+  .topbar .btn { padding: 6px 8px; font-size: 0.9rem; }
+
+  /* Ajustar panel de perfil para que quepa en pantalla móvil */
+  .topbar .profile-panel { right: 8px; top: 56px; min-width: 220px; }
+
+  /* En pantallas muy pequeñas ocultamos el texto del título para maximizar espacio */
+  @media (max-width: 420px) {
+    .topbar .topbar-title { display: none; }
+    .topbar .topbar-right { display: none; }
+  }
+}
+
 /* Links del menú siempre visibles, pero con transición ligera al abrir */
 .sidebar .menu a span {
   display: inline-block;
