@@ -68,8 +68,14 @@ body {
 
 
 .sidebar.closed {
-  width: 88px;
-  transform: none; /* evitar desplazar la barra con translateX, solo se cambia el width */
+  /* Cuando la sidebar esté cerrada NO debe mostrarse nada (ni iconos ni texto).
+     Ocultamos visualmente y desactivamos interacciones. */
+  width: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 
@@ -506,25 +512,9 @@ header.topbar .profile-panel * {
 }
 
 /* data-short para cuando esté cerrada la barra */
-.sidebar.closed .menu a::after {
-  content: attr(data-short);
-  display: block;
-  text-align: center;
-  color: var(--accent);
-  transition: none; /* aparece de golpe */
-
-}
-
-.sidebar.closed .menu a span {
-  display: none; /* oculta el texto largo */
-}
-
-/* Ocultar menú y deshabilitar enlaces */
-.sidebar.closed .menu {
-  pointer-events: none; /* no se puede clickear */
-  opacity: 1;           /* casi oculto */
-  transition: opacity 0.2s;
-}
+.sidebar.closed .menu a::after { display: none !important; }
+.sidebar.closed .menu a span { display: none !important; }
+.sidebar.closed .menu { display: none !important; pointer-events: none !important; }
 
 /* DARK SIDEBAR OVERRIDES - added by editor */
 .sidebar {
