@@ -1,58 +1,52 @@
-/* Estilos basados en el diseño del login */
+/* Estilos basados en el diseño del login - responsive mejorado */
 .login-container, .register-container {
-  max-width: 420px;
-  margin: 60px auto;
+  max-width: 520px;
+  width: 100%;
+  margin: 36px auto;
   background: #ffffff;
-  padding: 28px 26px;
+  padding: 22px;
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.08);
   font-family: 'Roboto', system-ui, Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 .register-container h2 {
-  margin: 0 0 18px 0;
+  margin: 0 0 14px 0;
   font-size: 20px;
   color: #2c3e50;
 }
 
-.register-container form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.register-container form { display: flex; flex-direction: column; gap: 12px; }
 
 .register-container input[type="text"],
 .register-container input[type="email"],
 .register-container input[type="password"] {
-  padding: 10px 12px;
+  padding: 12px 12px;
   border-radius: 8px;
   border: 1px solid rgba(0,0,0,0.08);
-  font-size: 14px;
+  font-size: 15px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .register-container button[type="submit"] {
   background: #2980b9;
   color: #fff;
   border: none;
-  padding: 10px 12px;
+  padding: 12px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
 }
 
-.register-container button[type="submit"]:hover {
-  background: #2573a6;
-}
+.register-container button[type="submit"]:hover { background: #2573a6; }
 
-.register-container .mensaje {
-  margin-top: 12px;
-  color: #c0392b;
-}
+.register-container .mensaje { margin-top: 12px; color: #c0392b; }
 
-/* Responsive */
+/* Responsive tweaks */
 @media (max-width: 480px) {
-  .login-container, .register-container {
-    margin: 20px;
-    padding: 18px;
-  }
+  .login-container, .register-container { margin: 18px 12px; padding: 14px; }
+  .register-container input[type="text"], .register-container input[type="email"], .register-container input[type="password"] { font-size: 14px; padding: 10px; }
+  .register-container button[type="submit"] { padding: 10px; font-size: 14px; }
 }
