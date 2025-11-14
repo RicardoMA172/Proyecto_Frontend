@@ -397,6 +397,8 @@ header.topbar .profile-panel * {
 
 /* Mobile / tablet: off-canvas sidebar behavior and overlay */
 @media (max-width: 800px) {
+  /* Ajuste de la variable global para que todas las referencias usen la altura real del topbar móvil */
+  :root { --topbar-height: 56px; }
   .sidebar {
     top: var(--topbar-height);
     transform: translateX(-100%); /* ocultar por defecto fuera de pantalla */
@@ -439,8 +441,8 @@ header.topbar .profile-panel * {
     align-items: center;
   }
 
-  /* Mantener el espacio reservado en el body igual a la altura del header móvil */
-  body { padding-top: 56px; }
+  /* El body ya usa padding-top: var(--topbar-height) en la regla global; la variable
+    se sobrescribe arriba para que todo (sidebar/overlay/topbar) esté sincronizado. */
 
   /* Hacer que el toggle y la brand estén en flujo normal (no absolute) para no empalmar) */
   .topbar .toggle {
