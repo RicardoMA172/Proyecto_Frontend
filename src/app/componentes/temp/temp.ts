@@ -78,7 +78,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  // Descargar los registros visibles del día actual en formato CSV/XLSX (según backend)
+  // Descargar los registros visibles del día actual en formato CSV/XLSX 
   downloadDayExport() {
   const dateStr = formatLocalDate(this.selectedDate);
     this.caService.exportDay(this.selectedDate).subscribe({
@@ -95,6 +95,42 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error descargando export:', err);
+        alert('No se pudo descargar el archivo.');
+      }
+    });
+  }
+
+  // Descargar solo el campo 'temp' en CSV (id, fecha_hora, temp)
+  downloadFieldExport() {
+    const dateStr = formatLocalDate(this.selectedDate);
+    this.caService.getByDate(this.selectedDate).subscribe({
+      next: (rows: any[]) => {
+        const header = ['ID','Fecha_Hora','TEMP'];
+        const lines: string[] = [header.join(',')];
+        rows.forEach(r => {
+          if (!r.fecha_hora) return;
+          if (!r.fecha_hora.startsWith(dateStr)) return;
+          const id = r.id ?? '';
+          const fecha = r.fecha_hora;
+          const val = (r.temp !== undefined && r.temp !== null) ? r.temp : '';
+          // escapado simple de comillas
+          const row = [id, fecha, val].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+          lines.push(row);
+        });
+        const csv = lines.join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const filename = `registros-temp-${dateStr}.csv`;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error generando export por campo:', err);
         alert('No se pudo descargar el archivo.');
       }
     });
