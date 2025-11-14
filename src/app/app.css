@@ -68,7 +68,7 @@ body {
 
 
 .sidebar.closed {
-  width: 0px;
+  width: 88px;
   transform: none; /* evitar desplazar la barra con translateX, solo se cambia el width */
 }
 
@@ -433,17 +433,13 @@ header.topbar .profile-panel * {
 @media (max-width: 800px) {
   /* Reducir la altura del topbar para móviles y ajustar padding */
   .topbar {
-    height: 56px;
     padding: 0 12px;
     justify-content: space-between; /* repartir toggle/brand y acciones */
     align-items: center;
   }
 
   /* Mantener el espacio reservado en el body igual a la altura del header móvil */
-  body { padding-top: 65px; }
-
-  /* El body ya usa padding-top: var(--topbar-height) en la regla global; la variable
-    se sobrescribe arriba para que todo (sidebar/overlay/topbar) esté sincronizado. */
+  body { padding-top: 56px; }
 
   /* Hacer que el toggle y la brand estén en flujo normal (no absolute) para no empalmar) */
   .topbar .toggle {
