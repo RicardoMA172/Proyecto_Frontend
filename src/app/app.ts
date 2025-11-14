@@ -54,7 +54,7 @@ export class App implements OnDestroy {
   }
   
 
-  // Cargar perfil desde backend (si hay token)
+  // Cargar perfil desde backend (si hay token))
   loadProfile() {
     // Mostrar el panel inmediatamente para dar feedback visual
     this.showProfile = !this.showProfile;
