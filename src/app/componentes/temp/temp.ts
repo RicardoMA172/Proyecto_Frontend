@@ -107,7 +107,7 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (rows: any[]) => {
         const header = ['ID','Fecha_Hora','TEMP'];
         const lines: string[] = [header.join(',')];
-        rows.forEach(r => {
+        rows.forEach(r => { 
           if (!r.fecha_hora) return;
           if (!r.fecha_hora.startsWith(dateStr)) return;
           const id = r.id ?? '';

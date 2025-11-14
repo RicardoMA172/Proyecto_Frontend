@@ -53,3 +53,26 @@ body {
 }
 
 /* End global layout rules */
+
+/* Responsive helpers y utilidades globales */
+:root{
+  --container-max-width: 1200px;
+}
+
+.container{
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+img, video, canvas { max-width: 100%; height: auto; display: block; }
+
+.table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* En pantallas pequeñas permitimos scroll global (anulamos overflow:hidden del body) */
+@media (max-width: 800px) {
+  html, body { overflow: auto; }
+  /* Evitar que el layout corte el contenido en dispositivos pequeños */
+  .layout { height: auto; min-height: calc(100vh - var(--topbar-height)); display:block; }
+}

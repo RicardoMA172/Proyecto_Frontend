@@ -395,6 +395,40 @@ header.topbar .profile-panel * {
   }
 }
 
+/* Mobile / tablet: off-canvas sidebar behavior and overlay */
+@media (max-width: 800px) {
+  .sidebar {
+    top: var(--topbar-height);
+    transform: translateX(-100%); /* ocultar por defecto fuera de pantalla */
+    transition: transform 280ms ease, box-shadow 200ms ease;
+    width: 80%;
+    max-width: 320px;
+    z-index: 1100; /* encima del contenido */
+    box-shadow: 2px 6px 22px rgba(0,0,0,0.3);
+    height: calc(100vh - var(--topbar-height));
+  }
+
+  /* Mostrar la sidebar cuando NO tiene la clase .closed (comportamiento actual del template) */
+  .sidebar:not(.closed) {
+    transform: translateX(0);
+  }
+
+  /* Overlay que cubre el contenido cuando la barra está abierta */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    top: var(--topbar-height);
+    background: rgba(0,0,0,0.45);
+    z-index: 1050;
+    display: none;
+    transition: opacity 180ms ease;
+  }
+  .overlay.show { display: block; }
+
+  /* Permitir scroll del body en pantallas pequeñas (anulamos overflow:hidden global) */
+  html, body { overflow: auto; }
+}
+
 /* Links del menú siempre visibles, pero con transición ligera al abrir */
 .sidebar .menu a span {
   display: inline-block;

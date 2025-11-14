@@ -17,6 +17,9 @@
 
 </header>
 
+<!-- Overlay para cuando la sidebar está abierta en pantallas pequeñas -->
+<div class="overlay" (click)="toggleSidebar()" [class.show]="!sidebarClosed"></div>
+
 <div class="layout">
   <nav *ngIf="showSidebar" class="sidebar" [class.closed]="sidebarClosed">
     <div class="sidebar-header">
