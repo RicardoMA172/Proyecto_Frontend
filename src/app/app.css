@@ -407,8 +407,9 @@ header.topbar .profile-panel * {
     top: var(--topbar-height);
     transform: translateX(-100%); /* ocultar por defecto fuera de pantalla */
     transition: transform 280ms ease, box-shadow 200ms ease;
-    width: 80%;
-    max-width: 320px;
+    /* Hacer la sidebar más compacta en celulares: usar porcentaje menor y un max-width reducido */
+    width: 72%;
+    max-width: 280px;
     z-index: 1100; /* encima del contenido */
     box-shadow: 2px 6px 22px rgba(0,0,0,0.3);
     height: calc(100vh - var(--topbar-height));

@@ -43,7 +43,8 @@ export class App implements OnDestroy {
     // Ocultar sidebar en rutas de auth
     const url: string = e.urlAfterRedirects ?? e.url ?? '';
     if (url.startsWith('/auth')) {
-      this.sidebarClosed = false;
+      // mantener la barra cerrada/oculta en rutas de autenticación (login/register)
+      this.sidebarClosed = true;
       this.showSidebar = false;
       try { document.body.classList.add('auth-route'); } catch(e) {}
     } else {
@@ -106,8 +107,18 @@ export class App implements OnDestroy {
       if (cur.startsWith('/auth')) {
         document.body.classList.add('auth-route');
         this.showSidebar = false;
+        this.sidebarClosed = true;
       } else {
         document.body.classList.remove('auth-route');
+      }
+    } catch(e) {}
+  }
+
+  // Cerrar la sidebar automáticamente cuando se selecciona un item en dispositivos pequeños
+  onMenuClick() {
+    try {
+      if (typeof window !== 'undefined' && window.innerWidth <= 800) {
+        this.sidebarClosed = true;
       }
     } catch(e) {}
   }
