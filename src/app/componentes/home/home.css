@@ -168,6 +168,53 @@
   }
 }
 
+/* Mejoras específicas para móviles/tablet: evitar que las pestañas se empalmen
+   y que queden fuera del flujo (posición absoluta). En pantallas pequeñas
+   las pestañas pasan a estar en el flujo del documento, centradas y cada
+   botón ocupa la mitad del ancho disponible para evitar superposición. */
+@media (max-width: 800px) {
+  .panel {
+    padding-top: 12px; /* dejar espacio para las pestañas en flujo */
+  }
+
+  /* Colocar las pestañas en el flujo normal (no absolutas) */
+  .panel .tabs,
+  .tabs-wrapper {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin: 0 12px 12px 12px !important;
+    display: flex !important;
+    gap: 8px !important;
+    justify-content: center;
+    width: calc(100% - 24px);
+  }
+
+  /* Hacer que cada botón ocupe la mitad del ancho disponible (2 columnas) */
+  .panel .tabs button {
+    flex: 1 1 48%;
+    padding: 10px 8px !important;
+    font-size: 15px !important;
+    text-align: center;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06) !important;
+  }
+
+  /* Estado activo visualmente diferenciado sin elevar la pestaña fuera del flujo */
+  .panel .tabs button.active {
+    transform: none !important;
+    top: auto !important;
+    box-shadow: 0 6px 18px rgba(41,128,185,0.12) !important;
+    background: #2980b9 !important;
+    color: #fff !important;
+  }
+
+  /* Ajustes del título para que no compita con las pestañas en pantallas pequeñas */
+  .content h1 { font-size: 20px; text-align: center; margin-top: 6px; }
+}
+
 /* OVERRIDES: convertir los botones en pestañas que se integran con la línea del panel */
 .panel {
   overflow: visible; /* permitir que las pestañas sobresalgan */
