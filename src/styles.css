@@ -15,7 +15,12 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* 🔒 evita el scroll de todo el documento */
+  /* Permitir scroll nativo por defecto. El contenedor principal `.content` seguirá
+     manejando el scroll interno en escritorio; en dispositivos táctiles activamos
+     el momentum scrolling más abajo. */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: auto;
 }
 
 /* Reservar el espacio del topbar fijo para que no tape el contenido */
@@ -152,3 +157,25 @@ img, video, canvas { max-width: 100%; height: auto; display: block; }
 
 /* Hide the global off-canvas overlay on auth pages to avoid the gray curtain on first load */
 body.auth-route .overlay { display: none !important; }
+
+/* Detectar dispositivos táctiles/coars e y asegurar experiencia de scroll fluida.
+   Esto ayuda en tablets y móviles donde el gesto táctil debe controlar el scroll
+   del contenido principal o de contenedores horizontales. */
+@media (pointer:coarse), (hover: none) {
+  html, body { overflow: auto !important; -webkit-overflow-scrolling: touch; }
+
+  /* Asegurar momentum scrolling y comportamiento predecible de overscroll */
+  .content,
+  .records-section .records-table,
+  .date-bar,
+  .chart-section,
+  .sidebar {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overscroll-behavior: contain; /* evitar el 'scroll chaining' inesperado */
+  }
+
+  /* Elementos con scroll horizontal deben permitir pan-x */
+  .date-bar,
+  .records-section .records-table { touch-action: pan-x; }
+}

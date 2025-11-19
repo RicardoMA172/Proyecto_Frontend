@@ -428,9 +428,12 @@ header.topbar .profile-panel * {
     background: rgba(0,0,0,0.45);
     z-index: 1050;
     display: none;
+    /* Evitar que un overlay oculto capture toques; sólo cuando se muestra debe
+       aceptar punteros. */
+    pointer-events: none;
     transition: opacity 180ms ease;
   }
-  .overlay.show { display: block; }
+  .overlay.show { display: block; pointer-events: auto; }
 
   /* Permitir scroll del body en pantallas pequeñas (anulamos overflow:hidden global) */
   html, body { overflow: auto; }
