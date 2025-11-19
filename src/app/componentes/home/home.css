@@ -233,3 +233,42 @@
   /* Ensure panel-body has enough top padding so the h1 is not covered */
   .panel .panel-body { padding-top: 28px !important; }
 }
+
+/* Additional mobile tweaks: make averages (cards) and charts smaller on phones */
+@media (max-width: 480px) {
+  .stats {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .card {
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .card h3 { font-size: 14px; margin-bottom: 6px; }
+  .card p { font-size: 13px; }
+
+  /* Charts: reduce vertical size so they fit better in a phone viewport */
+  .chart-section { padding: 0 0 8px 0; }
+  .chart-section canvas { height: 160px !important; max-height: 200px; }
+
+  /* Reduce panel paddings for compactness */
+  .panel .panel-body { padding: 12px 14px 18px 14px !important; }
+
+  /* Tabs: ensure they remain usable but compact */
+  .tabs { padding: 4px 6px !important; }
+  .tabs button { padding: 6px 8px !important; font-size: 12px !important; }
+
+  /* Headline smaller to free vertical space */
+  .content h1 { font-size: 18px !important; }
+}
+
+@media (max-width: 360px) {
+  /* Extra-small phones: make cards even more compact */
+  .stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+  .card h3 { font-size: 13px; }
+  .card p { font-size: 12px; }
+  .chart-section canvas { height: 140px !important; max-height: 160px; }
+  .panel .panel-body { padding: 10px 10px 14px 10px !important; }
+}
