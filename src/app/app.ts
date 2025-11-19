@@ -25,11 +25,22 @@ export class App implements OnDestroy {
   private auth = inject(AuthService);
   private authChangeHandler = () => {
     this.isAuthenticated = !!localStorage.getItem('token');
-    if (!this.isAuthenticated) {
+    // Al cambiar el estado de autenticación, sincronizar clases y sidebar para evitar
+    // que el layout quede desincronizado cuando el usuario vuelva desde /auth.
+    if (this.isAuthenticated) {
+      try { document.body.classList.remove('auth-route'); } catch(e) {}
+      this.showSidebar = true;
+      // abrir la sidebar por defecto al entrar
+      this.sidebarClosed = false;
+    } else {
       this.userProfile = null;
       this.showProfile = false;
+      try { document.body.classList.add('auth-route'); } catch(e) {}
+      this.showSidebar = false;
+      this.sidebarClosed = true;
     }
   };
+  
   // Cerrar panel de perfil al clicar fuera
   private outsideClickHandler = (ev: MouseEvent) => {
     if (!this.showProfile) return;
@@ -85,6 +96,9 @@ export class App implements OnDestroy {
     this.userProfile = null;
     this.showProfile = false;
     this.isAuthenticated = false;
+    // asegurar estado inmediato del layout
+    this.showSidebar = false;
+    this.sidebarClosed = true;
     // notificar cambio de auth para que otras partes de la app actualicen su estado
     window.dispatchEvent(new Event('auth-changed'));
     this.router.navigateByUrl('/auth');
