@@ -37,6 +37,10 @@ export class LoginComponent {
           localStorage.setItem('token', res.token);
           window.dispatchEvent(new Event('auth-changed'));
           this.mensaje = 'Inicio de sesión exitoso ✅';
+          // Si hay un elemento enfocado (teclado en móvil), desenfocarlo
+          try { if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); } catch(e) {}
+          // Asegurar que la vista vuelva al tope y quitar cualquier zoom/resalte
+          try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' as any }); } catch(e) { window.scrollTo(0,0); }
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {

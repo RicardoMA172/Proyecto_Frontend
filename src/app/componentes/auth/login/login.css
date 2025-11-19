@@ -16,7 +16,8 @@
   padding: 12px 10px;
   border-radius: 8px;
   border: 1px solid #dcdcdc;
-  font-size: 15px;
+  /* Evitar que Safari iOS haga zoom en inputs pequeños: usar 16px como mínimo */
+  font-size: 16px;
   box-sizing: border-box;
 }
 
@@ -38,7 +39,8 @@
 /* Responsive tweaks */
 @media (max-width: 480px) {
   .login-container { margin: 20px 12px; padding: 16px; }
-  .login-container input { padding: 10px; font-size: 14px; }
+  /* Mantener 16px en móviles para evitar zoom automático al enfocar */
+  .login-container input { padding: 10px; font-size: 16px; }
   .login-container button { padding: 10px; font-size: 14px; }
 }
 

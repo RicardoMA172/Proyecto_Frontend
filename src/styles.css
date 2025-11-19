@@ -185,4 +185,8 @@ body.auth-route .overlay { display: none !important; }
   .layout { height: auto !important; min-height: calc(100vh - var(--topbar-height)); display: block !important; }
   /* Algunos componentes usan .dashboard { min-height:100vh } — anulamos eso en táctil */
   .dashboard { min-height: auto !important; }
+
+  /* Evitar que navegadores móviles hagan 'zoom' al enfocar inputs pequeños: aseguramos
+    tamaño de texto mínimo en campos interactivos en dispositivos táctiles */
+  input, textarea, select, button { font-size: 16px !important; }
 }

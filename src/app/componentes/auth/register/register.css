@@ -26,7 +26,8 @@
   padding: 12px 12px;
   border-radius: 8px;
   border: 1px solid rgba(0,0,0,0.08);
-  font-size: 15px;
+  /* Evitar zoom en iOS/Android: font-size mínimo 16px */
+  font-size: 16px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -57,6 +58,6 @@
   }
   .register-container input[type="text"],
   .register-container input[type="email"], 
-  .register-container input[type="password"] { font-size: 14px; padding: 10px; }
+  .register-container input[type="password"] { font-size: 16px; padding: 10px; }
   .register-container button[type="submit"] { padding: 10px; font-size: 14px; }
 }
