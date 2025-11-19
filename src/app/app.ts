@@ -32,9 +32,6 @@ export class App implements OnDestroy {
       this.showSidebar = true;
       // mantener la sidebar cerrada al entrar desde login
       this.sidebarClosed = true;
-      // Si venimos del teclado/zoom en móvil, limpiar el estado visual
-      // (blur del input, scroll al top, quitar clase de foco)
-      try { this.cleanUpAfterKeyboard(); } catch(e) {}
     } else {
       this.userProfile = null;
       this.showProfile = false;
@@ -44,47 +41,6 @@ export class App implements OnDestroy {
     }
   };
 
-  // Marcar cuando se enfoca un input (para ajustar el layout temporalmente)
-  private focusInHandler = (ev: FocusEvent) => {
-    try {
-      const t = ev.target as HTMLElement | null;
-      if (!t) return;
-      const tag = t.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t as any).isContentEditable) {
-        document.body.classList.add('input-focused');
-      }
-    } catch(e) {}
-  };
-
-  private focusOutHandler = (ev: FocusEvent) => {
-    try {
-      const t = ev.target as HTMLElement | null;
-      if (!t) return;
-      const tag = t.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t as any).isContentEditable) {
-        document.body.classList.remove('input-focused');
-      }
-    } catch(e) {}
-  };
-
-  // Limpieza cuando se cierra el teclado / se sale del modo edición en móvil.
-  // - blur del elemento activo
-  // - scroll a (0,0) para restaurar viewport
-  // - quitar la clase `input-focused`
-  private cleanUpAfterKeyboard = () => {
-    try {
-      const active = document.activeElement as HTMLElement | null;
-      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT' || (active as any).isContentEditable)) {
-        try { active.blur(); } catch(e) {}
-      }
-      // Pequeña espera para que el blur y el cierre del teclado se propaguen
-      setTimeout(() => {
-        try { window.scrollTo(0, 0); } catch(e) {}
-        try { document.body.classList.remove('input-focused'); } catch(e) {}
-      }, 120);
-    } catch(e) {}
-  };
-  
   // Cerrar panel de perfil al clicar fuera
   private outsideClickHandler = (ev: MouseEvent) => {
     if (!this.showProfile) return;
@@ -105,8 +61,7 @@ export class App implements OnDestroy {
     } else {
       this.showSidebar = true;
       try { document.body.classList.remove('auth-route'); } catch(e) {}
-      // Restaurar estado visual por si venimos de un input/teclado en móvil
-      try { this.cleanUpAfterKeyboard(); } catch(e) {}
+      
     }
   });
 
@@ -147,8 +102,6 @@ export class App implements OnDestroy {
     this.sidebarClosed = true;
     // notificar cambio de auth para que otras partes de la app actualicen su estado
     window.dispatchEvent(new Event('auth-changed'));
-    // limpieza visual por si el teclado/zoom quedó activo
-    try { this.cleanUpAfterKeyboard(); } catch(e) {}
     this.router.navigateByUrl('/auth');
   }
 
@@ -156,8 +109,6 @@ export class App implements OnDestroy {
     this.sub.unsubscribe();
     window.removeEventListener('auth-changed', this.authChangeHandler);
     window.removeEventListener('click', this.outsideClickHandler);
-    try { document.removeEventListener('focusin', this.focusInHandler, true); } catch(e) {}
-    try { document.removeEventListener('focusout', this.focusOutHandler, true); } catch(e) {}
   }
 
   constructor() {
@@ -165,9 +116,6 @@ export class App implements OnDestroy {
     window.addEventListener('auth-changed', this.authChangeHandler);
     // Cerrar panel de perfil al clicar fuera
     window.addEventListener('click', this.outsideClickHandler);
-  // Listeners de foco para inputs (marcan body.input-focused)
-  try { document.addEventListener('focusin', this.focusInHandler, true); } catch(e) {}
-  try { document.addEventListener('focusout', this.focusOutHandler, true); } catch(e) {}
     // Al cargar la app, marcar si estamos en una ruta de auth para styling inicial
     try {
       const cur = this.router.url ?? (typeof location !== 'undefined' ? location.pathname : '');
