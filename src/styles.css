@@ -141,7 +141,7 @@ img, video, canvas { max-width: 100%; height: auto; display: block; }
   body.auth-route .login-container,
   body.auth-route .register-container {
     width: calc(100% - 32px);
-    max-width: 520px;
+    max-width: 420px;
     margin: 0 auto;
     transform: none !important;
     position: static !important;

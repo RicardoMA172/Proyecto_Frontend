@@ -1,11 +1,10 @@
-/* Estilos basados en el diseño del login - responsive mejorado */
 .login-container, .register-container {
   max-width: 420px;
   width: 100%;
   margin: 36px auto;
   background: #ffffff;
-  padding: 22px;
-  border-radius: 12px;
+  padding: 20px;
+  border-radius: 10px;
   box-shadow: 0 8px 30px rgba(0,0,0,0.08);
   font-family: 'Roboto', system-ui, Arial, sans-serif;
   box-sizing: border-box;
