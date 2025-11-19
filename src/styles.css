@@ -92,6 +92,14 @@ img, video, canvas { max-width: 100%; height: auto; display: block; }
 .records-section table { width: 100%; border-collapse: collapse; }
 .records-section .records-table { display: table; }
 .records-section { overflow: hidden; }
+
+/* Center content sections and limit their width for better reading on large screens */
+.records-section, .stats-section, .chart-section {
+  max-width: 1100px;
+  margin: 0 auto 24px auto;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
 .records-section .records-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
 .records-section .records-table thead, .records-section .records-table tbody, .records-section .records-table tr { display: table; width: 100%; table-layout: fixed; }
 

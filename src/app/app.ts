@@ -44,8 +44,11 @@ export class App implements OnDestroy {
     if (url.startsWith('/auth')) {
       this.sidebarClosed = false;
       this.showSidebar = false;
+        // Añadir clase al body para estilos específicos de las rutas de auth
+        try { document.body.classList.add('auth-route'); } catch(e){}
     } else {
       this.showSidebar = true;
+        try { document.body.classList.remove('auth-route'); } catch(e){}
     }
   });
 

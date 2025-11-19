@@ -41,3 +41,7 @@
   .login-container input { padding: 10px; font-size: 14px; }
   .login-container button { padding: 10px; font-size: 14px; }
 }
+
+/* Center auth forms vertically when body has .auth-route */
+body.auth-route { padding-top: 0 !important; }
+body.auth-route .login-container { margin: 0 auto; position: relative; top: 50%; transform: translateY(-50%); }
