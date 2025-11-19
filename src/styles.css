@@ -186,3 +186,23 @@ body.auth-route .overlay { display: none !important; }
   /* Algunos componentes usan .dashboard { min-height:100vh } — anulamos eso en táctil */
   .dashboard { min-height: auto !important; }
 }
+
+/* Evitar el "auto-zoom" en iOS/Android al enfocar inputs: garantizar font-size >= 16px
+   en dispositivos táctiles o pantallas pequeñas. Esto evita que el navegador aumente
+   el zoom al abrir el teclado y que ese zoom persista tras navegar/logear. */
+@media (max-width: 800px), (pointer:coarse) {
+  input, textarea, select {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+  /* Botones también ligeramente más grandes en móvil para targets táctiles */
+  button { font-size: 16px; }
+}
+
+/* Clase agregada dinámicamente mientras un input está enfocado. Sirve para
+   aplicar ajustes CSS puntuales si fuese necesario (se añade/elimina desde JS). */
+body.input-focused {
+  /* Marcador que se puede usar desde CSS/JS; dejamos una variable CSS
+     mínima para evitar reglas vacías y permitir overrides si fuera necesario. */
+  --input-focused: 1;
+}
