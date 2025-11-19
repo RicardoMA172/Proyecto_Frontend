@@ -50,7 +50,3 @@
   .register-container input[type="text"], .register-container input[type="email"], .register-container input[type="password"] { font-size: 14px; padding: 10px; }
   .register-container button[type="submit"] { padding: 10px; font-size: 14px; }
 }
-
-/* Center auth forms vertically when body has .auth-route */
-body.auth-route { padding-top: 0 !important; }
-body.auth-route .register-container { margin: 0 auto; position: relative; top: 50%; transform: translateY(-50%); }
