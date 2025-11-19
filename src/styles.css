@@ -183,7 +183,6 @@ body.auth-route .overlay { display: none !important; }
      (body) para evitar scrolls anidados que generan esos "saltos" al soltar.
      Forzamos layout y content a tamaño automático para que el body gestione el scroll. */
   .layout { height: auto !important; min-height: calc(100vh - var(--topbar-height)); display: block !important; }
-  .content { height: auto !important; overflow: visible !important; }
   /* Algunos componentes usan .dashboard { min-height:100vh } — anulamos eso en táctil */
   .dashboard { min-height: auto !important; }
 }
