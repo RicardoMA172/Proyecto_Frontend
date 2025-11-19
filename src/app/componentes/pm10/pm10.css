@@ -72,6 +72,17 @@
   margin-bottom: 40px;
 }
 
+/* Responsive: compactar solo la sección de datos y tabla en móviles/tablets */
+@media (max-width: 800px) {
+  .stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 16px; }
+  .card { padding: 8px; border-radius: 8px; }
+  .card h3 { font-size: 13px; margin-bottom: 4px; }
+  .card p { font-size: 12px; }
+
+  .records-table th, .records-table td { padding: 6px 8px; font-size: 12px; }
+  .records-section { margin-bottom: 16px; }
+}
+
 .stats-section {
   margin-bottom: 40px;
 }
