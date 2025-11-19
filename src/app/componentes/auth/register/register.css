@@ -1,6 +1,8 @@
 .login-container, .register-container {
-  max-width: 420px;
-  width: 100%;
+  /* Allow the card to take most of the viewport on small screens but
+     cap the width on larger devices. */
+  width: min(96vw, 480px);
+  max-width: 480px;
   margin: 36px auto;
   background: #ffffff;
   padding: 20px;
@@ -45,8 +47,14 @@
 
 /* Responsive tweaks */
 @media (max-width: 480px) {
-  .login-container, 
-  .register-container { margin: 20px 12px; padding: 16px; }
+  .login-container,
+  .register-container {
+    /* reduce side margins but keep the card wide on very small devices */
+    margin: 18px 8px;
+    padding: 14px;
+    width: calc(100% - 16px);
+    max-width: none;
+  }
   .register-container input[type="text"],
   .register-container input[type="email"], 
   .register-container input[type="password"] { font-size: 14px; padding: 10px; }

@@ -138,7 +138,16 @@ img, video, canvas { max-width: 100%; height: auto; display: block; }
     justify-content: center;
   }
 
-  
+  body.auth-route .login-container,
+  body.auth-route .register-container {
+    /* Prefer a viewport-relative width with a reasonable max so the
+       auth card is wider on mobile but still constrained on desktop */
+    width: min(96vw, 480px);
+    max-width: 480px;
+    margin: 0 auto;
+    transform: none !important;
+    position: static !important;
+  }
 }
 
 /* Hide the global off-canvas overlay on auth pages to avoid the gray curtain on first load */
