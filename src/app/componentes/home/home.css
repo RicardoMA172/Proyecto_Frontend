@@ -208,8 +208,8 @@
   .panel .tabs {
     top: -20px !important; /* less negative keeps the visual but reduces overlap */
     left: 24px !important; /* keep same left position as desktop to preserve design */
-    gap: 6px !important;
-    padding: 4px 6px !important;
+    gap: 6px !important; /* keep the same gap */
+    padding: 4px 6px !important; /* keep the same padding */
   }
 
   /* Make buttons a bit smaller but keep the same visual style */
@@ -228,5 +228,8 @@
   }
 
   /* Slightly reduce H1 size to balance the header/tab spacing on small screens */
-  .content h1 { font-size: 22px; }
+  .content h1 { font-size: 20px; line-height: 1.15; margin-top: 6px; overflow-wrap: break-word; word-break: break-word; }
+
+  /* Ensure panel-body has enough top padding so the h1 is not covered */
+  .panel .panel-body { padding-top: 28px !important; }
 }
