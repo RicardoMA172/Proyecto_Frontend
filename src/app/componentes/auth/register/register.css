@@ -45,7 +45,10 @@
 
 /* Responsive tweaks */
 @media (max-width: 480px) {
-  .login-container, .register-container { margin: 18px 12px; padding: 14px; }
-  .register-container input[type="text"], .register-container input[type="email"], .register-container input[type="password"] { font-size: 14px; padding: 10px; }
+  .login-container, 
+  .register-container { margin: 20px 12px; padding: 16px; }
+  .register-container input[type="text"],
+  .register-container input[type="email"], 
+  .register-container input[type="password"] { font-size: 14px; padding: 10px; }
   .register-container button[type="submit"] { padding: 10px; font-size: 14px; }
 }

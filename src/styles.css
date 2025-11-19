@@ -138,14 +138,7 @@ img, video, canvas { max-width: 100%; height: auto; display: block; }
     justify-content: center;
   }
 
-  body.auth-route .login-container,
-  body.auth-route .register-container {
-    width: calc(100% - 32px);
-    max-width: 420px;
-    margin: 0 auto;
-    transform: none !important;
-    position: static !important;
-  }
+  
 }
 
 /* Hide the global off-canvas overlay on auth pages to avoid the gray curtain on first load */
