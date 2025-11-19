@@ -13,7 +13,8 @@ import { AuthService } from './servicios/auth/auth';
 })
 export class App implements OnDestroy {
   protected readonly title = signal('Plataforma digital para monitoreo de la calidad del aire');
-  sidebarClosed = false;
+  // Por defecto la barra lateral debe estar cerrada para evitar overlays al cargar
+  sidebarClosed = true;
   showSidebar = true;
   // Perfil del usuario (nombre, email, password oculto)
   userProfile: any = null;

@@ -1,6 +1,6 @@
 /* Estilos basados en el diseño del login - responsive mejorado */
 .login-container, .register-container {
-  max-width: 520px;
+  max-width: 420px;
   width: 100%;
   margin: 36px auto;
   background: #ffffff;

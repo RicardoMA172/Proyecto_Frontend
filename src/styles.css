@@ -147,3 +147,6 @@ img, video, canvas { max-width: 100%; height: auto; display: block; }
     position: static !important;
   }
 }
+
+/* Hide the global off-canvas overlay on auth pages to avoid the gray curtain on first load */
+body.auth-route .overlay { display: none !important; }
