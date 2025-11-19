@@ -467,10 +467,12 @@ header.topbar .profile-panel * {
     gap: 8px;
     align-items: center;
     pointer-events: auto;
-    max-width: 60%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    /* Allow the brand/title to use more horizontal space on small screens
+       and permit wrapping so the full project name is visible. */
+    max-width: calc(100% - 140px);
+    overflow: visible;
+    white-space: normal;
+    text-overflow: unset;
   }
 
   .topbar .topbar-logo { height: 32px !important; }
@@ -478,10 +480,12 @@ header.topbar .profile-panel * {
   /* Reducir y truncar el título para evitar que empalme con los botones */
   .topbar .topbar-title {
     font-size: 14px;
-    max-width: calc(100% - 120px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    /* Allow wrapping of the title so the full name can be shown on several lines */
+    max-width: none;
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    line-height: 1.05;
   }
 
   /* Mostrar acciones a la derecha pero con menos espacio; si sigue habiendo empalme podemos ocultarlas en pantallas muy pequeñas */
@@ -491,9 +495,9 @@ header.topbar .profile-panel * {
   /* Ajustar panel de perfil para que quepa en pantalla móvil */
   .topbar .profile-panel { right: 8px; top: 56px; min-width: 220px; }
 
-  /* En pantallas muy pequeñas ocultamos el texto del título para maximizar espacio */
+  /* In very small screens keep the title visible but smaller; hide the right actions if needed */
   @media (max-width: 420px) {
-    .topbar .topbar-title { display: none; }
+    .topbar .topbar-title { font-size: 12px; display: block; white-space: normal; line-height: 1.1; }
     .topbar .topbar-right { display: none; }
   }
 }
