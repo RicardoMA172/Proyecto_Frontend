@@ -44,8 +44,10 @@ export class App implements OnDestroy {
     if (url.startsWith('/auth')) {
       this.sidebarClosed = false;
       this.showSidebar = false;
+      try { document.body.classList.add('auth-route'); } catch(e) {}
     } else {
       this.showSidebar = true;
+      try { document.body.classList.remove('auth-route'); } catch(e) {}
     }
   });
 
@@ -97,5 +99,15 @@ export class App implements OnDestroy {
     window.addEventListener('auth-changed', this.authChangeHandler);
     // Cerrar panel de perfil al clicar fuera
     window.addEventListener('click', this.outsideClickHandler);
+    // Al cargar la app, marcar si estamos en una ruta de auth para styling inicial
+    try {
+      const cur = this.router.url ?? (typeof location !== 'undefined' ? location.pathname : '');
+      if (cur.startsWith('/auth')) {
+        document.body.classList.add('auth-route');
+        this.showSidebar = false;
+      } else {
+        document.body.classList.remove('auth-route');
+      }
+    } catch(e) {}
   }
 }

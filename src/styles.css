@@ -127,3 +127,23 @@ img, video, canvas { max-width: 100%; height: auto; display: block; }
 }
 
 /* --------------------------------------------------------------------------------------------- */
+
+/* Center login/register pages vertically on small/medium screens when body has .auth-route */
+@media (max-width: 1024px) {
+  body.auth-route {
+    padding-top: 0 !important;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  body.auth-route .login-container,
+  body.auth-route .register-container {
+    width: calc(100% - 32px);
+    max-width: 520px;
+    margin: 0 auto;
+    transform: none !important;
+    position: static !important;
+  }
+}
