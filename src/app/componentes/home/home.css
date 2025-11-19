@@ -200,3 +200,33 @@
 }
 
 .tabs button:hover { background: rgba(0,0,0,0.02) !important; }
+
+/* Small, non-invasive scale-down for tablets/phones: keep same layout but
+   reduce sizes so tabs don't overlap or push content. Applies to widths <=800px. */
+@media (max-width: 800px) {
+  /* Slightly reduce vertical offset so tabs overlap less with the title */
+  .panel .tabs {
+    top: -20px !important; /* less negative keeps the visual but reduces overlap */
+    left: 24px !important; /* keep same left position as desktop to preserve design */
+    gap: 6px !important;
+    padding: 4px 6px !important;
+  }
+
+  /* Make buttons a bit smaller but keep the same visual style */
+  .tabs button {
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Active state: keep color and small shadow but avoid translateY that displaces layout */
+  .tabs button.active {
+    transform: none !important;
+    box-shadow: 0 6px 12px rgba(41,128,185,0.12) !important;
+    background: #2980b9 !important;
+    color: #fff !important;
+  }
+
+  /* Slightly reduce H1 size to balance the header/tab spacing on small screens */
+  .content h1 { font-size: 22px; }
+}
