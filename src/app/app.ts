@@ -30,8 +30,8 @@ export class App implements OnDestroy {
     if (this.isAuthenticated) {
       try { document.body.classList.remove('auth-route'); } catch(e) {}
       this.showSidebar = true;
-      // abrir la sidebar por defecto al entrar
-      this.sidebarClosed = false;
+      // mantener la sidebar cerrada al entrar desde login
+      this.sidebarClosed = true;
     } else {
       this.userProfile = null;
       this.showProfile = false;
