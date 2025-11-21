@@ -64,23 +64,11 @@
 
 /* Password eye toggle styles for register */
 .password-wrapper { position: relative; }
-.password-wrapper input { padding-right: 40px; }
+.password-wrapper input { padding-right: 36px; }
 .password-wrapper .toggle-eye {
   position: absolute;
   right: 6px;
   top: 50%;
   transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: inherit;
-  line-height: 1;
+  z-index: 2;
 }
-.password-wrapper .toggle-eye:focus { outline: none; }
