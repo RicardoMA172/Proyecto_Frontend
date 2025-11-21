@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
-export class RegisterComponent implements OnInit, OnDestroy {
+export class RegisterComponent implements OnDestroy {
   form = new FormBuilder().group({
     name: [''],
     email: [''],
@@ -24,13 +24,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   sub?: Subscription;
   showPassword = false;
   showPasswordConfirm = false;
-  private _bodyClass = 'auth-route';
 
   constructor(private auth: AuthService, private router: Router) {}
-
-  ngOnInit(): void {
-    try { document.body.classList.add(this._bodyClass); } catch(e) {}
-  }
 
   onSubmit() {
     console.log('RegisterComponent.onSubmit called', this.form.value);
@@ -78,6 +73,5 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
-    try { document.body.classList.remove(this._bodyClass); } catch(e) {}
   }
 }

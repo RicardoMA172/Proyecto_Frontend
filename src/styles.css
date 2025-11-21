@@ -155,26 +155,6 @@ img, video, canvas { max-width: 100%; height: auto; display: block; }
   }
 }
 
-/* Fondo específico para páginas de autenticación (login / register)
-   Aplica sólo cuando el elemento <body> tenga la clase `auth-route`. */
-body.auth-route {
-  min-height: 100vh;
-  background-color: #0f4a4f;
-  /* Combina gradientes para aproximar el fondo del mock: tonales verdiazules con viñeta */
-  background-image:
-    radial-gradient(circle at 50% 20%, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.00) 20%),
-    radial-gradient(circle at 10% 80%, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.00) 20%),
-    linear-gradient(135deg, #2a8a8f 0%, #1b6b70 35%, #12393b 100%),
-    radial-gradient(ellipse at center, rgba(0,0,0,0.45), rgba(0,0,0,0.65) 60%, rgba(0,0,0,0.75) 100%);
-  background-blend-mode: screen, screen, normal, multiply;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* Hide the global off-canvas overlay on auth pages to avoid the gray curtain on first load */
 body.auth-route .overlay { display: none !important; }
 
