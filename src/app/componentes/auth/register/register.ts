@@ -51,8 +51,9 @@ export class RegisterComponent implements OnDestroy {
         try { if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); } catch(e) {}
         try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' as any }); } catch(e) { window.scrollTo(0,0); }
 
-        // Navegar a la pantalla de login. No guardamos token ni disparamos 'auth-changed'.
-        this.router.navigateByUrl('/auth');
+        // Navegar a la pantalla de login con un flag para mostrar un aviso.
+        // No guardamos token ni disparamos 'auth-changed'.
+        this.router.navigate(['/auth'], { queryParams: { registered: '1' } });
       },
       error: (err) => {
         this.mensaje = err?.error?.errors ? JSON.stringify(err.error.errors) : 'Error al registrar';

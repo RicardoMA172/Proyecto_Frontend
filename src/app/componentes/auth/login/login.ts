@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../servicios/auth/auth';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -16,6 +16,7 @@ export class LoginComponent {
   fb = inject(FormBuilder);
   authService = inject(AuthService);
   router = inject(Router);
+  route = inject(ActivatedRoute);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -23,6 +24,16 @@ export class LoginComponent {
   });
 
   mensaje = '';
+
+  constructor() {
+    // Si venimos de un registro exitoso, mostrar un mensaje para que el usuario inicie sesión
+    try {
+      const registered = this.route.snapshot.queryParamMap.get('registered');
+      if (registered) {
+        this.mensaje = 'Cuenta creada correctamente. Por favor, inicia sesión.';
+      }
+    } catch (e) { /* ignore */ }
+  }
 
   onSubmit() {
     if (this.form.valid) {
