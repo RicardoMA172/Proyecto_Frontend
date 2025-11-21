@@ -22,6 +22,8 @@ export class RegisterComponent implements OnDestroy {
 
   mensaje = '';
   sub?: Subscription;
+  showPassword = false;
+  showPasswordConfirm = false;
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -59,6 +61,14 @@ export class RegisterComponent implements OnDestroy {
         this.mensaje = err?.error?.errors ? JSON.stringify(err.error.errors) : 'Error al registrar';
       }
     });
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
+
+  togglePasswordConfirm() {
+    this.showPasswordConfirm = !this.showPasswordConfirm;
   }
 
   ngOnDestroy(): void {

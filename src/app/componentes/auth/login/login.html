@@ -1,13 +1,17 @@
 <div class="login-container">
   <h2>Iniciar Sesión</h2>
 
+  <p class="mensaje">{{ mensaje }}</p>
+
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <input type="email" formControlName="email" placeholder="Correo electrónico" />
-    <input type="password" formControlName="password" placeholder="Contraseña" />
+    <div class="password-wrapper">
+      <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Contraseña" />
+      <button type="button" class="toggle-eye" (click)="togglePassword()" aria-label="Mostrar contraseña">👁️</button>
+    </div>
 
     <button type="submit" [disabled]="form.invalid">Iniciar sesión</button>
   </form>
 
-  <p class="mensaje">{{ mensaje }}</p>
   <p class="crear-cuenta">¿No tienes cuenta? <a routerLink="/auth/registro">Crear cuenta</a></p>
 </div>

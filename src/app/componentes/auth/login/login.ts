@@ -24,6 +24,7 @@ export class LoginComponent {
   });
 
   mensaje = '';
+  showPassword = false;
 
   constructor() {
     // mensaje que aparece en el login tras registrarse correctamente
@@ -54,8 +55,9 @@ export class LoginComponent {
           localStorage.setItem('token', res.token);
           window.dispatchEvent(new Event('auth-changed'));
           this.mensaje = 'Inicio de sesión exitoso ✅';
-          // Si hay un elemento enfocado (teclado en móvil), desenfocarlo
+          // asegurar que cualquier input desenfoque al iniciar sesion
           try { if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); } catch(e) {}
+          // Si hay un elemento enfocado (teclado en móvil), desenfocarlo
           // Asegurar que la vista vuelva al tope y quitar cualquier zoom/resalte
           try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' as any }); } catch(e) { window.scrollTo(0,0); }
           this.router.navigate(['/dashboard']);
@@ -66,6 +68,10 @@ export class LoginComponent {
         },
       });
     }
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 }
 

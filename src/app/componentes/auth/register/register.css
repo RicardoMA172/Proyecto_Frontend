@@ -61,3 +61,8 @@
   .register-container input[type="password"] { font-size: 16px; padding: 10px; }
   .register-container button[type="submit"] { padding: 10px; font-size: 14px; }
 }
+
+/* Password eye toggle styles for register */
+.password-wrapper { position: relative; }
+.password-wrapper input { padding-right: 44px; }
+.password-wrapper .toggle-eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 18px; padding: 6px; }
