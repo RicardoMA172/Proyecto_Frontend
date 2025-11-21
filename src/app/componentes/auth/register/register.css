@@ -1,6 +1,4 @@
 .login-container, .register-container {
-  /* Allow the card to take most of the viewport on small screens but
-     cap the width on larger devices. */
   width: min(96vw, 480px);
   max-width: 480px;
   margin: 36px auto;
@@ -19,7 +17,6 @@
 }
 
 .register-container form { display: flex; flex-direction: column; gap: 12px; }
-
 .register-container input[type="text"],
 .register-container input[type="email"],
 .register-container input[type="password"] {
