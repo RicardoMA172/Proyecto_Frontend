@@ -31,6 +31,12 @@ export class LoginComponent {
       const registered = this.route.snapshot.queryParamMap.get('registered');
       if (registered) {
         this.mensaje = 'Cuenta creada correctamente';
+        // eliminar el query param para que al refrescar la página no vuelva a mostrarse
+        try {
+          this.router.navigate([], { relativeTo: this.route, queryParams: { registered: null }, replaceUrl: true });
+        } catch (e) { /* ignore */ }
+        // limpiar el mensaje después de unos segundos para mayor claridad
+        setTimeout(() => { this.mensaje = ''; }, 5000);
       }
     } catch (e) { /* ignore */ }
   }
