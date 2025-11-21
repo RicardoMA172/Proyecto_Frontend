@@ -24,15 +24,37 @@ export class LoginComponent {
   });
 
   mensaje = '';
+  // Mensaje flash que aparece sobre el componente y se oculta automáticamente
+  flashMessage = '';
+  showFlash = false;
+  private flashTimer: any = null;
 
   constructor() {
-    // Si venimos de un registro exitoso, mostrar un mensaje para que el usuario inicie sesión
+    // Si venimos de un registro exitoso, mostrar un mensaje flash para que el usuario inicie sesión
     try {
       const registered = this.route.snapshot.queryParamMap.get('registered');
       if (registered) {
-        this.mensaje = 'Cuenta creada correctamente. Por favor, inicia sesión.';
+        this.showFlashMessage('Cuenta creada correctamente. Por favor, inicia sesión.');
       }
     } catch (e) { /* ignore */ }
+  }
+
+  private showFlashMessage(msg: string, ms = 4000) {
+    this.clearFlashTimer();
+    this.flashMessage = msg;
+    this.showFlash = true;
+    this.flashTimer = setTimeout(() => {
+      this.showFlash = false;
+      this.flashMessage = '';
+      this.flashTimer = null;
+    }, ms);
+  }
+
+  private clearFlashTimer() {
+    if (this.flashTimer) {
+      clearTimeout(this.flashTimer);
+      this.flashTimer = null;
+    }
   }
 
   onSubmit() {
