@@ -43,14 +43,16 @@ export class RegisterComponent implements OnDestroy {
 
     this.sub = this.auth.register({ name, email, password }).subscribe({
       next: (res) => {
-        if (res?.token) {
-          localStorage.setItem('token', res.token);
-          window.dispatchEvent(new Event('auth-changed'));
-        }
+        // No hacer auto-login: redirigimos al login para que el usuario inicie sesión.
+        // Mostramos un mensaje breve y navegamos a la ruta de auth (login).
+        this.mensaje = 'Cuenta creada correctamente. Por favor, inicia sesión.';
+
         // Desenfocar cualquier input activo para evitar que el zoom/teclado quede persistente
         try { if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); } catch(e) {}
         try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' as any }); } catch(e) { window.scrollTo(0,0); }
-        this.router.navigateByUrl('/');
+
+        // Navegar a la pantalla de login. No guardamos token ni disparamos 'auth-changed'.
+        this.router.navigateByUrl('/auth');
       },
       error: (err) => {
         this.mensaje = err?.error?.errors ? JSON.stringify(err.error.errors) : 'Error al registrar';
