@@ -43,21 +43,6 @@
 }
 .password-wrapper .toggle-eye:focus { outline: none; }
 
-.login-container button {
-  background-color: #3498db;
-  color: white;
-  padding: 12px;
-  border: none;
-  width: 100%;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.18s ease;
-  font-size: 15px;
-}
-
-.login-container button:hover { background-color: #2980b9; }
-.login-container .mensaje { margin-top: 10px; color: #2c3e50; font-weight: 500; }
-
 /* Responsive tweaks */
 @media (max-width: 480px) {
   .login-container { margin: 20px 12px; padding: 16px; }

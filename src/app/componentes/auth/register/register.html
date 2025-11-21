@@ -6,11 +6,21 @@
     <input type="email" formControlName="email" placeholder="Correo electrónico" />
     <div class="password-wrapper">
       <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Contraseña" />
-      <button type="button" class="toggle-eye" (click)="togglePassword()" aria-label="Mostrar contraseña">👁️</button>
+      <button type="button" class="toggle-eye" (click)="togglePassword()" [attr.aria-pressed]="showPassword" aria-label="Mostrar contraseña">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" fill="none"></circle>
+        </svg>
+      </button>
     </div>
     <div class="password-wrapper">
       <input [type]="showPasswordConfirm ? 'text' : 'password'" formControlName="passwordConfirm" placeholder="Confirmar contraseña" />
-      <button type="button" class="toggle-eye" (click)="togglePasswordConfirm()" aria-label="Mostrar confirmar contraseña">👁️</button>
+      <button type="button" class="toggle-eye" (click)="togglePasswordConfirm()" [attr.aria-pressed]="showPasswordConfirm" aria-label="Mostrar confirmar contraseña">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" fill="none"></circle>
+        </svg>
+      </button>
     </div>
 
     <button type="submit" [disabled]="form.invalid">Crear cuenta</button>
