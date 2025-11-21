@@ -8,7 +8,6 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   text-align: center;
   box-sizing: border-box;
-  position: relative;
 }
 
 .login-container input {
@@ -36,25 +35,6 @@
 
 .login-container button:hover { background-color: #2980b9; }
 .login-container .mensaje { margin-top: 10px; color: #2c3e50; font-weight: 500; }
-
-/* Flash message that appears above the login box and hides automatically */
-.login-container .flash {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #2ecc71;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-  font-weight: 600;
-  z-index: 40;
-  opacity: 1;
-  transition: opacity 220ms ease, transform 220ms ease;
-}
-.login-container .flash.ng-animating { transition: none; }
-.login-container .flash.hidden { opacity: 0; transform: translateX(-50%) translateY(-6px); }
 
 /* Responsive tweaks */
 @media (max-width: 480px) {
