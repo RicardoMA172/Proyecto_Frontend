@@ -22,8 +22,26 @@
 }
 
 .password-wrapper { position: relative; }
-.password-wrapper input { padding-right: 44px; }
-.password-wrapper .toggle-eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; font-size: 18px; padding: 6px; }
+.password-wrapper input { padding-right: 40px; }
+.password-wrapper .toggle-eye {
+  position: absolute;
+  right: 6px; /* pegado a la orilla derecha */
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent; /* sin estilo de fondo */
+  border: none; /* sin borde */
+  padding: 0; /* sin padding extra */
+  margin: 0;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: inherit;
+  line-height: 1;
+}
+.password-wrapper .toggle-eye:focus { outline: none; }
 
 .login-container button {
   background-color: #3498db;
