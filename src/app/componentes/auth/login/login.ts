@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../servicios/auth/auth';
@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   fb = inject(FormBuilder);
   authService = inject(AuthService);
   router = inject(Router);
@@ -25,8 +25,10 @@ export class LoginComponent {
 
   mensaje = '';
   showPassword = false;
+  private _bodyClass = 'auth-route';
 
   constructor() {
+    try { document.body.classList.add(this._bodyClass); } catch(e) {}
     // mensaje que aparece en el login tras registrarse correctamente
     try {
       const registered = this.route.snapshot.queryParamMap.get('registered');
@@ -40,6 +42,10 @@ export class LoginComponent {
         setTimeout(() => { this.mensaje = ''; }, 5000);
       }
     } catch (e) { /* ignore */ }
+  }
+
+  ngOnDestroy(): void {
+    try { document.body.classList.remove(this._bodyClass); } catch(e) {}
   }
 
   onSubmit() {
