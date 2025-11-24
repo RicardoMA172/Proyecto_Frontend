@@ -7,8 +7,13 @@
     <span class="topbar-title">{{ title() }}</span>
   </div>
   <div class="topbar-right">
-    <button class="btn" [class.active]="showProfile" (click)="loadProfile()">Ver perfil</button>
-    <button class="btn" (click)="logout()">Cerrar sesión</button>
+    <div class="settings-wrapper">
+      <button class="btn settings-btn" [class.active]="showSettings" (click)="toggleSettings()" aria-haspopup="true" aria-expanded="{{showSettings}}">⚙</button>
+      <div class="settings-panel" *ngIf="showSettings">
+        <button class="settings-item" (click)="loadProfile(); toggleSettings()">Ver perfil</button>
+        <button class="settings-item" (click)="logout()">Cerrar sesión</button>
+      </div>
+    </div>
   </div>
   <div class="profile-panel" *ngIf="showProfile" style="position: fixed !important; top: 64px !important; right: 24px !important; z-index: 2147483647 !important; background: #2b3036 !important; color: #eef2f5 !important; font-family: Roboto, system-ui, Arial, sans-serif !important;">
     <div class="profile-row"><strong>Nombre:</strong> {{ userProfile?.name }}</div>

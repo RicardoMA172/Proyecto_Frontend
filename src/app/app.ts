@@ -19,6 +19,7 @@ export class App implements OnDestroy {
   // Perfil del usuario (nombre, email, password oculto)
   userProfile: any = null;
   showProfile = false;
+  showSettings = false;
   passwordVisible = false;
   isAuthenticated = !!localStorage.getItem('token');
 
@@ -45,8 +46,11 @@ export class App implements OnDestroy {
   private outsideClickHandler = (ev: MouseEvent) => {
     if (!this.showProfile) return;
     const path = (ev as any).composedPath ? (ev as any).composedPath() : (ev as any).path;
-    const clickedInside = path ? path.some((el: any) => el && el.classList && (el.classList.contains('profile-panel') || el.classList.contains('topbar-right'))) : false;
-    if (!clickedInside) this.showProfile = false;
+    const clickedInside = path ? path.some((el: any) => el && el.classList && (el.classList.contains('profile-panel') || el.classList.contains('topbar-right') || el.classList.contains('settings-panel') || el.classList.contains('settings-wrapper'))) : false;
+    if (!clickedInside) {
+      this.showProfile = false;
+      this.showSettings = false;
+    }
   };
   // Router events
   private router = inject(Router);
@@ -74,6 +78,8 @@ export class App implements OnDestroy {
   loadProfile() {
     // Mostrar el panel inmediatamente para dar feedback visual
     this.showProfile = !this.showProfile;
+    // cerrar settings si estaba abierto
+    if (this.showProfile) this.showSettings = false;
     // Si acabamos de abrir el panel, cargamos el perfil; si lo cerramos, no hacemos petición
     if (!this.showProfile) return;
     this.auth.getUser().subscribe({
@@ -89,6 +95,12 @@ export class App implements OnDestroy {
 
   togglePasswordVisibility() {
     this.passwordVisible = !this.passwordVisible;
+  }
+
+  toggleSettings() {
+    this.showSettings = !this.showSettings;
+    // cerrar perfil si abrimos settings
+    if (this.showSettings) this.showProfile = false;
   }
 
   logout() {

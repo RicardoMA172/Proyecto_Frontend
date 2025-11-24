@@ -219,6 +219,35 @@ body {
   align-items: center;
 }
 
+/* Settings dropdown in the topbar: a compact gear button that shows a small panel */
+.settings-wrapper { position: relative; }
+.settings-btn { font-size: 16px; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; }
+.settings-panel {
+  position: absolute;
+  top: calc(var(--topbar-height));
+  right: 0;
+  background: var(--profile-bg);
+  color: var(--profile-text);
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 9999;
+}
+.settings-panel .settings-item {
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.settings-panel .settings-item:hover { background: rgba(255,255,255,0.06); }
+
 .topbar .btn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.11);
