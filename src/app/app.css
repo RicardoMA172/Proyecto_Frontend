@@ -226,26 +226,33 @@ body {
   position: absolute;
   top: calc(var(--topbar-height));
   right: 0;
-  background: var(--profile-bg);
-  color: var(--profile-text);
-  padding: 8px;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
-  min-width: 160px;
+  /* Fondo azul claro más suave que la página, diseño minimalista */
+  background: linear-gradient(180deg, #eaf6fb 0%, #d8eef8 100%);
+  color: #0b0b0b; /* texto en negro */
+  padding: 6px;
+  border-radius: 6px;
+  /* sombra más sutil y borde tenue para aspecto minimalista */
+  box-shadow: 0 6px 18px rgba(11,20,33,0.06);
+  border: 1px solid rgba(11,20,33,0.06);
+  min-width: 180px;
   display: flex;
   flex-direction: column;
   gap: 6px;
   z-index: 9999;
 }
 .settings-panel .settings-item {
-  background: black;
+  background: transparent;
   border: none;
-  color: inherit;
+  color: #0b0b0b;
   text-align: left;
   padding: 8px 10px;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: 500;
 }
-.settings-panel .settings-item:hover { background: rgba(255,255,255,0.06); }
+.settings-panel .settings-item:hover {
+  background: rgba(11,20,33,0.04);
+}
 
 .topbar .btn {
   background: transparent;
