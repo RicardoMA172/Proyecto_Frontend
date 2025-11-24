@@ -229,7 +229,6 @@ body {
   background: var(--profile-bg);
   color: var(--profile-text);
   padding: 8px;
-  border-radius: 8px;
   box-shadow: 0 8px 28px rgba(0,0,0,0.35);
   min-width: 160px;
   display: flex;
@@ -238,7 +237,7 @@ body {
   z-index: 9999;
 }
 .settings-panel .settings-item {
-  background: transparent;
+  background: black;
   border: none;
   color: inherit;
   text-align: left;
