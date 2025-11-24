@@ -44,9 +44,15 @@ export class App implements OnDestroy {
 
   // Cerrar panel de perfil al clicar fuera
   private outsideClickHandler = (ev: MouseEvent) => {
-    if (!this.showProfile) return;
+    // If neither panel is open, nothing to do
+    if (!this.showProfile && !this.showSettings) return;
     const path = (ev as any).composedPath ? (ev as any).composedPath() : (ev as any).path;
-    const clickedInside = path ? path.some((el: any) => el && el.classList && (el.classList.contains('profile-panel') || el.classList.contains('topbar-right') || el.classList.contains('settings-panel') || el.classList.contains('settings-wrapper'))) : false;
+    const clickedInside = path ? path.some((el: any) => el && el.classList && (
+      el.classList.contains('profile-panel') ||
+      el.classList.contains('topbar-right') ||
+      el.classList.contains('settings-panel') ||
+      el.classList.contains('settings-wrapper')
+    )) : false;
     if (!clickedInside) {
       this.showProfile = false;
       this.showSettings = false;
@@ -101,6 +107,21 @@ export class App implements OnDestroy {
     this.showSettings = !this.showSettings;
     // cerrar perfil si abrimos settings
     if (this.showSettings) this.showProfile = false;
+  }
+
+  openProfileFromSettings() {
+    // Close settings and open profile panel, then load profile data
+    this.showSettings = false;
+    if (this.showProfile) {
+      // If already open, just close it
+      this.showProfile = false;
+      return;
+    }
+    this.showProfile = true;
+    this.auth.getUser().subscribe({
+      next: (res) => { this.userProfile = res; },
+      error: () => { this.userProfile = null; this.showProfile = false; }
+    });
   }
 
   logout() {
