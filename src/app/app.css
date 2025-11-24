@@ -221,19 +221,28 @@ body {
 
 /* Settings dropdown in the topbar: a compact gear button that shows a small panel */
 .settings-wrapper { position: relative; }
-.settings-btn { font-size: 16px; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; }
+.settings-btn {
+  font-size: 16px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--profile-bg);
+  color: var(--profile-text);
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.12);
+}
 .settings-panel {
-  position: absolute;
-  top: calc(var(--topbar-height));
-  right: 0;
-  /* Fondo azul claro más suave que la página, diseño minimalista */
-  background: var(--profile-bg) !important; /* fondo oscuro garantizado */
+  position: fixed; /* fixed para alinear con el panel de perfil */
+  top: var(--topbar-height);
+  right: 16px;
+  /* Fondo oscuro igual al panel de perfil por defecto */
+  background: var(--profile-bg) !important;
   background-color: var(--profile-bg) !important;
-  background-image: none !important;
-  color: #0b0b0b; /* texto en negro */
+  color: var(--profile-text) !important;
   padding: 6px;
   border-radius: 6px;
-  /* sombra más sutil y borde tenue para aspecto minimalista */
   box-shadow: 0 6px 18px rgba(11,20,33,0.06);
   border: 1px solid rgba(11,20,33,0.06);
   min-width: 180px;
