@@ -222,34 +222,45 @@ body {
 /* Settings dropdown in the topbar: a compact gear button that shows a small panel */
 .settings-wrapper { position: relative; }
 .settings-btn {
-  font-size: 16px;
-  width: 40px;
-  height: 40px;
+  font-size: 20px;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--profile-bg);
-  color: var(--profile-text);
-  border-radius: 6px;
-  border: 1px solid rgba(0,0,0,0.12);
+  background: transparent; /* sin fondo */
+  color: #fff; /* mantener visible sobre el topbar azul */
+  border: none; /* sin marco */
+  border-radius: 50%; /* botón circular */
+  padding: 0;
+  cursor: pointer;
 }
+
+/* Asegurar que no aparezca borde o sombra por las reglas globales de .topbar .btn */
+.topbar .settings-btn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.topbar .settings-btn:focus { outline: none; box-shadow: none; }
 .settings-panel {
   position: fixed; /* fixed para alinear con el panel de perfil */
-  top: var(--topbar-height);
-  right: 16px;
-  /* Fondo oscuro igual al panel de perfil por defecto */
-  background: var(--profile-bg) !important;
-  background-color: var(--profile-bg) !important;
-  color: var(--profile-text) !important;
+  /* Use exact same placement and stacking as the explicit profile-panel inline styles */
+  top: 64px; /* match profile-panel */
+  right: 24px; /* match profile-panel */
+  z-index: 2147483647; /* ensure above everything (same as inline profile-panel) */
+  /* Force the same dark background / text color used by profile-panel */
+  background: #2b3036 !important;
+  background-color: #2b3036 !important;
+  color: #eef2f5 !important;
   padding: 6px;
   border-radius: 6px;
   box-shadow: 0 6px 18px rgba(11,20,33,0.06);
-  border: 1px solid rgba(11,20,33,0.06);
+  border: 1px solid rgba(0,0,0,0.18);
   min-width: 180px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  z-index: 9999;
 }
 .settings-panel .settings-item {
   background: transparent;
