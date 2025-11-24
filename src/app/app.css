@@ -227,7 +227,9 @@ body {
   top: calc(var(--topbar-height));
   right: 0;
   /* Fondo azul claro más suave que la página, diseño minimalista */
-  background: linear-gradient(180deg, #eaf3fb 0%, #0f58ac 100%);
+  background: var(--profile-bg) !important; /* fondo oscuro garantizado */
+  background-color: var(--profile-bg) !important;
+  background-image: none !important;
   color: #0b0b0b; /* texto en negro */
   padding: 6px;
   border-radius: 6px;
