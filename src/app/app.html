@@ -8,7 +8,7 @@
   </div>
   <div class="topbar-right">
     <div class="settings-wrapper">
-      <button class="btn settings-btn" [class.active]="showSettings" (click)="toggleSettings()" aria-haspopup="true" aria-expanded="{{showSettings}}">⚙</button>
+      <button class="settings-btn" [class.active]="showSettings" (click)="toggleSettings()" aria-haspopup="true" aria-expanded="{{showSettings}}">⚙</button>
       <div class="settings-panel" *ngIf="showSettings">
         <button class="settings-item" (click)="openProfileFromSettings()">Ver perfil</button>
         <button class="settings-item" (click)="logout()">Cerrar sesión</button>
