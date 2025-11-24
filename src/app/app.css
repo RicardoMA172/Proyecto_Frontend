@@ -262,6 +262,15 @@ body {
   flex-direction: column;
   gap: 6px;
 }
+.settings-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  stroke: currentColor;
+  fill: none;
+}
+.settings-btn:hover .settings-icon { opacity: 0.95; transform: scale(1.02); }
+.settings-btn:active .settings-icon { transform: scale(0.98); }
 .settings-panel * { color: var(--profile-text) !important; }
 .settings-panel .settings-item {
   background: transparent;

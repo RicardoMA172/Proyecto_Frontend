@@ -8,7 +8,13 @@
   </div>
   <div class="topbar-right">
     <div class="settings-wrapper">
-      <button class="settings-btn" [class.active]="showSettings" (click)="toggleSettings()" aria-haspopup="true" aria-expanded="{{showSettings}}">⚙</button>
+      <button class="settings-btn" [class.active]="showSettings" (click)="toggleSettings()" aria-haspopup="true" aria-expanded="{{showSettings}}" aria-label="Configuración">
+        <!-- Minimal gear SVG (stroke uses currentColor) -->
+        <svg class="settings-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09c.7 0 1.28-.42 1.51-1a1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 0 1 6.7 2.7l.06.06c.45.45 1.08.62 1.66.45.5-.14 1.05-.14 1.55 0 .58.17 1.21 0 1.66-.45l.06-.06A2 2 0 0 1 13.8 2.7l-.06.06c-.45.45-.62 1.08-.45 1.66.14.5.14 1.05 0 1.55-.17.58 0 1.21.45 1.66l.06.06a2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33c.5-.17 1.08 0 1.4.33z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
       <div class="settings-panel" *ngIf="showSettings">
         <button class="settings-item" (click)="openProfileFromSettings()">Ver perfil</button>
         <button class="settings-item" (click)="logout()">Cerrar sesión</button>
