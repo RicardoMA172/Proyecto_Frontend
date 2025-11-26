@@ -15,6 +15,7 @@ Chart.register(...registerables);
 export class HomeComponent implements OnInit, AfterViewInit {
   // track created charts to resize/destroy
   private charts: any[] = [];
+  private observers: any[] = [];
   private resizeTimer: any = null;
   private handleResizeBound: any = null;
   resumen: any = {};
@@ -46,20 +47,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
   constructor(private caService: CalidadAireService) {}
 
   ngOnDestroy(): void {
-    // cleanup charts and listeners
+    // cleanup charts, observers and listeners
     try {
       if (this.handleResizeBound) window.removeEventListener('resize', this.handleResizeBound);
     } catch (e) {}
     this.charts.forEach(c => { try { c.destroy(); } catch (e) {} });
     this.charts = [];
+    try { this.observers.forEach((o:any) => { try { o.disconnect(); } catch(e){} }); } catch(e){}
+    this.observers = [];
   }
 
-  private setupCanvasSize(canvas: HTMLCanvasElement) {
+  private setupCanvasSize(canvas: HTMLCanvasElement, wrapper?: HTMLElement) {
     try {
       // visual width (CSS pixels)
-      const cssWidth = canvas.clientWidth || parseFloat(getComputedStyle(canvas).width) || 300;
-      // visual height from CSS (must be set via CSS rules)
-      const cssHeight = parseFloat(getComputedStyle(canvas).height) || Math.round(cssWidth * 0.35);
+      const cssWidth = Math.max(1, Math.floor(canvas.clientWidth || (wrapper ? wrapper.clientWidth : 0) || parseFloat(getComputedStyle(canvas).width) || 300));
+      // prefer wrapper height if provided
+      let cssHeight = 0;
+      if (wrapper) cssHeight = wrapper.clientHeight || parseFloat(getComputedStyle(wrapper).height || '0');
+      if (!cssHeight) cssHeight = parseFloat(getComputedStyle(canvas).height) || Math.round(cssWidth * 0.35);
+      cssHeight = Math.max(80, Math.floor(cssHeight));
       const ratio = window.devicePixelRatio || 1;
       // set physical pixel size for crisp rendering
       canvas.width = Math.round(cssWidth * ratio);
@@ -67,7 +73,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // ensure CSS size remains
       canvas.style.width = `${cssWidth}px`;
       canvas.style.height = `${cssHeight}px`;
-      // also set ctx scale will be handled by Chart.js when maintainAspectRatio:false
     } catch (e) { /* ignore */ }
   }
 
@@ -77,7 +82,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.charts.forEach((chart: any) => {
         try {
           const canvas = chart.canvas as HTMLCanvasElement;
-          this.setupCanvasSize(canvas);
+          const wrapper = canvas.parentElement as HTMLElement | undefined;
+          this.setupCanvasSize(canvas, wrapper);
           chart.resize();
           chart.update();
         } catch (e) {}
@@ -230,7 +236,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
       const color = this.pollutants[idx]?.color || '#2980b9';
       // ensure canvas CSS/physical size set before creating chart
-      this.setupCanvasSize(canvas);
+      const wrapper = canvas.parentElement as HTMLElement | null;
+      this.setupCanvasSize(canvas, wrapper || undefined);
       const c = new Chart(canvas, {
         type: 'line',
         data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3 }] },
@@ -238,6 +245,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
       try { c.update(); c.resize(); } catch (e) {}
       try { this.charts.push(c); } catch (e) {}
+      // Observe wrapper size changes to adjust canvas and redraw
+      try {
+        if (wrapper && (window as any).ResizeObserver) {
+          const ro = new (window as any).ResizeObserver(() => {
+            try { this.setupCanvasSize(canvas, wrapper || undefined); c.resize(); c.update(); } catch (e) {}
+          });
+          ro.observe(wrapper);
+          this.observers.push(ro);
+        }
+      } catch (e) {}
     });
   }
 

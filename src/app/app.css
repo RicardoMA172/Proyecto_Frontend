@@ -576,7 +576,11 @@ header.topbar .profile-panel * {
   /* In very small screens keep the title visible but smaller; hide the right actions if needed */
   @media (max-width: 420px) {
     .topbar .topbar-title { font-size: 12px; display: block; white-space: normal; line-height: 1.1; }
-    .topbar .topbar-right { display: none; }
+    /* Mantener acciones visibles en pantallas muy pequeñas; si siguen empalmando
+       reducimos el máximo del título para dejar espacio. */
+    .topbar .topbar-right { display: flex !important; gap: 6px; align-items: center; }
+    .topbar .header-brand { max-width: calc(100% - 112px) !important; }
+    .topbar .topbar-title { white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
   }
 }
 
