@@ -107,10 +107,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
   private createChartWithRetry(canvas: HTMLCanvasElement, wrapper: HTMLElement | null, createFn: () => any, attempts = 6, delay = 80) {
     const tryCreate = (remaining: number) => {
       try {
+        // If wrapper exists but has no height yet, try to read CSS var --chart-height
+        if (wrapper) {
+          try {
+            const cs = getComputedStyle(wrapper);
+            const varH = cs.getPropertyValue('--chart-height')?.trim();
+            const parsed = varH ? parseFloat(varH.replace('px','')) : NaN;
+            // If wrapper height is very small but we have a CSS var, force that height on the wrapper
+            if ((!wrapper.clientHeight || wrapper.clientHeight < 40) && !isNaN(parsed) && parsed > 20) {
+              wrapper.style.height = `${parsed}px`;
+            }
+          } catch (e) {}
+        }
         // ensure sizing
         this.setupCanvasSize(canvas, wrapper || undefined);
-        // if canvas height still small, retry
-        if ((canvas.width || 0) < 200 && remaining > 0) {
+        // if canvas physical width still small, retry a few times (layout may not be settled yet)
+        const physicalWidth = canvas.width || 0;
+        const cssW = canvas.clientWidth || (wrapper ? wrapper.clientWidth : 0) || 0;
+        if ((physicalWidth < 300 || cssW < 200) && remaining > 0) {
           setTimeout(() => tryCreate(remaining - 1), delay);
           return;
         }
@@ -132,7 +146,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (remaining > 0) setTimeout(() => tryCreate(remaining - 1), delay);
       }
     };
-    tryCreate(attempts);
+    tryCreate(attempts * 2); // give more attempts on mobile
   }
 
 
