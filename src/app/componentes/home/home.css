@@ -253,11 +253,11 @@
   .chart-section { padding: 0 0 8px 0; }
   .chart-section { padding: 0 0 8px 0; }
   .chart-section canvas { height: 220px !important; max-height: 260px; }
-  .card .chart-wrapper { --chart-height: 220px; min-height: 180px; }
+  .card .chart-wrapper { --chart-height: 220px; min-height: 180px; height: var(--chart-height); }
 
 /* Chart wrapper and canvas sizing: let CSS define visual height, JS will set physical pixels */
 .chart-wrapper { width: 100%; }
-.card .chart-wrapper { --chart-height: 560px; min-height: 480px; }
+.card .chart-wrapper { --chart-height: 340px; min-height: 240px; height: var(--chart-height); }
 .card .chart-wrapper canvas { display: block; width: 100%; height: 100%; }
 
   /* Reduce panel paddings for compactness */
@@ -277,7 +277,7 @@
   .card h3 { font-size: 13px; }
   .card p { font-size: 12px; }
   .chart-section canvas { height: 140px !important; max-height: 160px; }
-  .card .chart-wrapper { --chart-height: 160px; min-height: 140px; }
+  .card .chart-wrapper { --chart-height: 160px; min-height: 140px; height: var(--chart-height); }
   .card .chart-wrapper canvas { height: 100% !important; }
   .panel .panel-body { padding: 10px 10px 14px 10px !important; }
 }
