@@ -47,7 +47,9 @@
   <div *ngIf="activeTab === 'charts'" class="stats">
           <div class="card" style="grid-column: 1 / -1;" *ngFor="let p of pollutants">
             <h3>{{p.label}} - Hoy</h3>
-            <canvas [attr.data-key]="p.key" #pollChart width="800" height="160"></canvas>
+            <div class="chart-wrapper">
+              <canvas [attr.data-key]="p.key" #pollChart></canvas>
+            </div>
           </div>
         </div>
       </div>

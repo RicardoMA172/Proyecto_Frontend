@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ViewChildren, QueryList, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
 import { Chart, registerables } from 'chart.js';
@@ -13,6 +13,10 @@ Chart.register(...registerables);
   styleUrls: ['./home.css']
 })
 export class HomeComponent implements OnInit, AfterViewInit {
+  // track created charts to resize/destroy
+  private charts: any[] = [];
+  private resizeTimer: any = null;
+  private handleResizeBound: any = null;
   resumen: any = {};
   todayData: any[] = [];
   chart: any;
@@ -41,9 +45,51 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(private caService: CalidadAireService) {}
 
+  ngOnDestroy(): void {
+    // cleanup charts and listeners
+    try {
+      if (this.handleResizeBound) window.removeEventListener('resize', this.handleResizeBound);
+    } catch (e) {}
+    this.charts.forEach(c => { try { c.destroy(); } catch (e) {} });
+    this.charts = [];
+  }
+
+  private setupCanvasSize(canvas: HTMLCanvasElement) {
+    try {
+      // visual width (CSS pixels)
+      const cssWidth = canvas.clientWidth || parseFloat(getComputedStyle(canvas).width) || 300;
+      // visual height from CSS (must be set via CSS rules)
+      const cssHeight = parseFloat(getComputedStyle(canvas).height) || Math.round(cssWidth * 0.35);
+      const ratio = window.devicePixelRatio || 1;
+      // set physical pixel size for crisp rendering
+      canvas.width = Math.round(cssWidth * ratio);
+      canvas.height = Math.round(cssHeight * ratio);
+      // ensure CSS size remains
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
+      // also set ctx scale will be handled by Chart.js when maintainAspectRatio:false
+    } catch (e) { /* ignore */ }
+  }
+
+  private handleResize = () => {
+    if (this.resizeTimer) clearTimeout(this.resizeTimer);
+    this.resizeTimer = setTimeout(() => {
+      this.charts.forEach((chart: any) => {
+        try {
+          const canvas = chart.canvas as HTMLCanvasElement;
+          this.setupCanvasSize(canvas);
+          chart.resize();
+          chart.update();
+        } catch (e) {}
+      });
+    }, 150);
+  }
+
 
   // 🔹 Modificada la función ngOnInit para cargar datos iniciales
   ngOnInit(): void {
+    // bind resize handler
+    try { this.handleResizeBound = this.handleResize.bind(this); window.addEventListener('resize', this.handleResizeBound); } catch (e) {}
   // Cargar promedios del día actual (reemplaza getDashboard)
   this.caService.getTodayAverage().subscribe({
     next: data => {
@@ -138,12 +184,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return `${hours}:${minutes}`;
     });
 
-    // Ensure canvas has an appropriate visual height on different viewports
-    try {
-      if (window && ctx && ctx.style) {
-        ctx.style.height = window.innerWidth <= 480 ? '160px' : '220px';
-      }
-    } catch (e) {}
+    // Ensure canvas physical pixel size matches CSS-provided visual height
+    this.setupCanvasSize(ctx);
 
     this.chart = new Chart(ctx, {
       type: 'line',
@@ -165,6 +207,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     });
     try { this.chart.update(); this.chart.resize(); } catch (e) {}
+    // track
+    try { this.charts.push(this.chart); } catch (e) {}
   }
   // 🔹 Nueva función: inicializar todas las gráficas de contaminantes
   private initAllCharts() {
@@ -185,15 +229,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
         return isNaN(n) ? null : n;
       });
       const color = this.pollutants[idx]?.color || '#2980b9';
-      try {
-        if (window && canvas && canvas.style) canvas.style.height = window.innerWidth <= 480 ? '140px' : '180px';
-      } catch (e) {}
+      // ensure canvas CSS/physical size set before creating chart
+      this.setupCanvasSize(canvas);
       const c = new Chart(canvas, {
         type: 'line',
         data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3 }] },
         options: { responsive: true, maintainAspectRatio: false }
       });
       try { c.update(); c.resize(); } catch (e) {}
+      try { this.charts.push(c); } catch (e) {}
     });
   }
 
