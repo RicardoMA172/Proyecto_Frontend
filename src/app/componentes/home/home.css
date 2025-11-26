@@ -251,8 +251,9 @@
 
   /* Charts: reduce vertical size so they fit better in a phone viewport */
   .chart-section { padding: 0 0 8px 0; }
-  .chart-section canvas { height: 160px !important; max-height: 200px; }
-  .card .chart-wrapper { --chart-height: 160px; min-height: 140px; }
+  .chart-section { padding: 0 0 8px 0; }
+  .chart-section canvas { height: 220px !important; max-height: 260px; }
+  .card .chart-wrapper { --chart-height: 220px; min-height: 180px; }
 
 /* Chart wrapper and canvas sizing: let CSS define visual height, JS will set physical pixels */
 .chart-wrapper { width: 100%; }
@@ -276,7 +277,7 @@
   .card h3 { font-size: 13px; }
   .card p { font-size: 12px; }
   .chart-section canvas { height: 140px !important; max-height: 160px; }
-  .card .chart-wrapper { --chart-height: 140px; min-height: 120px; }
+  .card .chart-wrapper { --chart-height: 160px; min-height: 140px; }
   .card .chart-wrapper canvas { height: 100% !important; }
   .panel .panel-body { padding: 10px 10px 14px 10px !important; }
 }

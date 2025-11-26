@@ -4,6 +4,8 @@ import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.se
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
+// Prefer device pixel ratio for crisp canvases
+try { (Chart.defaults as any).devicePixelRatio = window.devicePixelRatio || 1; } catch(e) {}
 
 @Component({
   selector: 'app-home',
@@ -64,6 +66,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
       // prefer wrapper height if provided
       let cssHeight = 0;
       if (wrapper) cssHeight = wrapper.clientHeight || parseFloat(getComputedStyle(wrapper).height || '0');
+      if (!cssHeight) {
+        // try CSS variable --chart-height on wrapper
+        try {
+          const varH = wrapper ? getComputedStyle(wrapper).getPropertyValue('--chart-height') : '';
+          if (varH) {
+            const parsed = parseFloat(varH.replace('px',''));
+            if (!isNaN(parsed) && parsed > 0) cssHeight = parsed;
+          }
+        } catch(e) {}
+      }
       if (!cssHeight) cssHeight = parseFloat(getComputedStyle(canvas).height) || Math.round(cssWidth * 0.35);
       cssHeight = Math.max(80, Math.floor(cssHeight));
       const ratio = window.devicePixelRatio || 1;
@@ -89,6 +101,38 @@ export class HomeComponent implements OnInit, AfterViewInit {
         } catch (e) {}
       });
     }, 150);
+  }
+
+  // Create chart with retries until wrapper height is available to avoid tiny initial canvas
+  private createChartWithRetry(canvas: HTMLCanvasElement, wrapper: HTMLElement | null, createFn: () => any, attempts = 6, delay = 80) {
+    const tryCreate = (remaining: number) => {
+      try {
+        // ensure sizing
+        this.setupCanvasSize(canvas, wrapper || undefined);
+        // if canvas height still small, retry
+        if ((canvas.width || 0) < 200 && remaining > 0) {
+          setTimeout(() => tryCreate(remaining - 1), delay);
+          return;
+        }
+        const cfg = createFn();
+        const c = new Chart(canvas, cfg);
+        try { c.update(); c.resize(); } catch(e) {}
+        try { this.charts.push(c); } catch(e) {}
+        // observe wrapper if present
+        try {
+          if (wrapper && (window as any).ResizeObserver) {
+            const ro = new (window as any).ResizeObserver(() => {
+              try { this.setupCanvasSize(canvas, wrapper || undefined); c.resize(); c.update(); } catch (e) {}
+            });
+            ro.observe(wrapper);
+            this.observers.push(ro);
+          }
+        } catch(e) {}
+      } catch (e) {
+        if (remaining > 0) setTimeout(() => tryCreate(remaining - 1), delay);
+      }
+    };
+    tryCreate(attempts);
   }
 
 
@@ -190,10 +234,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return `${hours}:${minutes}`;
     });
 
-    // Ensure canvas physical pixel size matches CSS-provided visual height
-    this.setupCanvasSize(ctx);
-
-    this.chart = new Chart(ctx, {
+    const wrapper = ctx.parentElement as HTMLElement | null;
+    this.createChartWithRetry(ctx, wrapper, () => ({
       type: 'line',
       data: {
         labels: labels,
@@ -211,10 +253,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } },
         scales: { x: { display: true }, y: { display: true } }
       }
-    });
-    try { this.chart.update(); this.chart.resize(); } catch (e) {}
-    // track
-    try { this.charts.push(this.chart); } catch (e) {}
+    }));
   }
   // 🔹 Nueva función: inicializar todas las gráficas de contaminantes
   private initAllCharts() {
@@ -237,24 +276,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const color = this.pollutants[idx]?.color || '#2980b9';
       // ensure canvas CSS/physical size set before creating chart
       const wrapper = canvas.parentElement as HTMLElement | null;
-      this.setupCanvasSize(canvas, wrapper || undefined);
-      const c = new Chart(canvas, {
+      this.createChartWithRetry(canvas, wrapper, () => ({
         type: 'line',
         data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3 }] },
         options: { responsive: true, maintainAspectRatio: false }
-      });
-      try { c.update(); c.resize(); } catch (e) {}
-      try { this.charts.push(c); } catch (e) {}
-      // Observe wrapper size changes to adjust canvas and redraw
-      try {
-        if (wrapper && (window as any).ResizeObserver) {
-          const ro = new (window as any).ResizeObserver(() => {
-            try { this.setupCanvasSize(canvas, wrapper || undefined); c.resize(); c.update(); } catch (e) {}
-          });
-          ro.observe(wrapper);
-          this.observers.push(ro);
-        }
-      } catch (e) {}
+      }));
     });
   }
 
