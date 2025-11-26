@@ -138,6 +138,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
       return `${hours}:${minutes}`;
     });
 
+    // Ensure canvas has an appropriate visual height on different viewports
+    try {
+      if (window && ctx && ctx.style) {
+        ctx.style.height = window.innerWidth <= 480 ? '160px' : '220px';
+      }
+    } catch (e) {}
+
     this.chart = new Chart(ctx, {
       type: 'line',
       data: {
@@ -153,8 +160,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
           }
         ]
       },
-      options: { responsive: true, plugins: { legend: { position: 'top' } } }
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } },
+        scales: { x: { display: true }, y: { display: true } }
+      }
     });
+    try { this.chart.update(); this.chart.resize(); } catch (e) {}
   }
   // 🔹 Nueva función: inicializar todas las gráficas de contaminantes
   private initAllCharts() {
@@ -175,11 +185,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
         return isNaN(n) ? null : n;
       });
       const color = this.pollutants[idx]?.color || '#2980b9';
-      new Chart(canvas, {
+      try {
+        if (window && canvas && canvas.style) canvas.style.height = window.innerWidth <= 480 ? '140px' : '180px';
+      } catch (e) {}
+      const c = new Chart(canvas, {
         type: 'line',
-        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true }] },
-        options: { responsive: true }
+        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3 }] },
+        options: { responsive: true, maintainAspectRatio: false }
       });
+      try { c.update(); c.resize(); } catch (e) {}
     });
   }
 
