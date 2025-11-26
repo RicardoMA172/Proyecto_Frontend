@@ -28,15 +28,10 @@
 
 .card {
   background: white;
-  padding: 12px;
+  padding: 10px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   text-align: center;
-  /* Make the card define the height and let the chart fill the remaining space */
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  min-height: 360px; /* default card height for desktop */
 }
 
 .card h3 {
@@ -44,14 +39,14 @@
   color: #2980b9;
 }
 
-.card h3 {
-  margin-bottom: 10px;
-  color: #2980b9;
-}
 .card p {
   font-size: 16px;
   color: #333;
 }
+
+/* Estilos para pestañas */
+.tabs {
+  display: flex;
   gap: 8px;
   margin-bottom: 16px;
 }
@@ -262,9 +257,8 @@
 
 /* Chart wrapper and canvas sizing: let CSS define visual height, JS will set physical pixels */
 .chart-wrapper { width: 100%; }
-/* Let the chart wrapper stretch to fill the card and control canvas size via JS */
-.card .chart-wrapper { flex: 1 1 auto; min-height: 240px; height: 100%; }
-.card .chart-wrapper canvas { display: block; width: 100%; height: 100% !important; }
+.card .chart-wrapper { --chart-height: 340px; min-height: 240px; height: var(--chart-height); }
+.card .chart-wrapper canvas { display: block; width: 100%; height: 100%; }
 
   /* Reduce panel paddings for compactness */
   .panel .panel-body { padding: 12px 14px 18px 14px !important; }

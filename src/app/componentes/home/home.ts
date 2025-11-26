@@ -288,14 +288,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
             label: 'CO (ppm) - Hoy',
             data: data.map(d => d.co),
             borderColor: '#2980b9',
-            backgroundColor: 'rgba(41,128,185,0.2)',
+            backgroundColor: 'rgba(41,128,185,0.18)',
             fill: true,
-            tension: 0.3
+            tension: 0.3,
+            borderWidth: 2,
+            pointRadius: 2
           }
         ]
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } },
-        scales: { x: { display: true }, y: { display: true } }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { left: 6, right: 6, top: 6, bottom: 6 } },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 12 } } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        elements: { line: { tension: 0.3 } },
+        scales: {
+          x: { display: true, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
+          y: { display: true, ticks: { font: { size: 12 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
+        }
       }
     }));
   }
@@ -322,8 +335,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const wrapper = canvas.parentElement as HTMLElement | null;
       this.createChartWithRetry(canvas, wrapper, () => ({
         type: 'line',
-        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3 }] },
-        options: { responsive: true, maintainAspectRatio: false }
+        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2 }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { left: 6, right: 6, top: 6, bottom: 6 } },
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 6, font: { size: 11 } } }, tooltip: { mode: 'index', intersect: false } },
+          scales: {
+            x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10, font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
+          }
+        }
       }));
     });
   }
