@@ -104,7 +104,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   // Create chart with retries until wrapper height is available to avoid tiny initial canvas
-  private createChartWithRetry(canvas: HTMLCanvasElement, wrapper: HTMLElement | null, createFn: () => any, attempts = 6, delay = 80) {
+  private createChartWithRetry(canvas: HTMLCanvasElement, wrapper: HTMLElement | null, createFn: () => any, attempts = 12, delay = 120) {
     const tryCreate = (remaining: number) => {
       try {
         // If wrapper exists but has no height yet, try to read CSS var --chart-height
@@ -119,19 +119,49 @@ export class HomeComponent implements OnInit, AfterViewInit {
             }
           } catch (e) {}
         }
+        // If wrapper exists but has no height yet, try to read CSS var --chart-height and force it
+        if (wrapper) {
+          try {
+            const cs = getComputedStyle(wrapper);
+            const varH = cs.getPropertyValue('--chart-height')?.trim();
+            const parsed = varH ? parseFloat(varH.replace('px','')) : NaN;
+            if ((!wrapper.clientHeight || wrapper.clientHeight < 40) && !isNaN(parsed) && parsed > 20) {
+              wrapper.style.height = `${parsed}px`;
+            }
+          } catch (e) {}
+        }
         // ensure sizing
         this.setupCanvasSize(canvas, wrapper || undefined);
         // if canvas physical width still small, retry a few times (layout may not be settled yet)
         const physicalWidth = canvas.width || 0;
         const cssW = canvas.clientWidth || (wrapper ? wrapper.clientWidth : 0) || 0;
-        if ((physicalWidth < 300 || cssW < 200) && remaining > 0) {
-          setTimeout(() => tryCreate(remaining - 1), delay);
-          return;
+        // If CSS width is too small, try forcing a larger wrapper height for mobile
+        if ((physicalWidth < 300 || cssW < 220) && wrapper && remaining > 0) {
+          try {
+            // force a conservative mobile height if CSS var absent
+            const cs = getComputedStyle(wrapper);
+            const varH = cs.getPropertyValue('--chart-height')?.trim();
+            let forced = 220;
+            if (varH) {
+              const p = parseFloat(varH.replace('px',''));
+              if (!isNaN(p) && p > 80) forced = p;
+            }
+            wrapper.style.height = `${forced}px`;
+            // give layout a moment then retry
+            setTimeout(() => tryCreate(remaining - 1), delay);
+            return;
+          } catch (e) {
+            setTimeout(() => tryCreate(remaining - 1), delay);
+            return;
+          }
         }
         const cfg = createFn();
         const c = new Chart(canvas, cfg);
         try { c.update(); c.resize(); } catch(e) {}
         try { this.charts.push(c); } catch(e) {}
+        // schedule extra redraws (some mobile browsers stabilize layout after a short delay)
+        try { setTimeout(() => { try { this.setupCanvasSize(canvas, wrapper || undefined); c.resize(); c.update(); } catch(e){} }, 220); } catch(e){}
+        try { setTimeout(() => { try { this.setupCanvasSize(canvas, wrapper || undefined); c.resize(); c.update(); } catch(e){} }, 700); } catch(e){}
         // observe wrapper if present
         try {
           if (wrapper && (window as any).ResizeObserver) {
