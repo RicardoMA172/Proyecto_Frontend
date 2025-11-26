@@ -44,6 +44,11 @@
   color: #333;
 }
 
+/* Chart wrapper and canvas sizing: let CSS define visual height, JS will set physical pixels */
+.chart-wrapper { width: 100%; }
+.card .chart-wrapper { --chart-height: 420px; min-height: 260px; height: var(--chart-height); }
+.card .chart-wrapper canvas { display: block; width: 100%; height: 100%; }
+
 /* Estilos para pestañas */
 .tabs {
   display: flex;
@@ -255,10 +260,7 @@
   .chart-section canvas { height: 220px !important; max-height: 260px; }
   .card .chart-wrapper { --chart-height: 220px; min-height: 180px; height: var(--chart-height); }
 
-/* Chart wrapper and canvas sizing: let CSS define visual height, JS will set physical pixels */
-.chart-wrapper { width: 100%; }
-.card .chart-wrapper { --chart-height: 340px; min-height: 240px; height: var(--chart-height); }
-.card .chart-wrapper canvas { display: block; width: 100%; height: 100%; }
+/* (chart wrapper sizing moved to global rules above) */
 
   /* Reduce panel paddings for compactness */
   .panel .panel-body { padding: 12px 14px 18px 14px !important; }
