@@ -150,7 +150,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             // force a conservative mobile height if CSS var absent
             const cs = getComputedStyle(wrapper);
             const varH = cs.getPropertyValue('--chart-height')?.trim();
-            let forced = 220;
+            let forced = 140;
             if (varH) {
               const p = parseFloat(varH.replace('px',''));
               if (!isNaN(p) && p > 80) forced = p;
