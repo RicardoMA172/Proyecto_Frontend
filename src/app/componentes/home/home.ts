@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ViewChildren, QueryList, OnDestroy } from '@angular/core';
+import { interval, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { CalidadAireService } from '../../servicios/calidad_aire/calidad-aire.service';
 import { Chart, registerables } from 'chart.js';
@@ -23,6 +24,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   private resizeTimer: any = null;
   private handleResizeBound: any = null;
   private chartsInitialized: boolean = false;
+  private refreshSub: Subscription | null = null;
   resumen: any = {};
   todayData: any[] = [];
   chart: any;
@@ -60,6 +62,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.charts = [];
     try { this.observers.forEach((o:any) => { try { o.disconnect(); } catch(e){} }); } catch(e){}
     this.observers = [];
+    try { if (this.refreshSub) this.refreshSub.unsubscribe(); } catch(e) {}
   }
 
   private setupCanvasSize(canvas: HTMLCanvasElement, wrapper?: HTMLElement) {
@@ -221,6 +224,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.todayData = [];
     }
   });
+
+  // Auto-refresh: obtener datos periódicamente y actualizar las gráficas existentes
+  try {
+    // Iniciar refresh inmediato y luego cada 15 segundos
+    this.refreshData();
+    this.refreshSub = interval(15000).subscribe(() => this.refreshData());
+  } catch(e) {}
 }
 
 
@@ -440,6 +450,64 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const g = (bigint >> 8) & 255;
     const b = bigint & 255;
     return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  // Refresca datos desde la API y actualiza las gráficas existentes (sin recrearlas)
+  private refreshData() {
+    try {
+      this.caService.getTodayAverage().subscribe({ next: data => { this.resumen = data ?? {}; }, error: () => {} });
+    } catch (e) {}
+
+    try {
+      const today = new Date();
+      this.caService.getLatestByDate(today, 50).subscribe({
+        next: data => {
+          const sorted = this.sortByFecha(data || []);
+          this.todayData = sorted;
+
+          // Si ya existen charts, actualizarlos en lugar de recrearlos
+          if (this.charts && this.charts.length) {
+            this.charts.forEach((c: any) => {
+              try {
+                const canvas = c && c.canvas ? (c.canvas as HTMLCanvasElement) : null;
+                const wrapper = canvas ? (canvas.parentElement as HTMLElement | null) : null;
+                const key = canvas ? canvas.getAttribute('data-key') : null;
+
+                const labels = sorted.map((d: any) => {
+                  const fecha = new Date(String(d.fecha_hora).replace(' ', 'T'));
+                  const hours = fecha.getHours().toString().padStart(2, '0');
+                  const minutes = fecha.getMinutes().toString().padStart(2, '0');
+                  return `${hours}:${minutes}`;
+                });
+
+                if (key) {
+                  const dataset = sorted.map((d: any) => {
+                    const v = d[key];
+                    const n = Number(v);
+                    return isNaN(n) ? null : n;
+                  });
+                  c.data.labels = labels;
+                  if (c.data.datasets && c.data.datasets[0]) c.data.datasets[0].data = dataset;
+                  try { if (canvas) this.setupCanvasSize(canvas, wrapper || undefined); } catch(e) {}
+                  try { c.resize(); c.update(); } catch(e) {}
+                } else {
+                  // Main CO chart fallback
+                  const dataset = sorted.map((d: any) => { const n = Number(d.co); return isNaN(n) ? null : n; });
+                  c.data.labels = labels;
+                  if (c.data.datasets && c.data.datasets[0]) c.data.datasets[0].data = dataset;
+                  try { if (canvas) this.setupCanvasSize(canvas, wrapper || undefined); } catch(e) {}
+                  try { c.resize(); c.update(); } catch(e) {}
+                }
+              } catch (e) {}
+            });
+          } else {
+            // si no hay charts aún, inicializarlos cuando la pestaña esté activa
+            if (this.activeTab === 'charts') setTimeout(() => this.initAllCharts(), 120);
+          }
+        },
+        error: err => { /* ignore */ }
+      });
+    } catch (e) {}
   }
 
   // Ordena un array de lecturas por la marca de tiempo `fecha_hora` (ascendente)
