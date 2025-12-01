@@ -46,7 +46,7 @@
 
 /* Chart wrapper and canvas sizing: let CSS define visual height, JS will set physical pixels */
 .chart-wrapper { width: 100%; }
-.card .chart-wrapper { --chart-height: min(300px, 38vh); min-height: 120px; height: var(--chart-height); }
+.card .chart-wrapper { --chart-height: min(200px, 38vh); min-height: 120px; height: var(--chart-height); }
 .card .chart-wrapper canvas { display: block; width: 100%; height: 100% !important; }
 
 /* Estilos para pestañas */
