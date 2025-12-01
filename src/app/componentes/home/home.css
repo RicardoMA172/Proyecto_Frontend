@@ -46,8 +46,9 @@
 
 /* Chart wrapper and canvas sizing: let CSS define visual height, JS will set physical pixels */
 .chart-wrapper { width: 100%; }
-.card .chart-wrapper { --chart-height: min(420px, 55vh); min-height: 220px; height: var(--chart-height); }
-.card .chart-wrapper canvas { display: block; width: 100%; height: 100%; }
+/* Default: moderate height, not too tall. JS uses wrapper height to set canvas physical pixels. */
+.card .chart-wrapper { --chart-height: min(360px, 44vh); min-height: 160px; height: var(--chart-height); }
+.card .chart-wrapper canvas { display: block; width: 100%; height: 100% !important; }
 
 /* Estilos para pestañas */
 .tabs {
@@ -254,10 +255,10 @@
   .card h3 { font-size: 14px; margin-bottom: 6px; }
   .card p { font-size: 13px; }
 
-  /* Charts: allow taller charts on modern phones; use vh to be responsive */
+  /* Charts: keep compact height on small phones to avoid overly tall charts */
   .chart-section { padding: 0 0 8px 0; }
   .chart-section canvas { height: auto !important; max-height: none; }
-  .card .chart-wrapper { --chart-height: min(60vh, 520px); min-height: 260px; height: var(--chart-height); }
+  .card .chart-wrapper { --chart-height: min(40vh, 360px); min-height: 140px; height: var(--chart-height); }
 
 /* (chart wrapper sizing moved to global rules above) */
 
@@ -277,9 +278,9 @@
   .stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
   .card h3 { font-size: 13px; }
   .card p { font-size: 12px; }
-  /* Extra-small phones: still provide a tall responsive chart but cap with vh */
+  /* Extra-small phones: compact charts */
   .chart-section canvas { height: auto !important; max-height: none; }
-  .card .chart-wrapper { --chart-height: min(56vh, 460px); min-height: 180px; height: var(--chart-height); }
+  .card .chart-wrapper { --chart-height: min(36vh, 320px); min-height: 120px; height: var(--chart-height); }
   .card .chart-wrapper canvas { height: 100% !important; }
   .panel .panel-body { padding: 10px 10px 14px 10px !important; }
 }
