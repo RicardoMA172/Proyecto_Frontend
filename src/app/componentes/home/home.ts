@@ -208,14 +208,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   // Cargar datos para las gráficas del día
   const today = new Date();
-  this.caService.getLatestByDate(today, 50).subscribe({
-    next: data => {
-      this.todayData = data;
-      if (this.activeTab === 'charts') {
-        // Wait a short moment to let Angular render canvases, then ensure charts exist/are resized
-        setTimeout(() => this.initAllCharts(), 120);
-      }
-    },
+    this.caService.getLatestByDate(today, 50).subscribe({
+      next: data => {
+        // asegurarnos de que los datos estén ordenados por fecha antes de graficar
+        this.todayData = this.sortByFecha(data || []);
+        if (this.activeTab === 'charts') {
+          setTimeout(() => this.initAllCharts(), 0);
+        }
+      },
     error: err => {
       console.error('Error al obtener datos de hoy:', err);
       this.todayData = [];
@@ -283,8 +283,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (!ctx) return;
     if (this.chart) this.chart.destroy();
 
-    const labels = data.map(d => {
-      const fecha = new Date(d.fecha_hora.replace(' ', 'T'));
+    // asegurarse de graficar en orden cronológico
+    const sorted = this.sortByFecha(data || []);
+    const labels = sorted.map(d => {
+      const fecha = new Date(String(d.fecha_hora).replace(' ', 'T'));
       const hours = fecha.getHours().toString().padStart(2, '0');
       const minutes = fecha.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
@@ -298,7 +300,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         datasets: [
           {
             label: 'CO (ppm) - Hoy',
-            data: data.map(d => d.co),
+            data: sorted.map(d => d.co),
             borderColor: '#2980b9',
             backgroundColor: 'rgba(41,128,185,0.18)',
             fill: true,
@@ -438,6 +440,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const g = (bigint >> 8) & 255;
     const b = bigint & 255;
     return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  // Ordena un array de lecturas por la marca de tiempo `fecha_hora` (ascendente)
+  private sortByFecha(arr: any[]) {
+    if (!arr || !arr.slice) return arr;
+    return arr.slice().sort((a: any, b: any) => {
+      const pa = (a && a.fecha_hora) ? new Date(String(a.fecha_hora).replace(' ', 'T')).getTime() : 0;
+      const pb = (b && b.fecha_hora) ? new Date(String(b.fecha_hora).replace(' ', 'T')).getTime() : 0;
+      return pa - pb;
+    });
   }
 
 }
