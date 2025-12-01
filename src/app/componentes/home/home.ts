@@ -6,6 +6,8 @@ import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 // Prefer device pixel ratio for crisp canvases
 try { (Chart.defaults as any).devicePixelRatio = window.devicePixelRatio || 1; } catch(e) {}
+// Cap devicePixelRatio to avoid extremely large internal canvases on some devices
+try { (Chart.defaults as any).devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2); } catch(e) {}
 
 @Component({
   selector: 'app-home',
@@ -78,7 +80,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
         } catch(e) {}
       }
       if (!cssHeight) cssHeight = parseFloat(getComputedStyle(canvas).height) || Math.round(cssWidth * 0.35);
-      cssHeight = Math.max(80, Math.floor(cssHeight));
+      // Adaptive sizing: on very narrow screens increase the visual height ratio so chart content remains readable
+      if (cssWidth < 380) {
+        // use a taller aspect for small phones
+        const adaptive = Math.round(cssWidth * 0.6);
+        cssHeight = Math.max(cssHeight, adaptive);
+      }
+      cssHeight = Math.max(100, Math.floor(cssHeight));
       const ratio = window.devicePixelRatio || 1;
       // set physical pixel size for crisp rendering
       canvas.width = Math.round(cssWidth * ratio);
