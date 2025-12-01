@@ -46,7 +46,7 @@
 
 /* Chart wrapper and canvas sizing: let CSS define visual height, JS will set physical pixels */
 .chart-wrapper { width: 100%; }
-.card .chart-wrapper { --chart-height: 420px; min-height: 260px; height: var(--chart-height); }
+.card .chart-wrapper { --chart-height: min(420px, 55vh); min-height: 220px; height: var(--chart-height); }
 .card .chart-wrapper canvas { display: block; width: 100%; height: 100%; }
 
 /* Estilos para pestañas */
@@ -254,11 +254,10 @@
   .card h3 { font-size: 14px; margin-bottom: 6px; }
   .card p { font-size: 13px; }
 
-  /* Charts: reduce vertical size so they fit better in a phone viewport */
+  /* Charts: allow taller charts on modern phones; use vh to be responsive */
   .chart-section { padding: 0 0 8px 0; }
-  .chart-section { padding: 0 0 8px 0; }
-  .chart-section canvas { height: 220px !important; max-height: 260px; }
-  .card .chart-wrapper { --chart-height: 220px; min-height: 180px; height: var(--chart-height); }
+  .chart-section canvas { height: auto !important; max-height: none; }
+  .card .chart-wrapper { --chart-height: min(60vh, 520px); min-height: 260px; height: var(--chart-height); }
 
 /* (chart wrapper sizing moved to global rules above) */
 
@@ -278,8 +277,9 @@
   .stats { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
   .card h3 { font-size: 13px; }
   .card p { font-size: 12px; }
-  .chart-section canvas { height: 140px !important; max-height: 160px; }
-  .card .chart-wrapper { --chart-height: 160px; min-height: 140px; height: var(--chart-height); }
+  /* Extra-small phones: still provide a tall responsive chart but cap with vh */
+  .chart-section canvas { height: auto !important; max-height: none; }
+  .card .chart-wrapper { --chart-height: min(56vh, 460px); min-height: 180px; height: var(--chart-height); }
   .card .chart-wrapper canvas { height: 100% !important; }
   .panel .panel-body { padding: 10px 10px 14px 10px !important; }
 }

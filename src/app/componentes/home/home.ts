@@ -290,30 +290,33 @@ export class HomeComponent implements OnInit, AfterViewInit {
             borderColor: '#2980b9',
             backgroundColor: 'rgba(41,128,185,0.18)',
             fill: true,
-            tension: 0.3,
-            borderWidth: 2,
-            pointRadius: 2
+            tension: 0.3
           }
         ]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: { padding: { left: 6, right: 6, top: 6, bottom: 6 } },
-        plugins: {
-          legend: { position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: 12 } } },
-          tooltip: { mode: 'index', intersect: false }
-        },
-        elements: { line: { tension: 0.3 } },
-        scales: {
-          x: { display: true, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10, font: { size: 11 } }, grid: { display: false } },
-          y: { display: true, ticks: { font: { size: 12 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
-        }
-      }
+      options: (() => {
+        const w = (window && window.innerWidth) || document.documentElement.clientWidth || 800;
+        const isSmall = w < 420;
+        const showLegend = !isSmall;
+        const borderW = isSmall ? 3 : 2;
+        const pointR = isSmall ? 3 : 2;
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { left: 6, right: 6, top: 6, bottom: 6 } },
+          plugins: {
+            legend: { display: showLegend, position: 'bottom', labels: { boxWidth: 12, padding: 8, font: { size: showLegend ? 12 : 10 } } },
+            tooltip: { mode: 'index', intersect: false }
+          },
+          elements: { line: { tension: 0.3, borderWidth: borderW }, point: { radius: pointR } },
+          scales: {
+            x: { display: true, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: isSmall ? 6 : 10, font: { size: isSmall ? 10 : 11 } }, grid: { display: false } },
+            y: { display: true, ticks: { font: { size: isSmall ? 11 : 12 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
+          }
+        };
+      })()
     }));
-  }
-  // 🔹 Nueva función: inicializar todas las gráficas de contaminantes
-  private initAllCharts() {
+
     if (!this.pollCharts || !this.pollCharts.length) return;
     this.pollCharts.forEach((elRef: ElementRef<HTMLCanvasElement>, idx: number) => {
       const canvas: HTMLCanvasElement = elRef.nativeElement;
@@ -335,17 +338,25 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const wrapper = canvas.parentElement as HTMLElement | null;
       this.createChartWithRetry(canvas, wrapper, () => ({
         type: 'line',
-        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3, borderWidth: 2, pointRadius: 2 }] },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          layout: { padding: { left: 6, right: 6, top: 6, bottom: 6 } },
-          plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 6, font: { size: 11 } } }, tooltip: { mode: 'index', intersect: false } },
-          scales: {
-            x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10, font: { size: 10 } }, grid: { display: false } },
-            y: { ticks: { font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
-          }
-        }
+        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3 }] },
+        options: (() => {
+          const w = (window && window.innerWidth) || document.documentElement.clientWidth || 800;
+          const isSmall = w < 420;
+          const showLegend = !isSmall;
+          const borderW = w < 420 ? 3 : 2;
+          const pointR = w < 420 ? 3 : 2;
+          return {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { left: 6, right: 6, top: 6, bottom: 6 } },
+            plugins: { legend: { display: showLegend, position: 'bottom', labels: { boxWidth: 12, padding: 6, font: { size: showLegend ? 11 : 10 } } }, tooltip: { mode: 'index', intersect: false } },
+            elements: { line: { tension: 0.3, borderWidth: borderW }, point: { radius: pointR } },
+            scales: {
+              x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: isSmall ? 6 : 10, font: { size: isSmall ? 10 : 11 } }, grid: { display: false } },
+              y: { ticks: { font: { size: isSmall ? 11 : 11 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
+            }
+          };
+        })()
       }));
     });
   }
