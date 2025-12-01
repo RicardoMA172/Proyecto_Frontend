@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   private observers: any[] = [];
   private resizeTimer: any = null;
   private handleResizeBound: any = null;
+  private chartsInitialized: boolean = false;
   resumen: any = {};
   todayData: any[] = [];
   chart: any;
@@ -203,7 +204,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     next: data => {
       this.todayData = data;
       if (this.activeTab === 'charts') {
-        setTimeout(() => this.initAllCharts(), 0);
+        // Give Angular a short moment to render canvases when switching tabs first time
+        setTimeout(() => {
+          if (!this.chartsInitialized) this.initAllCharts(); else this.handleResize();
+        }, 120);
       }
     },
     error: err => {
@@ -221,7 +225,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   setTab(tab: 'summary' | 'charts') {
     this.activeTab = tab;
     if (tab === 'charts') {
-      setTimeout(() => this.initAllCharts(), 0);
+      // create charts only once; on subsequent openings just resize/update
+      setTimeout(() => {
+        if (!this.chartsInitialized) this.initAllCharts(); else this.handleResize();
+      }, 120);
     }
     setTimeout(() => {
       const arr = this.tabButtons ? this.tabButtons.toArray() : [];
@@ -364,10 +371,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // Inicializar todas las gráficas (pollCharts) — llamada desde ngOnInit y al cambiar pestaña
   private initAllCharts() {
     if (!this.pollCharts || !this.pollCharts.length) return;
+    this.chartsInitialized = true;
     this.pollCharts.forEach((elRef: ElementRef<HTMLCanvasElement>, idx: number) => {
       const canvas: HTMLCanvasElement = elRef.nativeElement;
       const key = canvas.getAttribute('data-key');
       if (!key) return;
+      // If a chart already exists for this canvas, just resize/update it instead of recreating
+      try {
+        const existing = (Chart as any).getChart(canvas);
+        const wrapperExist = canvas.parentElement as HTMLElement | null;
+        if (existing) {
+          try { this.setupCanvasSize(canvas, wrapperExist || undefined); existing.resize(); existing.update(); } catch(e) {}
+          return;
+        }
+      } catch(e) {}
+
       const labels = this.todayData.map(d => {
         const fecha = new Date(d.fecha_hora.replace(' ', 'T'));
         const hours = fecha.getHours().toString().padStart(2, '0');
