@@ -14,7 +14,7 @@ export class CalidadAireService {
 
   //PARA EL DASHBOARD
   getDashboard(): Observable<any> { return this.http.get(`${this.apiUrl}/dashboard`); }
-  getCO(): Observable<any> { return this.http.get(`${this.apiUrl}/co`); }
+  getCO(): Observable<any> { return this.http.get(`${this.apiUrl}/co2`); }
   getNOx(): Observable<any> { return this.http.get(`${this.apiUrl}/nox`); }
   getSOx(): Observable<any> { return this.http.get(`${this.apiUrl}/sox`); }
   getPM10(): Observable<any> { return this.http.get(`${this.apiUrl}/pm10`); }

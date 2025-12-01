@@ -1,6 +1,6 @@
 <div class="dashboard">
   <main class="content">
-    <h1>Dioxido de Carbono (CO)</h1>
+    <h1>Dioxido de Carbono (CO2)</h1>
 
     <!-- Tabla de últimos registros -->
     <section class="records-section">
@@ -20,7 +20,7 @@
         <tbody>
           <tr *ngFor="let r of data; let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ r.co }}</td>
+            <td>{{ r.co2 ?? r.co }}</td>
             <td>{{ r.fecha_hora | date:'yyyy-MM-dd' }}</td>
             <td>{{ r.fecha_hora | date:'HH:mm' }}</td>
           </tr>

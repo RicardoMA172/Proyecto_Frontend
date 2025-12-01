@@ -11,7 +11,7 @@ export const routes: Routes = [
   { path: 'temp', canActivate: [authGuard], loadComponent: () => import('./componentes/temp/temp').then(m => m.TempComponent) },
   { path: 'hum', canActivate: [authGuard], loadComponent: () => import('./componentes/hum/hum').then(m => m.HumComponent) },
   { path: 'amon', canActivate: [authGuard], loadComponent: () => import('./componentes/amon/amon').then(m => m.AmonComponent) },
-  { path: 'co',   canActivate: [authGuard], loadComponent: () => import('./componentes/co/co').then(m => m.CoComponent) },
+  { path: 'co2',   canActivate: [authGuard], loadComponent: () => import('./componentes/co/co').then(m => m.CoComponent) },
   { path: 'nox',  canActivate: [authGuard], loadComponent: () => import('./componentes/nox/nox').then(m => m.NoxComponent) },
   { path: 'sox',  canActivate: [authGuard], loadComponent: () => import('./componentes/sox/sox').then(m => m.SoxComponent) },
   { path: 'pm10', canActivate: [authGuard], loadComponent: () => import('./componentes/pm10/pm10').then(m => m.Pm10Component) },

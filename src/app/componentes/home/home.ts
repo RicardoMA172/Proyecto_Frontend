@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     { key: 'temp', label: 'Temperatura (°C)', color: '#1abc9c' },
     { key: 'hum', label: 'Humedad (%)', color: '#3498db' },
     { key: 'amon', label: 'Amoníaco (ppm)', color: '#7f8c8d' },
-    { key: 'co', label: 'CO (ppm)', color: '#2980b9' },
+    { key: 'co2', label: 'CO2 (ppm)', color: '#2980b9' },
     { key: 'nox', label: 'NOx (µg/m³)', color: '#27ae60' },
     { key: 'sox', label: 'SOx (µg/m³)', color: '#f39c12' },
     { key: 'pm10', label: 'PM10 (µg/m³)', color: '#8e44ad' },
@@ -199,7 +199,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // Cargar promedios del día actual (reemplaza getDashboard)
   this.caService.getTodayAverage().subscribe({
     next: data => {
-      // `data` contiene co,nox,sox,pm10,pm25,temp,hum,start,end
+      // `data` contiene co2,nox,sox,pm10,pm25,temp,hum,start,end
       // lo asignamos directamente a `resumen` para que el template lo consuma
       this.resumen = data ?? {};
     },
@@ -309,8 +309,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
         labels: labels,
         datasets: [
           {
-            label: 'CO (ppm) - Hoy',
-            data: sorted.map(d => d.co),
+            label: 'CO2 (ppm) - Hoy',
+            data: sorted.map(d => d.co2 ?? d.co),
             borderColor: '#2980b9',
             backgroundColor: 'rgba(41,128,185,0.18)',
             fill: true,
@@ -491,8 +491,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
                   try { if (canvas) this.setupCanvasSize(canvas, wrapper || undefined); } catch(e) {}
                   try { c.resize(); c.update(); } catch(e) {}
                 } else {
-                  // Main CO chart fallback
-                  const dataset = sorted.map((d: any) => { const n = Number(d.co); return isNaN(n) ? null : n; });
+                  // Main CO2 chart fallback
+                  const dataset = sorted.map((d: any) => { const n = Number(d.co2 ?? d.co); return isNaN(n) ? null : n; });
                   c.data.labels = labels;
                   if (c.data.datasets && c.data.datasets[0]) c.data.datasets[0].data = dataset;
                   try { if (canvas) this.setupCanvasSize(canvas, wrapper || undefined); } catch(e) {}

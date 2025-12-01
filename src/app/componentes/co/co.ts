@@ -53,7 +53,7 @@ export class CoComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(data => {
         this.chartData = data;
         this.initChart(this.chartData);
-        this.computeStats(this.chartData, 'co');
+        this.computeStats(this.chartData, 'co2');
       });
 
     // Polling tabla
@@ -106,11 +106,11 @@ export class CoComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedDate$.next(this.selectedDate);
     this.updateVisibleDates();
 
-    this.caService.getByDate(date).subscribe(data => {
+        this.caService.getByDate(date).subscribe(data => {
       console.log('📊 Datos recibidos:', data.length, data.slice(0, 5));
       this.chartData = data;
       this.initChart(this.chartData);
-      this.computeStats(this.chartData, 'co');
+          this.computeStats(this.chartData, 'co2');
     });
 
     if (this.isToday(date)) {
@@ -143,8 +143,8 @@ export class CoComponent implements OnInit, AfterViewInit, OnDestroy {
       data: {
         labels: labels,
         datasets: [{
-          label: 'CO (ppm)',
-          data: data.map(d => d.co),
+          label: 'CO2 (ppm)',
+          data: data.map(d => d.co2 ?? d.co),
           borderColor: '#2980b9',
           backgroundColor: 'rgba(41, 128, 185, 0.2)',
           fill: true,
