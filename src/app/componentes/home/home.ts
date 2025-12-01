@@ -261,28 +261,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     if (this.todayData.length) this.initChart(this.todayData);
   }
-  
-  // Parsear `fecha_hora` (formato "YYYY-MM-DD HH:MM:SS" o "YYYY-MM-DDTHH:MM:SS")
-  // tratamos la hora como UTC (como viene almacenada en la base) y restamos `hours`.
-  private parseFechaMinusHours(fechaHora: string, hours = 6): Date {
-    if (!fechaHora) return new Date(NaN);
-    const s = fechaHora.replace(' ', 'T');
-    const m = s.match(/(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?/);
-    if (!m) {
-      // fallback: dejar que Date intente parsear
-      try { return new Date(s); } catch(e) { return new Date(NaN); }
-    }
-    const Y = parseInt(m[1], 10);
-    const Mo = parseInt(m[2], 10) - 1;
-    const D = parseInt(m[3], 10);
-    const H = parseInt(m[4], 10);
-    const Mi = parseInt(m[5], 10);
-    const S = m[6] ? parseInt(m[6], 10) : 0;
-    // Construir tiempo en UTC y restar horas
-    const utcMs = Date.UTC(Y, Mo, D, H, Mi, S);
-    const adjusted = new Date(utcMs - hours * 3600 * 1000);
-    return adjusted;
-  }
   // 🔹 Modificada la función initChart para el contaminante CO
   private initChart(data: any[]) {
     if (!this.homeChart) {
@@ -294,7 +272,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.chart) this.chart.destroy();
 
     const labels = data.map(d => {
-      const fecha = this.parseFechaMinusHours(d.fecha_hora, 6);
+      const fecha = new Date(d.fecha_hora.replace(' ', 'T'));
       const hours = fecha.getHours().toString().padStart(2, '0');
       const minutes = fecha.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
@@ -342,7 +320,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const key = canvas.getAttribute('data-key');
       if (!key) return;
       const labels = this.todayData.map(d => {
-        const fecha = this.parseFechaMinusHours(d.fecha_hora, 6);
+        const fecha = new Date(d.fecha_hora.replace(' ', 'T'));
         const hours = fecha.getHours().toString().padStart(2, '0');
         const minutes = fecha.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
