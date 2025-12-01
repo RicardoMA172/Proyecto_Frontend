@@ -361,6 +361,52 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Inicializar todas las gráficas (pollCharts) — llamada desde ngOnInit y al cambiar pestaña
+  private initAllCharts() {
+    if (!this.pollCharts || !this.pollCharts.length) return;
+    this.pollCharts.forEach((elRef: ElementRef<HTMLCanvasElement>, idx: number) => {
+      const canvas: HTMLCanvasElement = elRef.nativeElement;
+      const key = canvas.getAttribute('data-key');
+      if (!key) return;
+      const labels = this.todayData.map(d => {
+        const fecha = new Date(d.fecha_hora.replace(' ', 'T'));
+        const hours = fecha.getHours().toString().padStart(2, '0');
+        const minutes = fecha.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+      });
+      const dataset = this.todayData.map(d => {
+        const v = d[key];
+        const n = Number(v);
+        return isNaN(n) ? null : n;
+      });
+      const color = this.pollutants[idx]?.color || '#2980b9';
+      // ensure canvas CSS/physical size set before creating chart
+      const wrapper = canvas.parentElement as HTMLElement | null;
+      this.createChartWithRetry(canvas, wrapper, () => ({
+        type: 'line',
+        data: { labels, datasets: [{ label: this.pollutants[idx].label, data: dataset, borderColor: color, backgroundColor: this.hexToRgba(color, 0.15), fill: true, tension: 0.3 }] },
+        options: (() => {
+          const w = (window && window.innerWidth) || document.documentElement.clientWidth || 800;
+          const isSmall = w < 420;
+          const showLegend = !isSmall;
+          const borderW = w < 420 ? 3 : 2;
+          const pointR = w < 420 ? 3 : 2;
+          return {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: { padding: { left: 6, right: 6, top: 6, bottom: 6 } },
+            plugins: { legend: { display: showLegend, position: 'bottom', labels: { boxWidth: 12, padding: 6, font: { size: showLegend ? 11 : 10 } } }, tooltip: { mode: 'index', intersect: false } },
+            elements: { line: { tension: 0.3, borderWidth: borderW }, point: { radius: pointR } },
+            scales: {
+              x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: isSmall ? 6 : 10, font: { size: isSmall ? 10 : 11 } }, grid: { display: false } },
+              y: { ticks: { font: { size: isSmall ? 11 : 11 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
+            }
+          };
+        })()
+      }));
+    });
+  }
+
   private hexToRgba(hex: string, alpha: number) {
     if (!hex) return `rgba(41,128,185,${alpha})`;
     const h = hex.replace('#', '');
