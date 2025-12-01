@@ -204,10 +204,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     next: data => {
       this.todayData = data;
       if (this.activeTab === 'charts') {
-        // Give Angular a short moment to render canvases when switching tabs first time
-        setTimeout(() => {
-          if (!this.chartsInitialized) this.initAllCharts(); else this.handleResize();
-        }, 120);
+        // Wait a short moment to let Angular render canvases, then ensure charts exist/are resized
+        setTimeout(() => this.initAllCharts(), 120);
       }
     },
     error: err => {
@@ -225,10 +223,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   setTab(tab: 'summary' | 'charts') {
     this.activeTab = tab;
     if (tab === 'charts') {
-      // create charts only once; on subsequent openings just resize/update
-      setTimeout(() => {
-        if (!this.chartsInitialized) this.initAllCharts(); else this.handleResize();
-      }, 120);
+      // Always call initAllCharts after a short delay: the function is idempotent
+      // and will create missing charts or resize existing ones.
+      setTimeout(() => this.initAllCharts(), 120);
     }
     setTimeout(() => {
       const arr = this.tabButtons ? this.tabButtons.toArray() : [];
