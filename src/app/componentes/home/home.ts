@@ -241,8 +241,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   setTab(tab: 'summary' | 'charts') {
     this.activeTab = tab;
     if (tab === 'charts') {
-      // Always call initAllCharts after a short delay: the function is idempotent
-      // and will create missing charts or resize existing ones.
       setTimeout(() => this.initAllCharts(), 120);
     }
     setTimeout(() => {

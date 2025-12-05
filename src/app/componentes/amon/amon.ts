@@ -60,17 +60,12 @@ export class AmonComponent implements OnInit, AfterViewInit, OnDestroy {
     interval(this.pollingIntervalMs)
       .pipe(
         takeUntil(this.destroy$),
-        switchMap(() => {
-          if (this.isToday(this.selectedDate$.value)) {
-            return this.caService.getLatestByDate(this.selectedDate$.value, this.tableLimit);
-          } else {
-            return this.caService.getByDate(this.selectedDate$.value);
-          }
-        })
+        switchMap(() => this.caService.getByDate(this.selectedDate$.value))
       )
-      .subscribe(latest => {
-  const selDateStr = formatLocalDate(this.selectedDate);
-        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
+      .subscribe(allData => {
+        if (!allData || !Array.isArray(allData)) return;
+        // Invertir y limitar a tableLimit
+        this.data = allData.reverse().slice(0, this.tableLimit);
       });
   }
 
@@ -107,23 +102,24 @@ export class AmonComponent implements OnInit, AfterViewInit, OnDestroy {
     this.updateVisibleDates();
 
     this.caService.getByDate(date).subscribe(data => {
-      console.log('📊 Datos recibidos:', data.length, data.slice(0, 5));
-      this.chartData = data;
+      console.log('📊 Datos recibidos para gráfica:', data?.length ?? 0, data?.slice(0, 5));
+      this.chartData = data || [];
       this.initChart(this.chartData);
       this.computeStats(this.chartData, 'amon');
     });
 
-    if (this.isToday(date)) {
-      this.caService.getLatestByDate(date, this.tableLimit).subscribe(latest => {
-  const selDateStr = formatLocalDate(this.selectedDate);
-        this.data = latest.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
-      });
-    } else {
-      this.caService.getByDate(date).subscribe(allData => {
-  const selDateStr = formatLocalDate(this.selectedDate);
-        this.data = allData.filter((r: any) => r.fecha_hora.startsWith(selDateStr));
-      });
-    }
+    // Para la tabla: siempre usamos getByDate (más confiable)
+    this.caService.getByDate(date).subscribe(allData => {
+      console.log('📋 Datos para tabla:', allData?.length ?? 0);
+      if (!allData || !Array.isArray(allData)) {
+        this.data = [];
+        console.warn('⚠️ Datos inválidos recibidos:', allData);
+        return;
+      }
+      // Invertir orden para mostrar los más recientes primero (como LatestByDate)
+      this.data = allData.reverse().slice(0, this.tableLimit);
+      console.log('📋 Tabla actualizada con', this.data.length, 'registros');
+    });
   }
 
   private initChart(data: any[]) {
