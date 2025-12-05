@@ -30,7 +30,7 @@ export class AmonComponent implements OnInit, AfterViewInit, OnDestroy {
   visibleDates: Date[] = [];
   private destroy$ = new Subject<void>();
   private pollingIntervalMs = 50000; // 50 segundos
-  private tableLimit = 5;
+  private tableLimit = 10000; // Mostrar todos los registros disponibles
 
   private selectedDate$ = new BehaviorSubject<Date>(this.selectedDate);
   isAdmin: boolean = false;

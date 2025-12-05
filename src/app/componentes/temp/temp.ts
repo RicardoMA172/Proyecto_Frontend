@@ -28,8 +28,8 @@ export class TempComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedDate: Date = new Date();
   visibleDates: Date[] = [];
   private destroy$ = new Subject<void>();
-  private pollingIntervalMs = 5000; // 5 segundos
-  private tableLimit = 5;
+  private pollingIntervalMs = 50000; // 50 segundos
+  private tableLimit = 10000; // Mostrar todos los registros disponibles
 
   private selectedDate$ = new BehaviorSubject<Date>(this.selectedDate);
   isAdmin: boolean = false;
